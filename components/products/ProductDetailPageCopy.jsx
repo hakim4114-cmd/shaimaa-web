@@ -38,7 +38,7 @@ export function ProductOrderSection({ productSlug }) {
   const maxWidthAlignment = direction === "rtl" ? "me-auto" : "";
 
   return (
-    <section id="product-order" dir={direction} className="scroll-mt-24 px-4 pb-12 sm:px-6 lg:px-8 lg:pb-14">
+    <section id="order-form" dir={direction} className="scroll-mt-24 px-4 pb-12 sm:px-6 lg:px-8 lg:pb-14">
       <div className="mx-auto max-w-7xl">
         <div className={`mb-7 max-w-2xl ${textAlignment} ${maxWidthAlignment}`}>
           <p className="text-sm font-bold uppercase tracking-[0.16em] text-henna">{productDetail.orderLabel}</p>

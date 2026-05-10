@@ -58,7 +58,7 @@ export function ProductInfo({ product }) {
           <MessageCircle size={18} />
         </a>
         <Link
-          href="#product-order"
+          href="#order-form"
           className={`inline-flex items-center justify-center gap-2 rounded-full border border-cedar/25 px-6 py-4 text-sm font-bold uppercase tracking-[0.12em] text-cedar transition hover:border-henna hover:text-henna ${iconAfterTextDirection}`}
         >
           {productDetail.orderPiece}

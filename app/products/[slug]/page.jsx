@@ -8,6 +8,7 @@ import { ProductGallery } from "@/components/products/ProductGallery";
 import { ProductInfo } from "@/components/products/ProductInfo";
 import { ProductObjectionLayer, ProductRelatedAndFAQ } from "@/components/products/ProductObjectionSections";
 import { ProductPersuasionBlock } from "@/components/products/ProductPersuasionSections";
+import { StickyOrderCta } from "@/components/products/StickyOrderCta";
 import { products } from "@/data/products";
 
 export function generateStaticParams() {
@@ -61,7 +62,7 @@ export default async function ProductDetailPage({ params }) {
   }
 
   return (
-    <main className="min-h-screen overflow-x-hidden pt-16 sm:pt-20">
+    <main className="min-h-screen overflow-x-hidden pb-24 pt-16 sm:pt-20 md:pb-0">
       <Header />
       <ProductDetailHeader />
 
@@ -80,6 +81,7 @@ export default async function ProductDetailPage({ params }) {
       <CODTrust />
       <FAQ />
       <Footer />
+      <StickyOrderCta />
     </main>
   );
 }
