@@ -9,7 +9,11 @@ const settingRows = [
   ["Support email", adminStoreConfig.supportEmail],
   ["Default delivery fee", adminStoreConfig.defaultDeliveryFee],
   ["Currency", adminStoreConfig.currency],
-  ["Announcement bar", adminStoreConfig.announcementBarText]
+  ["Payment method", adminStoreConfig.paymentMethod],
+  ["Market", adminStoreConfig.market],
+  ["Announcement bar Arabic", adminStoreConfig.announcementBarTranslations.ar],
+  ["Announcement bar French", adminStoreConfig.announcementBarTranslations.fr],
+  ["Announcement bar English", adminStoreConfig.announcementBarTranslations.en]
 ];
 
 export default function AdminSettingsPage() {

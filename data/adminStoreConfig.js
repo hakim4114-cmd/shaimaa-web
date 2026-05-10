@@ -1,15 +1,22 @@
-import { brandName, whatsappHref } from "@/lib/constants";
+import { brandName, supportEmail, whatsappDisplayNumber, whatsappHref } from "@/lib/constants";
 
 export const adminStoreConfig = {
   storeName: brandName,
-  whatsappNumber: "+212600000000",
+  whatsappNumber: whatsappDisplayNumber,
   whatsappHref,
-  supportPhone: "Not configured",
-  supportEmail: "Not configured",
-  defaultDeliveryFee: "Manual confirmation",
+  supportPhone: whatsappDisplayNumber,
+  supportEmail,
+  defaultDeliveryFee: 25,
   currency: "MAD",
+  paymentMethod: "الدفع عند الاستلام",
+  market: "Morocco",
   codEnabled: true,
-  announcementBarText: "Not configured",
+  announcementBarText: "الدفع عند الاستلام داخل المغرب — التوصيل خلال 2 إلى 4 أيام",
+  announcementBarTranslations: {
+    ar: "الدفع عند الاستلام داخل المغرب — التوصيل خلال 2 إلى 4 أيام",
+    fr: "Paiement à la livraison au Maroc — livraison sous 2 à 4 jours",
+    en: "Cash on delivery in Morocco — delivery within 2 to 4 days"
+  },
   socialLinks: {
     instagram: "Not configured",
     tiktok: "Not configured",
