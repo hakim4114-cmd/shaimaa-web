@@ -16,16 +16,16 @@ export default function OrderPage() {
   const direction = getLanguageDirection(language);
   const orderPage = getTranslation(language).orderPage;
   const textAlignment = direction === "rtl" ? "text-right" : "text-left";
-  const iconDirection = direction === "rtl" ? "flex-row-reverse" : "";
+  const iconAfterTextDirection = direction === "rtl" ? "flex-row-reverse" : "";
   const maxWidthAlignment = direction === "rtl" ? "ml-auto" : "";
 
   return (
     <main className="min-h-screen overflow-hidden pt-24 sm:pt-28">
       <Header />
-      <section dir={direction} className="px-4 pb-20 pt-10 sm:px-6 sm:py-16 lg:px-8">
+      <section dir={direction} lang={language} className="px-4 pb-20 pt-10 sm:px-6 sm:py-16 lg:px-8">
         <div className={`mx-auto max-w-7xl ${textAlignment}`}>
           <p
-            className={`inline-flex items-center gap-2 rounded-full border border-brass/40 bg-ivory px-4 py-2 text-xs font-bold uppercase tracking-[0.16em] text-henna ${iconDirection}`}
+            className="inline-flex items-center gap-2 rounded-full border border-brass/40 bg-ivory px-4 py-2 text-xs font-bold uppercase tracking-[0.16em] text-henna"
           >
             <ShieldCheck size={15} />
             {orderPage.badge}
@@ -52,7 +52,7 @@ export default function OrderPage() {
 
           <Link
             href="/size-guide"
-            className={`mt-6 inline-flex items-center gap-2 text-sm font-bold uppercase tracking-[0.12em] text-henna ${iconDirection}`}
+            className={`mt-6 inline-flex items-center gap-2 text-sm font-bold uppercase tracking-[0.12em] text-henna ${iconAfterTextDirection}`}
           >
             {orderPage.sizeGuide}
             <Ruler size={17} />

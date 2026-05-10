@@ -17,7 +17,6 @@ export function SizeAdvisor({ availableSizes }) {
   const direction = getLanguageDirection(language);
   const advisorCopy = getTranslation(language).sizeAdvisor;
   const textAlignment = direction === "rtl" ? "text-right" : "text-left";
-  const iconDirection = direction === "rtl" ? "flex-row-reverse" : "";
   const [isOpen, setIsOpen] = useState(false);
   const [heightCm, setHeightCm] = useState("");
   const [weightKg, setWeightKg] = useState("");
@@ -42,6 +41,7 @@ export function SizeAdvisor({ availableSizes }) {
   return (
     <section
       dir={direction}
+      lang={language}
       className={`border border-brass/25 bg-ivory p-4 shadow-soft sm:p-5 ${textAlignment}`}
       aria-labelledby="size-advisor-title"
     >
@@ -52,7 +52,7 @@ export function SizeAdvisor({ availableSizes }) {
         onClick={() => setIsOpen((currentValue) => !currentValue)}
         className={`flex w-full items-center justify-between gap-4 ${textAlignment}`}
       >
-        <span className={`flex items-start gap-3 ${iconDirection}`}>
+        <span className="flex items-start gap-3">
           <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-henna text-ivory">
             <Ruler size={19} />
           </span>
@@ -176,7 +176,7 @@ export function SizeAdvisor({ availableSizes }) {
             </div>
 
             <p className="mt-3 text-sm leading-6 text-coffee">{advice.note}</p>
-            <div className={`mt-4 flex gap-3 bg-pearl p-3 text-sm font-semibold leading-6 text-cedar ${iconDirection}`}>
+            <div className="mt-4 flex gap-3 bg-pearl p-3 text-sm font-semibold leading-6 text-cedar">
               <PhoneCall className="mt-1 shrink-0 text-henna" size={17} />
               <span>{advice.confirmationMessage}</span>
             </div>

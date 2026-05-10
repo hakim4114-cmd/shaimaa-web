@@ -15,14 +15,14 @@ export function Hero() {
   const hero = getTranslation(language).hero;
   const textAlignment = direction === "rtl" ? "text-right" : "text-left";
   const ctaDirection = direction === "rtl" ? "sm:flex-row-reverse" : "sm:flex-row";
-  const iconDirection = direction === "rtl" ? "flex-row-reverse" : "";
+  const iconAfterTextDirection = direction === "rtl" ? "flex-row-reverse" : "";
 
   return (
-    <section dir={direction} className="relative px-4 pb-16 pt-28 sm:px-6 lg:px-8 lg:pb-24 lg:pt-36">
+    <section dir={direction} lang={language} className="relative px-4 pb-16 pt-28 sm:px-6 lg:px-8 lg:pb-24 lg:pt-36">
       <div className="mx-auto grid max-w-7xl items-center gap-10 lg:grid-cols-[1.02fr_0.98fr]">
         <div className={`animate-fade-up ${textAlignment}`}>
           <p
-            className={`mb-4 inline-flex items-center gap-2 rounded-full border border-brass/40 bg-ivory px-4 py-2 text-xs font-bold uppercase tracking-[0.18em] text-henna ${iconDirection}`}
+            className="mb-4 inline-flex items-center gap-2 rounded-full border border-brass/40 bg-ivory px-4 py-2 text-xs font-bold uppercase tracking-[0.18em] text-henna"
           >
             <Sparkles size={15} />
             {hero.badge}
@@ -37,7 +37,7 @@ export function Hero() {
           <div className={`mt-8 flex flex-col gap-3 ${ctaDirection}`}>
             <a
               href={whatsappHref}
-              className={`inline-flex items-center justify-center gap-2 rounded-full bg-henna px-6 py-4 text-sm font-bold uppercase tracking-[0.12em] text-ivory shadow-soft transition hover:bg-cedar ${iconDirection}`}
+              className={`inline-flex items-center justify-center gap-2 rounded-full bg-henna px-6 py-4 text-sm font-bold uppercase tracking-[0.12em] text-ivory shadow-soft transition hover:bg-cedar ${iconAfterTextDirection}`}
             >
               {hero.primaryCta}
               <ArrowRight size={18} />

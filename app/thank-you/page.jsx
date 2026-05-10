@@ -16,13 +16,13 @@ export default function ThankYouPage() {
   const direction = getLanguageDirection(language);
   const thankYou = getTranslation(language).thankYou;
   const textAlignment = direction === "rtl" ? "text-right" : "text-left";
-  const iconDirection = direction === "rtl" ? "flex-row-reverse" : "";
+  const iconAfterTextDirection = direction === "rtl" ? "flex-row-reverse" : "";
 
   return (
     <main className="min-h-screen overflow-hidden pt-24">
       <Header />
 
-      <section dir={direction} className="px-4 py-16 sm:px-6 lg:px-8 lg:py-24">
+      <section dir={direction} lang={language} className="px-4 py-16 sm:px-6 lg:px-8 lg:py-24">
         <div className="mx-auto max-w-5xl bg-ivory shadow-soft">
           <div className="moroccan-frame px-5 py-12 text-center sm:px-10 lg:px-16">
             <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-cedar text-brass">
@@ -53,13 +53,13 @@ export default function ThankYouPage() {
             <div className="mt-9 flex flex-col justify-center gap-3 sm:flex-row">
               <a
                 href={whatsappHref}
-                className={`inline-flex items-center justify-center gap-2 rounded-full bg-henna px-6 py-4 text-sm font-bold uppercase tracking-[0.12em] text-ivory shadow-soft transition hover:bg-cedar ${iconDirection}`}
+                className={`inline-flex items-center justify-center gap-2 rounded-full bg-henna px-6 py-4 text-sm font-bold uppercase tracking-[0.12em] text-ivory shadow-soft transition hover:bg-cedar ${iconAfterTextDirection}`}
               >
                 {thankYou.whatsapp}
                 <MessageCircle size={18} />
               </a>
               <Button href="/products" variant="secondary">
-                <span className={`inline-flex items-center gap-2 ${iconDirection}`}>
+                <span className={`inline-flex items-center gap-2 ${iconAfterTextDirection}`}>
                   {thankYou.return}
                   <ShoppingBag size={18} />
                 </span>

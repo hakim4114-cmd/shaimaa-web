@@ -48,6 +48,7 @@ export function ProductListingPage() {
                 key={product.slug}
                 product={product}
                 productCopy={productCopy}
+                direction={direction}
                 labels={translation.productCard}
               />
             );

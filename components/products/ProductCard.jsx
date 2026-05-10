@@ -9,6 +9,7 @@ function formatText(template, values) {
 export function ProductCard({
   product,
   productCopy = product,
+  direction = "ltr",
   labels = {
     viewDetails: "View details",
     photosSoon: "Photos soon",
@@ -19,6 +20,7 @@ export function ProductCard({
   const productHref = `/products/${product.slug}`;
   const detailsAriaLabel = formatText(labels.detailsAriaLabel, { productName: productCopy.name });
   const previewAlt = formatText(labels.previewAlt, { productName: productCopy.name });
+  const iconAfterTextDirection = direction === "rtl" ? "flex-row-reverse" : "";
 
   return (
     <article className="group bg-ivory shadow-soft">
@@ -63,12 +65,12 @@ export function ProductCard({
             </Link>
             <p className="mt-1 text-sm text-coffee">{productCopy.color}</p>
           </div>
-          <p className="font-bold text-henna">{product.price}</p>
+          <p dir="ltr" className="font-bold text-henna">{product.price}</p>
         </div>
 
         <Link
           href={productHref}
-          className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-full border border-brass/70 px-4 py-3 text-sm font-bold uppercase tracking-[0.12em] text-cedar outline-none transition hover:bg-cedar hover:text-ivory focus-visible:bg-cedar focus-visible:text-ivory focus-visible:ring-2 focus-visible:ring-henna focus-visible:ring-offset-2 focus-visible:ring-offset-ivory"
+          className={`mt-5 inline-flex w-full items-center justify-center gap-2 rounded-full border border-brass/70 px-4 py-3 text-sm font-bold uppercase tracking-[0.12em] text-cedar outline-none transition hover:bg-cedar hover:text-ivory focus-visible:bg-cedar focus-visible:text-ivory focus-visible:ring-2 focus-visible:ring-henna focus-visible:ring-offset-2 focus-visible:ring-offset-ivory ${iconAfterTextDirection}`}
         >
           {labels.viewDetails}
           <MessageCircle size={17} />

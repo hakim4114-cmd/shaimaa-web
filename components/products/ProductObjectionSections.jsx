@@ -70,7 +70,6 @@ export function ProductTrustBox({ product, productCopy, productDetail, direction
 export function ProductCraftBlock({ productCopy, productDetail, direction }) {
   const objections = productDetail.objections;
   const textAlignment = direction === "rtl" ? "text-right" : "text-left";
-  const iconDirection = direction === "rtl" ? "flex-row-reverse" : "";
 
   return (
     <section dir={direction} className="px-4 pb-8 sm:px-6 lg:px-8">
@@ -84,7 +83,7 @@ export function ProductCraftBlock({ productCopy, productDetail, direction }) {
 
         <div className="grid gap-4 bg-ivory p-6 shadow-soft">
           <div>
-            <div className={`mb-3 flex items-center gap-3 ${iconDirection}`}>
+            <div className="mb-3 flex items-center gap-3">
               <Shirt className="text-henna" size={20} />
               <h3 className="font-display text-2xl font-semibold text-cedar">{productDetail.fabric}</h3>
             </div>
@@ -97,7 +96,7 @@ export function ProductCraftBlock({ productCopy, productDetail, direction }) {
             </p>
             <div className="grid gap-2">
               {productCopy.craftsmanship.map((item) => (
-                <div key={item} className={`flex gap-3 text-sm leading-6 text-coffee ${iconDirection}`}>
+                <div key={item} className="flex gap-3 text-sm leading-6 text-coffee">
                   <Check className="mt-1 shrink-0 text-brass" size={16} />
                   {item}
                 </div>
@@ -143,7 +142,7 @@ export function RelatedProducts({ currentProduct, productDetail, direction }) {
                   <p className="text-sm font-bold uppercase tracking-[0.12em] text-henna">{relatedCopy.tag}</p>
                   <h3 className="mt-2 font-display text-3xl font-semibold text-cedar">{relatedCopy.name}</h3>
                   <p className="mt-2 text-sm leading-6 text-coffee">{relatedCopy.color}</p>
-                  <p className="mt-3 font-bold text-henna">{product.price}</p>
+                  <p dir="ltr" className="mt-3 font-bold text-henna">{product.price}</p>
                   <span className="mt-4 inline-flex text-sm font-bold text-cedar underline-offset-4 group-hover:text-henna group-hover:underline">
                     {objections.relatedCta}
                   </span>

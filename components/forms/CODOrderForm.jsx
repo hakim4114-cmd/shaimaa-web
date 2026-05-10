@@ -104,7 +104,7 @@ export function CODOrderForm({
   const formCopy = translation.orderForm;
   const productDetail = translation.productDetail;
   const textAlignment = direction === "rtl" ? "text-right" : "text-left";
-  const iconDirection = direction === "rtl" ? "flex-row-reverse" : "";
+  const iconAfterTextDirection = direction === "rtl" ? "flex-row-reverse" : "";
   const initialProduct = getProductBySlug(initialProductSlug);
   const [selectedSlug, setSelectedSlug] = useState(initialProduct.slug);
   const [selectedColor, setSelectedColor] = useState(initialProduct.colors[0]);
@@ -183,6 +183,7 @@ export function CODOrderForm({
   return (
     <div
       dir={direction}
+      lang={language}
       className={`grid min-w-0 gap-6 lg:grid-cols-[minmax(0,1.15fr)_minmax(18rem,0.85fr)] lg:items-start ${textAlignment}`}
     >
       <form noValidate onSubmit={handleSubmit} className="grid min-w-0 gap-4 bg-ivory p-5 shadow-soft sm:p-7">
@@ -289,15 +290,15 @@ export function CODOrderForm({
         </FieldLabel>
 
         <div className="grid gap-3 bg-pearl p-4">
-          <div className={`flex gap-3 text-sm font-semibold text-cedar ${iconDirection}`}>
+          <div className="flex gap-3 text-sm font-semibold text-cedar">
             <WalletCards className="shrink-0 text-henna" size={19} />
             {formCopy.trustItems[0]}
           </div>
-          <div className={`flex gap-3 text-sm font-semibold text-cedar ${iconDirection}`}>
+          <div className="flex gap-3 text-sm font-semibold text-cedar">
             <PhoneCall className="shrink-0 text-henna" size={19} />
             {formCopy.trustItems[1]}
           </div>
-          <div className={`flex gap-3 text-sm font-semibold text-cedar ${iconDirection}`}>
+          <div className="flex gap-3 text-sm font-semibold text-cedar">
             <Truck className="shrink-0 text-henna" size={19} />
             {formCopy.trustItems[2]}
           </div>
@@ -317,7 +318,7 @@ export function CODOrderForm({
 
         <a
           href={whatsappHref}
-          className="inline-flex items-center justify-center gap-2 text-sm font-bold text-henna underline-offset-4 hover:underline"
+          className={`inline-flex items-center justify-center gap-2 text-sm font-bold text-henna underline-offset-4 hover:underline ${iconAfterTextDirection}`}
         >
           {formCopy.help}
           <MessageCircle size={17} />
@@ -331,7 +332,7 @@ export function CODOrderForm({
         <div className="mt-6 divide-y divide-brass/25 border-y border-brass/25">
           <div className="flex flex-wrap items-center justify-between gap-4 py-4">
             <span className="text-pearl/80">{formCopy.productPrice}</span>
-            <strong className="text-brass">{selectedProduct.price}</strong>
+            <strong dir="ltr" className="text-brass">{selectedProduct.price}</strong>
           </div>
           <div className="py-4">
             <span className="text-pearl/80">{formCopy.selectedColor}</span>

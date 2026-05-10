@@ -33,7 +33,13 @@ export function CollectionPreview() {
             const productCopy = translation.productDetail.products?.[product.slug] || product;
 
             return (
-              <ProductCard key={product.slug} product={product} productCopy={productCopy} labels={translation.productCard} />
+              <ProductCard
+                key={product.slug}
+                product={product}
+                productCopy={productCopy}
+                direction={direction}
+                labels={translation.productCard}
+              />
             );
           })}
         </div>

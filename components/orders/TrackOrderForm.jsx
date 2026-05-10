@@ -32,7 +32,7 @@ export function TrackOrderForm() {
   const direction = getLanguageDirection(language);
   const trackOrder = getTranslation(language).trackOrder;
   const textAlignment = direction === "rtl" ? "text-right" : "text-left";
-  const iconDirection = direction === "rtl" ? "flex-row-reverse" : "";
+  const iconAfterTextDirection = direction === "rtl" ? "flex-row-reverse" : "";
   const [orderId, setOrderId] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -98,7 +98,7 @@ export function TrackOrderForm() {
     : "";
 
   return (
-    <div dir={direction} className={`grid gap-6 lg:grid-cols-[1.05fr_0.95fr] lg:items-start ${textAlignment}`}>
+    <div dir={direction} lang={language} className={`grid gap-6 lg:grid-cols-[1.05fr_0.95fr] lg:items-start ${textAlignment}`}>
       <form onSubmit={handleSubmit} className="grid gap-4 bg-ivory p-5 shadow-soft sm:p-7">
         <div>
           <p className="text-sm font-bold uppercase tracking-[0.16em] text-henna">{trackOrder.formLabel}</p>
@@ -135,7 +135,7 @@ export function TrackOrderForm() {
           />
         </label>
 
-        <div className={`flex gap-3 bg-pearl p-4 text-sm font-semibold leading-6 text-cedar ${iconDirection}`}>
+        <div className="flex gap-3 bg-pearl p-4 text-sm font-semibold leading-6 text-cedar">
           <ShieldCheck className="mt-1 shrink-0 text-henna" size={18} />
           <span>{trackOrder.privacy}</span>
         </div>
@@ -147,7 +147,7 @@ export function TrackOrderForm() {
         <button
           type="submit"
           disabled={isLoading}
-          className={`inline-flex items-center justify-center gap-2 rounded-full bg-henna px-6 py-4 text-sm font-bold uppercase tracking-[0.12em] text-ivory shadow-soft transition hover:bg-cedar disabled:cursor-not-allowed disabled:opacity-70 ${iconDirection}`}
+          className={`inline-flex items-center justify-center gap-2 rounded-full bg-henna px-6 py-4 text-sm font-bold uppercase tracking-[0.12em] text-ivory shadow-soft transition hover:bg-cedar disabled:cursor-not-allowed disabled:opacity-70 ${iconAfterTextDirection}`}
         >
           {isLoading ? trackOrder.loading : trackOrder.submit}
           <Search size={17} />
@@ -155,7 +155,7 @@ export function TrackOrderForm() {
 
         <a
           href={whatsappHref}
-          className={`inline-flex items-center justify-center gap-2 text-sm font-bold text-henna underline-offset-4 hover:underline ${iconDirection}`}
+          className={`inline-flex items-center justify-center gap-2 text-sm font-bold text-henna underline-offset-4 hover:underline ${iconAfterTextDirection}`}
         >
           {trackOrder.whatsapp}
           <MessageCircle size={17} />
@@ -186,7 +186,7 @@ export function TrackOrderForm() {
               </div>
             ) : null}
 
-            <div className={`flex gap-3 border-t border-brass/25 pt-4 text-sm leading-6 text-pearl/85 ${iconDirection}`}>
+            <div className="flex gap-3 border-t border-brass/25 pt-4 text-sm leading-6 text-pearl/85">
               <PackageCheck className="mt-1 shrink-0 text-brass" size={18} />
               <span>{statusMessage}</span>
             </div>

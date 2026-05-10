@@ -18,12 +18,12 @@ export function ProductInfo({ product }) {
   const productDetail = translation.productDetail;
   const productCopy = productDetail.products[product.slug] || product;
   const textAlignment = direction === "rtl" ? "text-right" : "text-left";
-  const iconDirection = direction === "rtl" ? "flex-row-reverse" : "";
+  const iconAfterTextDirection = direction === "rtl" ? "flex-row-reverse" : "";
   const priceDirection = direction === "rtl" ? "sm:flex-row-reverse" : "sm:flex-row";
   const maxWidthAlignment = direction === "rtl" ? "ml-auto" : "";
 
   return (
-    <div dir={direction} className={`space-y-7 ${textAlignment}`}>
+    <div dir={direction} lang={language} className={`space-y-7 ${textAlignment}`}>
       <div>
         <p className="text-sm font-bold uppercase tracking-[0.18em] text-henna">{productCopy.tag}</p>
         <h1 className="mt-3 font-display text-5xl font-bold leading-tight text-cedar sm:text-6xl">
@@ -35,7 +35,7 @@ export function ProductInfo({ product }) {
       <div className="border-y border-brass/25 py-5">
         <p className="text-sm font-bold uppercase tracking-[0.16em] text-coffee">{productDetail.priceLabel}</p>
         <div className={`mt-2 flex flex-col gap-2 sm:items-end sm:justify-between ${priceDirection}`}>
-          <p className="font-display text-4xl font-bold text-henna">{product.price}</p>
+          <p dir="ltr" className="font-display text-4xl font-bold text-henna">{product.price}</p>
           <p className="text-sm font-semibold text-cedar">{productCopy.offer}</p>
         </div>
         <p className="mt-3 text-sm leading-6 text-coffee">{productDetail.codNote}</p>
@@ -51,14 +51,14 @@ export function ProductInfo({ product }) {
       <div className="grid gap-3 sm:grid-cols-2">
         <a
           href={whatsappHref}
-          className={`inline-flex items-center justify-center gap-2 rounded-full bg-henna px-6 py-4 text-sm font-bold uppercase tracking-[0.12em] text-ivory shadow-soft transition hover:bg-cedar ${iconDirection}`}
+          className={`inline-flex items-center justify-center gap-2 rounded-full bg-henna px-6 py-4 text-sm font-bold uppercase tracking-[0.12em] text-ivory shadow-soft transition hover:bg-cedar ${iconAfterTextDirection}`}
         >
           {productDetail.askWhatsapp}
           <MessageCircle size={18} />
         </a>
         <Link
           href="#product-order"
-          className={`inline-flex items-center justify-center gap-2 rounded-full border border-cedar/25 px-6 py-4 text-sm font-bold uppercase tracking-[0.12em] text-cedar transition hover:border-henna hover:text-henna ${iconDirection}`}
+          className={`inline-flex items-center justify-center gap-2 rounded-full border border-cedar/25 px-6 py-4 text-sm font-bold uppercase tracking-[0.12em] text-cedar transition hover:border-henna hover:text-henna ${iconAfterTextDirection}`}
         >
           {productDetail.orderPiece}
           <Truck size={18} />
@@ -69,7 +69,7 @@ export function ProductInfo({ product }) {
         {productDetail.trustItems.map((text, index) => {
           const TrustIcon = trustIcons[index];
           return (
-            <div key={text} className={`flex items-center gap-3 text-sm font-semibold text-cedar ${iconDirection}`}>
+            <div key={text} className="flex items-center gap-3 text-sm font-semibold text-cedar">
               <TrustIcon className="text-henna" size={18} />
               {text}
             </div>
@@ -85,7 +85,7 @@ export function ProductInfo({ product }) {
           <p className="text-sm font-bold uppercase tracking-[0.14em] text-henna">{productDetail.craftsmanship}</p>
           <div className="mt-4 grid gap-3">
             {productCopy.craftsmanship.map((item) => (
-              <div key={item} className={`flex gap-3 text-sm leading-6 text-coffee ${iconDirection}`}>
+              <div key={item} className="flex gap-3 text-sm leading-6 text-coffee">
                 <Check className="mt-1 shrink-0 text-brass" size={16} />
                 {item}
               </div>

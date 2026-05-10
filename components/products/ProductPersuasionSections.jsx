@@ -109,7 +109,6 @@ export function ProductDecisionSteps({ persuasion, direction }) {
 
 export function ProductOrderReassurance({ persuasion, direction }) {
   const textAlignment = direction === "rtl" ? "text-right" : "text-left";
-  const iconDirection = direction === "rtl" ? "flex-row-reverse" : "";
 
   return (
     <div className={`bg-ivory p-5 shadow-soft ${textAlignment}`}>
@@ -119,7 +118,7 @@ export function ProductOrderReassurance({ persuasion, direction }) {
         {persuasion.reassuranceItems.map((item, index) => {
           const Icon = reassuranceIcons[index];
           return (
-            <div key={item} className={`flex gap-3 text-sm font-semibold leading-6 text-cedar ${iconDirection}`}>
+            <div key={item} className="flex gap-3 text-sm font-semibold leading-6 text-cedar">
               <Icon className="mt-1 shrink-0 text-henna" size={18} />
               <span>{item}</span>
             </div>
@@ -140,7 +139,7 @@ export function ProductPersuasionBlock({ product }) {
   const textAlignment = direction === "rtl" ? "text-right" : "text-left";
 
   return (
-    <section dir={direction} className="px-4 pb-12 sm:px-6 lg:px-8">
+    <section dir={direction} lang={language} className="px-4 pb-12 sm:px-6 lg:px-8">
       <div className={`mx-auto grid max-w-7xl gap-7 ${textAlignment}`}>
         <ProductValueStack
           persuasion={persuasion}
