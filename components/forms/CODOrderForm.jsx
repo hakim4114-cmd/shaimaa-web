@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { MessageCircle, PhoneCall, Truck, WalletCards } from "lucide-react";
 import { useSelectedLanguage } from "@/components/layout/LanguageSwitcher";
+import { IconTextRow } from "@/components/ui/IconTextRow";
 import { products } from "@/data/products";
 import { getLanguageDirection, getTranslation } from "@/data/translations";
 import { whatsappHref } from "@/lib/constants";
@@ -290,18 +291,27 @@ export function CODOrderForm({
         </FieldLabel>
 
         <div className="grid gap-3 bg-pearl p-4">
-          <div className="flex gap-3 text-sm font-semibold text-cedar">
-            <WalletCards className="shrink-0 text-henna" size={19} />
+          <IconTextRow
+            direction={direction}
+            icon={<WalletCards className="text-henna" size={19} />}
+            className="text-sm font-semibold text-cedar"
+          >
             {formCopy.trustItems[0]}
-          </div>
-          <div className="flex gap-3 text-sm font-semibold text-cedar">
-            <PhoneCall className="shrink-0 text-henna" size={19} />
+          </IconTextRow>
+          <IconTextRow
+            direction={direction}
+            icon={<PhoneCall className="text-henna" size={19} />}
+            className="text-sm font-semibold text-cedar"
+          >
             {formCopy.trustItems[1]}
-          </div>
-          <div className="flex gap-3 text-sm font-semibold text-cedar">
-            <Truck className="shrink-0 text-henna" size={19} />
+          </IconTextRow>
+          <IconTextRow
+            direction={direction}
+            icon={<Truck className="text-henna" size={19} />}
+            className="text-sm font-semibold text-cedar"
+          >
             {formCopy.trustItems[2]}
-          </div>
+          </IconTextRow>
         </div>
 
         {errorMessage ? (

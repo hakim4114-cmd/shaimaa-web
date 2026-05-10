@@ -11,7 +11,7 @@ import { SizeGuide } from "@/components/products/SizeGuide";
 
 export default function Home() {
   return (
-    <main className="min-h-screen overflow-hidden">
+    <main className="min-h-screen overflow-x-hidden">
       <Header />
       <Hero />
       <BrandValue />

@@ -11,9 +11,9 @@ export default function AboutPage() {
   const aboutPage = getTranslation(useSelectedLanguage()).aboutPage;
 
   return (
-    <main className="min-h-screen overflow-hidden pt-28">
+    <main className="min-h-screen overflow-x-hidden pt-16 sm:pt-20">
       <Header />
-      <section className="moroccan-frame px-4 py-20 sm:px-6 lg:px-8">
+      <section className="moroccan-frame px-4 py-8 sm:px-6 sm:py-10 lg:px-8 lg:py-12">
         <SectionTitle label={aboutPage.label} title={aboutPage.title} text={aboutPage.text} />
       </section>
       <Footer />

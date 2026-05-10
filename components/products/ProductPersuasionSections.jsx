@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { CheckCircle2, Heart, Palette, PenLine, Ruler, ShieldCheck, Sparkles, Truck, WalletCards } from "lucide-react";
 import { useSelectedLanguage } from "@/components/layout/LanguageSwitcher";
+import { IconTextRow } from "@/components/ui/IconTextRow";
 import { getLanguageDirection, getTranslation } from "@/data/translations";
 
 const valueIcons = [PenLine, Sparkles, Heart];
@@ -73,7 +74,6 @@ export function ProductSoftUrgency({ persuasion, product, productCopy, direction
 
 export function ProductDecisionSteps({ persuasion, direction }) {
   const textAlignment = direction === "rtl" ? "text-right" : "text-left";
-  const iconDirection = direction === "rtl" ? "flex-row-reverse" : "";
   const stepIcons = [Palette, Ruler, Truck, CheckCircle2];
 
   return (
@@ -85,11 +85,11 @@ export function ProductDecisionSteps({ persuasion, direction }) {
           const Icon = stepIcons[index];
           return (
             <div key={step.title} className="bg-pearl p-4">
-              <div className={`mb-3 flex items-center gap-3 ${iconDirection}`}>
+              <div dir={direction} className="mb-3 flex items-center gap-3">
+                <Icon className="text-henna" size={18} />
                 <span className="flex h-8 w-8 items-center justify-center rounded-full bg-henna text-sm font-bold text-ivory">
                   {index + 1}
                 </span>
-                <Icon className="text-henna" size={18} />
               </div>
               <h3 className="font-display text-2xl font-semibold text-cedar">{step.title}</h3>
               <p className="mt-2 text-sm leading-6 text-coffee">{step.text}</p>
@@ -118,10 +118,14 @@ export function ProductOrderReassurance({ persuasion, direction }) {
         {persuasion.reassuranceItems.map((item, index) => {
           const Icon = reassuranceIcons[index];
           return (
-            <div key={item} className="flex gap-3 text-sm font-semibold leading-6 text-cedar">
-              <Icon className="mt-1 shrink-0 text-henna" size={18} />
-              <span>{item}</span>
-            </div>
+            <IconTextRow
+              key={item}
+              direction={direction}
+              icon={<Icon className="text-henna" size={18} />}
+              className="text-sm font-semibold leading-6 text-cedar"
+            >
+              {item}
+            </IconTextRow>
           );
         })}
       </div>

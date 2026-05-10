@@ -18,7 +18,7 @@ export function Hero() {
   const iconAfterTextDirection = direction === "rtl" ? "flex-row-reverse" : "";
 
   return (
-    <section dir={direction} lang={language} className="relative px-4 pb-16 pt-28 sm:px-6 lg:px-8 lg:pb-24 lg:pt-36">
+    <section dir={direction} lang={language} className="relative px-4 pb-12 pt-24 sm:px-6 lg:px-8 lg:pb-16 lg:pt-28">
       <div className="mx-auto grid max-w-7xl items-center gap-10 lg:grid-cols-[1.02fr_0.98fr]">
         <div className={`animate-fade-up ${textAlignment}`}>
           <p
@@ -62,7 +62,7 @@ export function Hero() {
           </div>
         </div>
 
-        <div className="luxury-border relative min-h-[520px] overflow-hidden bg-cedar shadow-soft">
+        <div className="luxury-border relative mx-auto aspect-[4/5] w-full max-w-[34rem] overflow-hidden bg-cedar shadow-soft sm:aspect-[5/4] lg:aspect-[4/5] lg:max-w-full">
           {heroImageReady ? (
             <Image
               src={heroImage}

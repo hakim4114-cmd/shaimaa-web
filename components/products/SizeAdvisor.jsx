@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { CheckCircle2, ChevronDown, PhoneCall, Ruler } from "lucide-react";
 import { useSelectedLanguage } from "@/components/layout/LanguageSwitcher";
+import { IconTextRow } from "@/components/ui/IconTextRow";
 import { getLanguageDirection, getTranslation } from "@/data/translations";
 import { getSizeAdvice, sizeAdvisorOptions } from "@/lib/sizeAdvisor";
 
@@ -52,11 +53,11 @@ export function SizeAdvisor({ availableSizes }) {
         onClick={() => setIsOpen((currentValue) => !currentValue)}
         className={`flex w-full items-center justify-between gap-4 ${textAlignment}`}
       >
-        <span className="flex items-start gap-3">
+        <span dir={direction} className={`flex min-w-0 flex-1 items-start gap-3 ${textAlignment}`}>
           <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-henna text-ivory">
             <Ruler size={19} />
           </span>
-          <span>
+          <span className={`min-w-0 flex-1 ${textAlignment}`}>
             <span id="size-advisor-title" className="block text-sm font-bold uppercase tracking-[0.14em] text-coffee">
               {advisorCopy.prompt}
             </span>
@@ -176,10 +177,13 @@ export function SizeAdvisor({ availableSizes }) {
             </div>
 
             <p className="mt-3 text-sm leading-6 text-coffee">{advice.note}</p>
-            <div className="mt-4 flex gap-3 bg-pearl p-3 text-sm font-semibold leading-6 text-cedar">
-              <PhoneCall className="mt-1 shrink-0 text-henna" size={17} />
-              <span>{advice.confirmationMessage}</span>
-            </div>
+            <IconTextRow
+              direction={direction}
+              icon={<PhoneCall className="text-henna" size={17} />}
+              className="mt-4 bg-pearl p-3 text-sm font-semibold leading-6 text-cedar"
+            >
+              {advice.confirmationMessage}
+            </IconTextRow>
           </div>
         </div>
       ) : null}

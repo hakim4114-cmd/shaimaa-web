@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { Check, PackageCheck, Palette, Scissors, Shirt, Truck, WalletCards } from "lucide-react";
 import { useSelectedLanguage } from "@/components/layout/LanguageSwitcher";
+import { IconTextRow } from "@/components/ui/IconTextRow";
 import { getLanguageDirection, getTranslation } from "@/data/translations";
 import { products } from "@/data/products";
 
@@ -96,10 +97,14 @@ export function ProductCraftBlock({ productCopy, productDetail, direction }) {
             </p>
             <div className="grid gap-2">
               {productCopy.craftsmanship.map((item) => (
-                <div key={item} className="flex gap-3 text-sm leading-6 text-coffee">
-                  <Check className="mt-1 shrink-0 text-brass" size={16} />
+                <IconTextRow
+                  key={item}
+                  direction={direction}
+                  icon={<Check className="text-brass" size={16} />}
+                  className="text-sm leading-6 text-coffee"
+                >
                   {item}
-                </div>
+                </IconTextRow>
               ))}
             </div>
           </div>
@@ -132,7 +137,7 @@ export function RelatedProducts({ currentProduct, productDetail, direction }) {
                 href={`/products/${product.slug}`}
                 className="group grid gap-4 border border-brass/25 bg-ivory p-5 shadow-soft transition hover:border-henna md:grid-cols-[0.7fr_1fr]"
               >
-                <div className="relative min-h-40 overflow-hidden bg-pearl">
+                <div className="relative aspect-[4/3] w-full overflow-hidden bg-pearl">
                   <div className="absolute inset-0" style={{ background: product.placeholderGradient }}>
                     <div className="absolute inset-x-8 bottom-0 top-8 rounded-t-[5rem] bg-ivory/70 transition group-hover:-translate-y-1" />
                     <div className="absolute left-1/2 top-12 h-24 w-16 -translate-x-1/2 rounded-t-[4rem] border border-brass/60 bg-pearl/80" />
@@ -168,7 +173,7 @@ export function ProductFAQ({ product, productCopy, productDetail, direction }) {
   }));
 
   return (
-    <section dir={direction} className="px-4 pb-16 sm:px-6 lg:px-8">
+    <section dir={direction} className="px-4 pb-12 sm:px-6 lg:px-8 lg:pb-16">
       <div className={`mx-auto max-w-4xl ${textAlignment}`}>
         <p className="text-sm font-bold uppercase tracking-[0.14em] text-henna">{objections.faqLabel}</p>
         <h2 className="mt-2 font-display text-4xl font-bold text-cedar">{objections.faqTitle}</h2>

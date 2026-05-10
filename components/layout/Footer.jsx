@@ -17,8 +17,8 @@ export function Footer() {
 
   return (
     <>
-      <section dir={direction} lang={language} className="px-4 pb-24 sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-7xl bg-cedar px-6 py-14 text-center text-ivory shadow-soft sm:px-10">
+      <section dir={direction} lang={language} className="px-4 pb-16 sm:px-6 lg:px-8 lg:pb-20">
+        <div className="mx-auto max-w-7xl bg-cedar px-6 py-10 text-center text-ivory shadow-soft sm:px-10 lg:py-12">
           <PackageCheck className="mx-auto mb-5 text-brass" size={34} />
           <h2 className="mx-auto max-w-3xl font-display text-4xl font-bold sm:text-5xl">
             {footer.ctaTitle}

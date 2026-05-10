@@ -14,7 +14,7 @@ export function CollectionPreview() {
   const headerDirection = direction === "rtl" ? "md:flex-row-reverse" : "md:flex-row";
 
   return (
-    <section id="collection" dir={direction} className="px-4 py-20 sm:px-6 lg:px-8">
+    <section id="collection" dir={direction} className="px-4 py-12 sm:px-6 lg:px-8 lg:py-16">
       <div className="mx-auto max-w-7xl">
         <div className={`mb-10 flex flex-col justify-between gap-5 md:items-end ${headerDirection}`}>
           <div>

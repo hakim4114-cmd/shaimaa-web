@@ -24,9 +24,9 @@ export function ProductListingPage() {
   const textAlignment = direction === "rtl" ? "text-right" : "text-left";
 
   return (
-    <main className="min-h-screen overflow-hidden pt-24 sm:pt-28">
+    <main className="min-h-screen overflow-x-hidden pt-16 sm:pt-20">
       <Header />
-      <section dir={direction} className="px-4 pb-16 pt-10 sm:px-6 sm:py-16 lg:px-8">
+      <section dir={direction} className="px-4 pb-12 pt-6 sm:px-6 sm:py-10 lg:px-8 lg:py-12">
         <SectionTitle label={productsPage.label} title={productsPage.title} text={productsPage.text} />
         <div className={`mx-auto mt-8 grid max-w-7xl gap-3 sm:grid-cols-3 ${textAlignment}`}>
           {categoryLinks.map((category) => (

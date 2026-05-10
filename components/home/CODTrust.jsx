@@ -13,7 +13,7 @@ export function CODTrust() {
   const textAlignment = direction === "rtl" ? "text-right" : "text-left";
 
   return (
-    <section dir={direction} className="px-4 py-20 sm:px-6 lg:px-8">
+    <section dir={direction} className="px-4 py-12 sm:px-6 lg:px-8 lg:py-16">
       <div className="mx-auto grid max-w-7xl gap-6 lg:grid-cols-3">
         <div className={textAlignment}>
           <p className="text-sm font-bold uppercase tracking-[0.18em] text-henna">{codTrust.label}</p>

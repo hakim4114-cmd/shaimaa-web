@@ -13,8 +13,8 @@ export function ProductGallery({ product }) {
   const thumbTextAlignment = direction === "rtl" ? "text-right" : "text-left";
 
   return (
-    <div dir={direction} className="grid gap-3">
-      <div className="luxury-border relative min-h-[520px] overflow-hidden bg-pearl shadow-soft">
+    <div dir={direction} className="mx-auto grid w-full max-w-[34rem] gap-3 lg:max-w-full">
+      <div className="luxury-border relative aspect-[4/5] w-full max-w-full overflow-hidden bg-pearl shadow-soft">
         {product.hasFinalImage ? (
           <Image
             src={product.image}
@@ -41,7 +41,7 @@ export function ProductGallery({ product }) {
 
       <div className="grid grid-cols-3 gap-3">
         {productDetail.galleryLabels.map((label, index) => (
-          <div key={label} className="relative h-28 overflow-hidden bg-pearl">
+          <div key={label} className="relative aspect-[4/3] w-full overflow-hidden bg-pearl">
             {product.hasFinalImage ? (
               <Image
                 src={product.image}

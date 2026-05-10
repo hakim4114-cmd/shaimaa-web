@@ -10,7 +10,7 @@ export function StorySection() {
   const textAlignment = direction === "rtl" ? "text-right" : "text-left";
 
   return (
-    <section id="story" dir={direction} className="moroccan-frame px-4 py-20 sm:px-6 lg:px-8">
+    <section id="story" dir={direction} className="moroccan-frame px-4 py-12 sm:px-6 lg:px-8 lg:py-16">
       <div className="mx-auto grid max-w-7xl gap-10 lg:grid-cols-[0.85fr_1.15fr] lg:items-center">
         <div className={`bg-cedar p-8 text-ivory shadow-soft sm:p-10 ${textAlignment}`}>
           <p className="text-sm font-bold uppercase tracking-[0.18em] text-brass">{story.label}</p>

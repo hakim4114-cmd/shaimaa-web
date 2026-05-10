@@ -17,12 +17,12 @@ export default function OrderPage() {
   const orderPage = getTranslation(language).orderPage;
   const textAlignment = direction === "rtl" ? "text-right" : "text-left";
   const iconAfterTextDirection = direction === "rtl" ? "flex-row-reverse" : "";
-  const maxWidthAlignment = direction === "rtl" ? "ml-auto" : "";
+  const maxWidthAlignment = direction === "rtl" ? "me-auto" : "";
 
   return (
-    <main className="min-h-screen overflow-hidden pt-24 sm:pt-28">
+    <main className="min-h-screen overflow-x-hidden pt-16 sm:pt-20">
       <Header />
-      <section dir={direction} lang={language} className="px-4 pb-20 pt-10 sm:px-6 sm:py-16 lg:px-8">
+      <section dir={direction} lang={language} className="px-4 pb-12 pt-6 sm:px-6 sm:py-10 lg:px-8 lg:py-12">
         <div className={`mx-auto max-w-7xl ${textAlignment}`}>
           <p
             className="inline-flex items-center gap-2 rounded-full border border-brass/40 bg-ivory px-4 py-2 text-xs font-bold uppercase tracking-[0.16em] text-henna"

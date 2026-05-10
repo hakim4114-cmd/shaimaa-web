@@ -6,6 +6,7 @@ import { ColorSelector } from "./ColorSelector";
 import { SizeAdvisor } from "./SizeAdvisor";
 import { SizeSelector } from "./SizeSelector";
 import { useSelectedLanguage } from "@/components/layout/LanguageSwitcher";
+import { IconTextRow } from "@/components/ui/IconTextRow";
 import { getLanguageDirection, getTranslation } from "@/data/translations";
 import { whatsappHref } from "@/lib/constants";
 
@@ -20,7 +21,7 @@ export function ProductInfo({ product }) {
   const textAlignment = direction === "rtl" ? "text-right" : "text-left";
   const iconAfterTextDirection = direction === "rtl" ? "flex-row-reverse" : "";
   const priceDirection = direction === "rtl" ? "sm:flex-row-reverse" : "sm:flex-row";
-  const maxWidthAlignment = direction === "rtl" ? "ml-auto" : "";
+  const maxWidthAlignment = direction === "rtl" ? "me-auto" : "";
 
   return (
     <div dir={direction} lang={language} className={`space-y-7 ${textAlignment}`}>
@@ -69,10 +70,14 @@ export function ProductInfo({ product }) {
         {productDetail.trustItems.map((text, index) => {
           const TrustIcon = trustIcons[index];
           return (
-            <div key={text} className="flex items-center gap-3 text-sm font-semibold text-cedar">
-              <TrustIcon className="text-henna" size={18} />
+            <IconTextRow
+              key={text}
+              direction={direction}
+              icon={<TrustIcon className="text-henna" size={18} />}
+              className="text-sm font-semibold text-cedar"
+            >
               {text}
-            </div>
+            </IconTextRow>
           );
         })}
         <Link href="/size-guide" className="mt-1 text-sm font-bold text-henna underline-offset-4 hover:underline">
@@ -85,10 +90,14 @@ export function ProductInfo({ product }) {
           <p className="text-sm font-bold uppercase tracking-[0.14em] text-henna">{productDetail.craftsmanship}</p>
           <div className="mt-4 grid gap-3">
             {productCopy.craftsmanship.map((item) => (
-              <div key={item} className="flex gap-3 text-sm leading-6 text-coffee">
-                <Check className="mt-1 shrink-0 text-brass" size={16} />
+              <IconTextRow
+                key={item}
+                direction={direction}
+                icon={<Check className="text-brass" size={16} />}
+                className="text-sm leading-6 text-coffee"
+              >
                 {item}
-              </div>
+              </IconTextRow>
             ))}
           </div>
         </div>

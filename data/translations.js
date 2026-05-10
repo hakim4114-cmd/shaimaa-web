@@ -1,4 +1,4 @@
-export const defaultLanguage = "en";
+export const defaultLanguage = "ar";
 
 export const languageStorageKey = "maison-shaimaa-language";
 

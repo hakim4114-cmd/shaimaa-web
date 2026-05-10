@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { MessageCircle, PackageCheck, Search, ShieldCheck } from "lucide-react";
 import { useSelectedLanguage } from "@/components/layout/LanguageSwitcher";
+import { IconTextRow } from "@/components/ui/IconTextRow";
 import { getLanguageDirection, getTranslation } from "@/data/translations";
 import { whatsappHref } from "@/lib/constants";
 import { normalizeOrderId, validateTrackingRequest } from "@/lib/trackingUtils";
@@ -135,10 +136,13 @@ export function TrackOrderForm() {
           />
         </label>
 
-        <div className="flex gap-3 bg-pearl p-4 text-sm font-semibold leading-6 text-cedar">
-          <ShieldCheck className="mt-1 shrink-0 text-henna" size={18} />
-          <span>{trackOrder.privacy}</span>
-        </div>
+        <IconTextRow
+          direction={direction}
+          icon={<ShieldCheck className="text-henna" size={18} />}
+          className="bg-pearl p-4 text-sm font-semibold leading-6 text-cedar"
+        >
+          {trackOrder.privacy}
+        </IconTextRow>
 
         {errorMessage ? (
           <p className="bg-henna/10 px-4 py-3 text-sm font-semibold leading-6 text-henna">{errorMessage}</p>
@@ -186,10 +190,13 @@ export function TrackOrderForm() {
               </div>
             ) : null}
 
-            <div className="flex gap-3 border-t border-brass/25 pt-4 text-sm leading-6 text-pearl/85">
-              <PackageCheck className="mt-1 shrink-0 text-brass" size={18} />
-              <span>{statusMessage}</span>
-            </div>
+            <IconTextRow
+              direction={direction}
+              icon={<PackageCheck className="text-brass" size={18} />}
+              className="border-t border-brass/25 pt-4 text-sm leading-6 text-pearl/85"
+            >
+              {statusMessage}
+            </IconTextRow>
           </div>
         ) : (
           <p className="mt-5 leading-7 text-pearl/80">{trackOrder.emptyResult}</p>

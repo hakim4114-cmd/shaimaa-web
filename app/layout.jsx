@@ -48,7 +48,8 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html
-      lang="en"
+      lang="ar"
+      dir="rtl"
       className={`${latinDisplay.variable} ${latinBody.variable} ${arabicDisplay.variable} ${arabicBody.variable}`}
     >
       <body>{children}</body>

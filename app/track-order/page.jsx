@@ -14,9 +14,9 @@ export const metadata = {
 
 export default function TrackOrderPage() {
   return (
-    <main className="min-h-screen overflow-hidden pt-24 sm:pt-28">
+    <main className="min-h-screen overflow-x-hidden pt-16 sm:pt-20">
       <Header />
-      <section className="px-4 pb-20 pt-10 sm:px-6 sm:py-16 lg:px-8">
+      <section className="px-4 pb-12 pt-6 sm:px-6 sm:py-10 lg:px-8 lg:py-12">
         <div className="mx-auto max-w-7xl">
           <TrackOrderForm />
         </div>

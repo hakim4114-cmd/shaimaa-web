@@ -35,7 +35,7 @@ export function Header() {
 
         <a
           href={whatsappHref}
-          className="ml-auto inline-flex shrink-0 items-center gap-2 rounded-full bg-cedar px-3 py-2 text-sm font-semibold text-ivory shadow-soft transition hover:bg-henna sm:px-4"
+          className="ms-auto inline-flex shrink-0 items-center gap-2 rounded-full bg-cedar px-3 py-2 text-sm font-semibold text-ivory shadow-soft transition hover:bg-henna sm:px-4"
           aria-label={nav.orderWhatsappAria}
         >
           <MessageCircle size={17} />

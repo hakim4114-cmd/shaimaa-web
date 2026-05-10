@@ -12,9 +12,9 @@ export default function EuropePage() {
   const europePage = getTranslation(useSelectedLanguage()).europePage;
 
   return (
-    <main className="min-h-screen overflow-hidden pt-28">
+    <main className="min-h-screen overflow-x-hidden pt-16 sm:pt-20">
       <Header />
-      <section className="px-4 py-16 sm:px-6 lg:px-8">
+      <section className="px-4 py-8 sm:px-6 sm:py-10 lg:px-8 lg:py-12">
         <SectionTitle label={europePage.label} title={europePage.title} text={europePage.text} />
         <div className="mx-auto mt-10 max-w-2xl">
           <EuropePreOrderForm />

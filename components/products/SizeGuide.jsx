@@ -14,7 +14,7 @@ export function SizeGuide() {
   const textAlignment = direction === "rtl" ? "text-right" : "text-left";
 
   return (
-    <section id="size-guide" dir={direction} className="bg-ivory px-4 py-20 sm:px-6 lg:px-8">
+    <section id="size-guide" dir={direction} className="bg-ivory px-4 py-12 sm:px-6 lg:px-8 lg:py-16">
       <div className="mx-auto grid max-w-7xl gap-8 lg:grid-cols-[0.9fr_1.1fr]">
         <div className={textAlignment}>
           <p className="text-sm font-bold uppercase tracking-[0.18em] text-henna">{sizeGuide.label}</p>

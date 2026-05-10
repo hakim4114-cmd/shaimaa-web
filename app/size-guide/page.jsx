@@ -14,7 +14,7 @@ export const metadata = {
 
 export default function SizeGuidePage() {
   return (
-    <main className="min-h-screen overflow-hidden pt-16">
+    <main className="min-h-screen overflow-x-hidden pt-16 sm:pt-20">
       <Header />
       <SizeGuide />
       <Footer />

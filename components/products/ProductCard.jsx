@@ -9,7 +9,7 @@ function formatText(template, values) {
 export function ProductCard({
   product,
   productCopy = product,
-  direction = "ltr",
+  direction = "rtl",
   labels = {
     viewDetails: "View details",
     photosSoon: "Photos soon",
@@ -27,7 +27,7 @@ export function ProductCard({
       <Link
         href={productHref}
         aria-label={detailsAriaLabel}
-        className="relative block h-80 overflow-hidden bg-pearl outline-none transition focus-visible:ring-2 focus-visible:ring-henna focus-visible:ring-offset-2 focus-visible:ring-offset-ivory"
+        className="relative block aspect-[4/5] w-full max-w-full overflow-hidden bg-pearl outline-none transition focus-visible:ring-2 focus-visible:ring-henna focus-visible:ring-offset-2 focus-visible:ring-offset-ivory"
       >
         {product.hasFinalImage ? (
           <Image

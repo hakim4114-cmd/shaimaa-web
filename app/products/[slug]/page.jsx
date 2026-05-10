@@ -61,12 +61,12 @@ export default async function ProductDetailPage({ params }) {
   }
 
   return (
-    <main className="min-h-screen overflow-hidden pt-24">
+    <main className="min-h-screen overflow-x-hidden pt-16 sm:pt-20">
       <Header />
       <ProductDetailHeader />
 
-      <section className="px-4 pb-20 sm:px-6 lg:px-8">
-        <div className="mx-auto grid max-w-7xl gap-10 lg:grid-cols-2 lg:items-center">
+      <section className="px-4 pb-12 sm:px-6 lg:px-8 lg:pb-16">
+        <div className="mx-auto grid max-w-7xl gap-8 lg:grid-cols-2 lg:items-center">
           <ProductGallery product={product} />
           <ProductInfo product={product} />
         </div>
