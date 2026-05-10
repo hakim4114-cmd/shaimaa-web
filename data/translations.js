@@ -201,10 +201,20 @@ export const translations = {
       text: "Customers can compare their usual size, then message you for a final recommendation before delivery.",
       advisorIntro: "Not sure which size to choose? Use the advisor below for an initial recommendation.",
       advisorNote: "This recommendation is only a guide. We will confirm your size before dispatch.",
+      rows: [
+        ["S", "Quarter 28"],
+        ["M", "Quarter 30"],
+        ["L", "Quarter 32"],
+        ["XL", "Quarter 34"],
+        ["XXL", "Quarter 36"],
+        ["Custom help", "WhatsApp"]
+      ],
       notes: [
         "Relaxed fit for petite silhouettes",
         "Most requested everyday fit",
         "Comfortable elegant drape",
+        "Roomier djellaba fit",
+        "Wider djellaba fit",
         "Send height and usual size"
       ]
     },
@@ -432,10 +442,20 @@ export const translations = {
       text: "يمكنك مقارنة قياسك المعتاد، ثم التواصل معنا للحصول على تأكيد نهائي قبل الإرسال.",
       advisorIntro: "ما متأكدة من القياس المناسب؟ استعملي المساعد أسفله باش يعطيك اقتراح مبدئي.",
       advisorNote: "هذا الاقتراح للمساعدة فقط. سنتأكد معك من القياس قبل إرسال الطلب.",
+      rows: [
+        ["S", "الربع 28"],
+        ["M", "الربع 30"],
+        ["L", "الربع 32"],
+        ["XL", "الربع 34"],
+        ["XXL", "الربع 36"],
+        ["مساعدة خاصة", "واتساب"]
+      ],
       notes: [
         "قصة مريحة للقامات الصغيرة",
         "القياس الأكثر طلبًا للاستعمال اليومي",
         "انسدال أنيق ومريح",
+        "مناسب لمن تفضل جلابة أوسع",
+        "مناسب لمن تحتاج مقاساً أوسع",
         "أرسلي الطول والقياس المعتاد"
       ]
     },
@@ -673,10 +693,20 @@ export const translations = {
       advisorIntro:
         "Vous hésitez sur la taille ? Utilisez le guide ci-dessous pour obtenir une première recommandation.",
       advisorNote: "Cette recommandation est indicative. Nous confirmerons votre taille avant l’expédition.",
+      rows: [
+        ["S", "Quart 28"],
+        ["M", "Quart 30"],
+        ["L", "Quart 32"],
+        ["XL", "Quart 34"],
+        ["XXL", "Quart 36"],
+        ["Aide personnalisée", "WhatsApp"]
+      ],
       notes: [
         "Coupe souple pour les silhouettes menues",
         "La taille la plus demandée au quotidien",
         "Un tombé élégant et confortable",
+        "Une coupe de djellaba plus ample",
+        "Une coupe plus large",
         "Envoyez votre taille et votre taille habituelle"
       ]
     },

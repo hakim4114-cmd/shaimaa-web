@@ -12,6 +12,7 @@ export function SizeGuide() {
   const direction = getLanguageDirection(language);
   const sizeGuide = getTranslation(language).sizeGuide;
   const textAlignment = direction === "rtl" ? "text-right" : "text-left";
+  const sizeRows = sizeGuide.rows || sizes;
 
   return (
     <section id="size-guide" dir={direction} className="bg-ivory px-4 py-12 sm:px-6 lg:px-8 lg:py-16">
@@ -23,7 +24,7 @@ export function SizeGuide() {
         </div>
 
         <div className="overflow-hidden border border-brass/30">
-          {sizes.map(([size, range], index) => (
+          {sizeRows.map(([size, range], index) => (
             <div
               key={size}
               className="grid grid-cols-[0.75fr_0.9fr_1.35fr] gap-2 border-b border-brass/20 bg-pearl/70 px-4 py-4 text-sm last:border-b-0 sm:text-base"

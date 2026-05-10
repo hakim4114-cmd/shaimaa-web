@@ -53,8 +53,10 @@ export const products = [
 ];
 
 export const sizes = [
-  ["S", "36-38", "Relaxed fit for petite silhouettes"],
-  ["M", "40-42", "Most requested everyday fit"],
-  ["L", "44-46", "Comfortable elegant drape"],
-  ["Custom help", "WhatsApp", "Send height and usual size"]
+  ["S", "الربع 28", "Relaxed fit for petite silhouettes"],
+  ["M", "الربع 30", "Most requested everyday fit"],
+  ["L", "الربع 32", "Comfortable elegant drape"],
+  ["XL", "الربع 34", "Roomier djellaba fit"],
+  ["XXL", "الربع 36", "Wider djellaba fit"],
+  ["مساعدة خاصة", "واتساب", "Send height and usual size"]
 ];
