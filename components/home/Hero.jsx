@@ -1,16 +1,13 @@
-"use client";
-
 import Image from "next/image";
 import { ArrowRight, Sparkles } from "lucide-react";
-import { useSelectedLanguage } from "@/components/layout/LanguageSwitcher";
-import { getLanguageDirection, getTranslation } from "@/data/translations";
+import { defaultLanguage, getLanguageDirection, getTranslation } from "@/data/translations";
 import { whatsappHref } from "@/lib/constants";
 
 const heroImage = "/images/hero-djellaba.png";
 const heroImageReady = false;
 
 export function Hero() {
-  const language = useSelectedLanguage();
+  const language = defaultLanguage;
   const direction = getLanguageDirection(language);
   const hero = getTranslation(language).hero;
   const textAlignment = direction === "rtl" ? "text-right" : "text-left";

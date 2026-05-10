@@ -1,11 +1,8 @@
-"use client";
-
 import Image from "next/image";
-import { useSelectedLanguage } from "@/components/layout/LanguageSwitcher";
-import { getLanguageDirection, getTranslation } from "@/data/translations";
+import { defaultLanguage, getLanguageDirection, getTranslation } from "@/data/translations";
 
 export function ProductGallery({ product }) {
-  const language = useSelectedLanguage();
+  const language = defaultLanguage;
   const direction = getLanguageDirection(language);
   const productDetail = getTranslation(language).productDetail;
   const productCopy = productDetail.products[product.slug] || product;

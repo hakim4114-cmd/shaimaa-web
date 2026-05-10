@@ -1,10 +1,7 @@
-"use client";
-
-import { useSelectedLanguage } from "@/components/layout/LanguageSwitcher";
-import { getLanguageDirection, getTranslation } from "@/data/translations";
+import { defaultLanguage, getLanguageDirection, getTranslation } from "@/data/translations";
 
 export function StorySection() {
-  const language = useSelectedLanguage();
+  const language = defaultLanguage;
   const direction = getLanguageDirection(language);
   const story = getTranslation(language).story;
   const textAlignment = direction === "rtl" ? "text-right" : "text-left";

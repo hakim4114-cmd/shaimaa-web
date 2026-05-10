@@ -1,18 +1,15 @@
-"use client";
-
 import { CheckCircle2, MessageCircle, PhoneCall, ShoppingBag, Truck, WalletCards } from "lucide-react";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { StickyWhatsAppButton } from "@/components/layout/StickyWhatsAppButton";
-import { useSelectedLanguage } from "@/components/layout/LanguageSwitcher";
 import { Button } from "@/components/ui/Button";
-import { getLanguageDirection, getTranslation } from "@/data/translations";
+import { defaultLanguage, getLanguageDirection, getTranslation } from "@/data/translations";
 import { whatsappHref } from "@/lib/constants";
 
 const trustIcons = [WalletCards, PhoneCall, Truck];
 
 export default function ThankYouPage() {
-  const language = useSelectedLanguage();
+  const language = defaultLanguage;
   const direction = getLanguageDirection(language);
   const thankYou = getTranslation(language).thankYou;
   const textAlignment = direction === "rtl" ? "text-right" : "text-left";

@@ -1,14 +1,11 @@
-"use client";
-
 import { sizes } from "@/data/products";
-import { useSelectedLanguage } from "@/components/layout/LanguageSwitcher";
-import { getLanguageDirection, getTranslation } from "@/data/translations";
-import { SizeAdvisor } from "./SizeAdvisor";
+import { defaultLanguage, getLanguageDirection, getTranslation } from "@/data/translations";
+import { LazySizeAdvisor } from "./LazySizeAdvisor";
 
 const allAdvisorSizes = ["S", "M", "L", "XL", "XXL"];
 
 export function SizeGuide() {
-  const language = useSelectedLanguage();
+  const language = defaultLanguage;
   const direction = getLanguageDirection(language);
   const sizeGuide = getTranslation(language).sizeGuide;
   const textAlignment = direction === "rtl" ? "text-right" : "text-left";
@@ -39,7 +36,7 @@ export function SizeGuide() {
         <div className={`lg:col-span-2 ${textAlignment}`}>
           <div className="mx-auto max-w-3xl">
             <p className="mb-4 text-base leading-7 text-coffee">{sizeGuide.advisorIntro}</p>
-            <SizeAdvisor availableSizes={allAdvisorSizes} />
+            <LazySizeAdvisor availableSizes={allAdvisorSizes} />
             <p className="mt-4 text-sm font-semibold leading-6 text-coffee">{sizeGuide.advisorNote}</p>
           </div>
         </div>

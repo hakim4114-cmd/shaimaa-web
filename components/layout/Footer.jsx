@@ -1,14 +1,11 @@
-"use client";
-
 import { ArrowRight, MessageCircle, PackageCheck, PhoneCall, Ruler, Truck } from "lucide-react";
-import { useSelectedLanguage } from "./LanguageSwitcher";
-import { getLanguageDirection, getTranslation } from "@/data/translations";
+import { defaultLanguage, getLanguageDirection, getTranslation } from "@/data/translations";
 import { whatsappHref } from "@/lib/constants";
 
 const footerIcons = [PhoneCall, Truck, Ruler];
 
 export function Footer() {
-  const language = useSelectedLanguage();
+  const language = defaultLanguage;
   const direction = getLanguageDirection(language);
   const footer = getTranslation(language).footer;
   const textAlignment = direction === "rtl" ? "text-right" : "text-left";

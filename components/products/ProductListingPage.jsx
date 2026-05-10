@@ -1,14 +1,11 @@
-"use client";
-
 import Link from "next/link";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { StickyWhatsAppButton } from "@/components/layout/StickyWhatsAppButton";
-import { useSelectedLanguage } from "@/components/layout/LanguageSwitcher";
 import { ProductCard } from "@/components/products/ProductCard";
 import { SectionTitle } from "@/components/ui/SectionTitle";
 import { products } from "@/data/products";
-import { getLanguageDirection, getTranslation } from "@/data/translations";
+import { defaultLanguage, getLanguageDirection, getTranslation } from "@/data/translations";
 
 const categoryLinks = [
   { key: "djellabas", href: "/products?category=djellabas" },
@@ -17,7 +14,7 @@ const categoryLinks = [
 ];
 
 export function ProductListingPage() {
-  const language = useSelectedLanguage();
+  const language = defaultLanguage;
   const direction = getLanguageDirection(language);
   const translation = getTranslation(language);
   const productsPage = translation.productsPage;

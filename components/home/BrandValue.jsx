@@ -1,11 +1,8 @@
-"use client";
-
 import { Star } from "lucide-react";
-import { useSelectedLanguage } from "@/components/layout/LanguageSwitcher";
-import { getLanguageDirection, getTranslation } from "@/data/translations";
+import { defaultLanguage, getLanguageDirection, getTranslation } from "@/data/translations";
 
 export function BrandValue() {
-  const language = useSelectedLanguage();
+  const language = defaultLanguage;
   const direction = getLanguageDirection(language);
   const cards = getTranslation(language).brandValue.cards;
   const borderClass = direction === "rtl" ? "border-r pr-5 text-right" : "border-l pl-5";

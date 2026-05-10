@@ -1,14 +1,11 @@
-"use client";
-
 import { Footer } from "@/components/layout/Footer";
 import { Header } from "@/components/layout/Header";
-import { useSelectedLanguage } from "@/components/layout/LanguageSwitcher";
 import { StickyWhatsAppButton } from "@/components/layout/StickyWhatsAppButton";
 import { SectionTitle } from "@/components/ui/SectionTitle";
-import { getTranslation } from "@/data/translations";
+import { defaultLanguage, getTranslation } from "@/data/translations";
 
 export default function AboutPage() {
-  const aboutPage = getTranslation(useSelectedLanguage()).aboutPage;
+  const aboutPage = getTranslation(defaultLanguage).aboutPage;
 
   return (
     <main className="min-h-screen overflow-x-hidden pt-16 sm:pt-20">

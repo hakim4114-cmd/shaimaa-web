@@ -1,14 +1,12 @@
-"use client";
-
 import Link from "next/link";
 import { MessageCircle } from "lucide-react";
-import { LanguageSwitcher, useSelectedLanguage } from "./LanguageSwitcher";
+import { LanguageSwitcher } from "./LanguageSwitcher";
 import { MobileMenu } from "./MobileMenu";
-import { getTranslation } from "@/data/translations";
+import { defaultLanguage, getTranslation } from "@/data/translations";
 import { whatsappHref } from "@/lib/constants";
 
 export function Header() {
-  const translation = getTranslation(useSelectedLanguage());
+  const translation = getTranslation(defaultLanguage);
   const nav = translation.nav;
 
   return (

@@ -1,10 +1,7 @@
-"use client";
-
 import Link from "next/link";
 import { CheckCircle2, Heart, Palette, PenLine, Ruler, ShieldCheck, Sparkles, Truck, WalletCards } from "lucide-react";
-import { useSelectedLanguage } from "@/components/layout/LanguageSwitcher";
 import { IconTextRow } from "@/components/ui/IconTextRow";
-import { getLanguageDirection, getTranslation } from "@/data/translations";
+import { defaultLanguage, getLanguageDirection, getTranslation } from "@/data/translations";
 
 const valueIcons = [PenLine, Sparkles, Heart];
 const reassuranceIcons = [WalletCards, Truck, Ruler, ShieldCheck];
@@ -134,7 +131,7 @@ export function ProductOrderReassurance({ persuasion, direction }) {
 }
 
 export function ProductPersuasionBlock({ product }) {
-  const language = useSelectedLanguage();
+  const language = defaultLanguage;
   const direction = getLanguageDirection(language);
   const translation = getTranslation(language);
   const productDetail = translation.productDetail;

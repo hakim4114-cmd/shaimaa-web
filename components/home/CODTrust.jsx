@@ -1,13 +1,10 @@
-"use client";
-
 import { MessageCircle, Ruler, Truck } from "lucide-react";
-import { useSelectedLanguage } from "@/components/layout/LanguageSwitcher";
-import { getLanguageDirection, getTranslation } from "@/data/translations";
+import { defaultLanguage, getLanguageDirection, getTranslation } from "@/data/translations";
 
 const stepIcons = [MessageCircle, Ruler, Truck];
 
 export function CODTrust() {
-  const language = useSelectedLanguage();
+  const language = defaultLanguage;
   const direction = getLanguageDirection(language);
   const codTrust = getTranslation(language).codTrust;
   const textAlignment = direction === "rtl" ? "text-right" : "text-left";

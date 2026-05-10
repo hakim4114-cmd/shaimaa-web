@@ -1,18 +1,15 @@
-"use client";
-
 import Link from "next/link";
 import { CODOrderForm } from "@/components/forms/CODOrderForm";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { StickyWhatsAppButton } from "@/components/layout/StickyWhatsAppButton";
-import { useSelectedLanguage } from "@/components/layout/LanguageSwitcher";
-import { getLanguageDirection, getTranslation } from "@/data/translations";
+import { defaultLanguage, getLanguageDirection, getTranslation } from "@/data/translations";
 import { PhoneCall, Ruler, ShieldCheck, Truck, WalletCards } from "lucide-react";
 
 const trustIcons = [WalletCards, PhoneCall, Truck];
 
 export default function OrderPage() {
-  const language = useSelectedLanguage();
+  const language = defaultLanguage;
   const direction = getLanguageDirection(language);
   const orderPage = getTranslation(language).orderPage;
   const textAlignment = direction === "rtl" ? "text-right" : "text-left";

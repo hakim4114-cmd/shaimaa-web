@@ -1,12 +1,9 @@
-"use client";
-
 import Link from "next/link";
-import { CODOrderForm } from "@/components/forms/CODOrderForm";
-import { useSelectedLanguage } from "@/components/layout/LanguageSwitcher";
-import { getLanguageDirection, getTranslation } from "@/data/translations";
+import { LazyCODOrderForm } from "@/components/forms/LazyCODOrderForm";
+import { defaultLanguage, getLanguageDirection, getTranslation } from "@/data/translations";
 
 export function ProductDetailHeader() {
-  const language = useSelectedLanguage();
+  const language = defaultLanguage;
   const direction = getLanguageDirection(language);
   const productDetail = getTranslation(language).productDetail;
   const textAlignment = direction === "rtl" ? "text-right" : "text-left";
@@ -31,7 +28,7 @@ export function ProductDetailHeader() {
 }
 
 export function ProductOrderSection({ productSlug }) {
-  const language = useSelectedLanguage();
+  const language = defaultLanguage;
   const direction = getLanguageDirection(language);
   const productDetail = getTranslation(language).productDetail;
   const textAlignment = direction === "rtl" ? "text-right" : "text-left";
@@ -47,7 +44,7 @@ export function ProductOrderSection({ productSlug }) {
           </h2>
           <p className="mt-4 leading-7 text-coffee">{productDetail.orderText}</p>
         </div>
-        <CODOrderForm
+        <LazyCODOrderForm
           initialProductSlug={productSlug}
           lockProduct
           intro={productDetail.orderIntro}

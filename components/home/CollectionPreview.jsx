@@ -1,12 +1,9 @@
-"use client";
-
 import { products } from "@/data/products";
 import { ProductCard } from "@/components/products/ProductCard";
-import { useSelectedLanguage } from "@/components/layout/LanguageSwitcher";
-import { getLanguageDirection, getTranslation } from "@/data/translations";
+import { defaultLanguage, getLanguageDirection, getTranslation } from "@/data/translations";
 
 export function CollectionPreview() {
-  const language = useSelectedLanguage();
+  const language = defaultLanguage;
   const direction = getLanguageDirection(language);
   const translation = getTranslation(language);
   const collection = translation.collectionPreview;

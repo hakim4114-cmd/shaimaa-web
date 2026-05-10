@@ -1,10 +1,7 @@
-"use client";
-
-import { useSelectedLanguage } from "@/components/layout/LanguageSwitcher";
-import { getLanguageDirection, getTranslation } from "@/data/translations";
+import { defaultLanguage, getLanguageDirection, getTranslation } from "@/data/translations";
 
 export function FAQ() {
-  const language = useSelectedLanguage();
+  const language = defaultLanguage;
   const direction = getLanguageDirection(language);
   const faq = getTranslation(language).faq;
   const textAlignment = direction === "rtl" ? "text-right" : "text-left";

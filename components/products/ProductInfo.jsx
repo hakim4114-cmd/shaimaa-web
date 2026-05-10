@@ -1,19 +1,16 @@
-"use client";
-
 import Link from "next/link";
 import { Check, MessageCircle, PhoneCall, Ruler, ShieldCheck, Sparkles, Truck } from "lucide-react";
 import { ColorSelector } from "./ColorSelector";
-import { SizeAdvisor } from "./SizeAdvisor";
+import { LazySizeAdvisor } from "./LazySizeAdvisor";
 import { SizeSelector } from "./SizeSelector";
-import { useSelectedLanguage } from "@/components/layout/LanguageSwitcher";
 import { IconTextRow } from "@/components/ui/IconTextRow";
-import { getLanguageDirection, getTranslation } from "@/data/translations";
+import { defaultLanguage, getLanguageDirection, getTranslation } from "@/data/translations";
 import { whatsappHref } from "@/lib/constants";
 
 const trustIcons = [ShieldCheck, PhoneCall, Ruler, Sparkles];
 
 export function ProductInfo({ product }) {
-  const language = useSelectedLanguage();
+  const language = defaultLanguage;
   const direction = getLanguageDirection(language);
   const translation = getTranslation(language);
   const productDetail = translation.productDetail;
@@ -47,7 +44,7 @@ export function ProductInfo({ product }) {
         sizes={product.sizes}
         labels={{ size: productDetail.sizeLabel, sizeGuide: productDetail.sizeGuide }}
       />
-      <SizeAdvisor availableSizes={product.sizes} />
+      <LazySizeAdvisor availableSizes={product.sizes} />
 
       <div className="grid gap-3 sm:grid-cols-2">
         <a

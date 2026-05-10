@@ -1,10 +1,7 @@
-"use client";
-
 import Link from "next/link";
 import { Check, PackageCheck, Palette, Scissors, Shirt, Truck, WalletCards } from "lucide-react";
-import { useSelectedLanguage } from "@/components/layout/LanguageSwitcher";
 import { IconTextRow } from "@/components/ui/IconTextRow";
-import { getLanguageDirection, getTranslation } from "@/data/translations";
+import { defaultLanguage, getLanguageDirection, getTranslation } from "@/data/translations";
 import { products } from "@/data/products";
 
 const trustIcons = [Palette, WalletCards, Truck, PackageCheck];
@@ -194,7 +191,7 @@ export function ProductFAQ({ product, productCopy, productDetail, direction }) {
 }
 
 export function ProductObjectionLayer({ product }) {
-  const language = useSelectedLanguage();
+  const language = defaultLanguage;
   const direction = getLanguageDirection(language);
   const productDetail = getTranslation(language).productDetail;
   const productCopy = getProductCopy(product, productDetail);
@@ -208,7 +205,7 @@ export function ProductObjectionLayer({ product }) {
 }
 
 export function ProductRelatedAndFAQ({ product }) {
-  const language = useSelectedLanguage();
+  const language = defaultLanguage;
   const direction = getLanguageDirection(language);
   const productDetail = getTranslation(language).productDetail;
   const productCopy = getProductCopy(product, productDetail);
