@@ -41,7 +41,8 @@ Order tracking (`/track-order` → `POST /api/track-order`) proxies server-side 
 ### Two product sources
 
 - `data/products.js` is the static catalog that drives product pages (`/products/[slug]`), the order form, size data, and the Wassilni fallback.
-- Supabase (`lib/supabaseClient.js`, `lib/supabaseProducts.js`) holds a `products` table; rows with `status = "active"` render on the homepage via the `SupabaseProducts` server component. `next.config.mjs` derives the `next/image` remote-pattern allowlist from `NEXT_PUBLIC_SUPABASE_URL`. All Supabase helpers return `{ products, error }` instead of throwing.
+- Supabase (`lib/supabaseClient.js`, `lib/supabaseProducts.js`) holds a `products` table; rows with `status = "active"` render on the homepage via the `SupabaseProducts` server component ("New arrivals", with per-product WhatsApp order links). `next.config.mjs` derives the `next/image` remote-pattern allowlist from `NEXT_PUBLIC_SUPABASE_URL`. All Supabase helpers return `{ products, error }` instead of throwing.
+- Supabase products are managed from `/admin/products` (`components/admin/ProductManagerClient.jsx`) through the protected `/api/admin/products` routes, which use the server-only `SUPABASE_SERVICE_ROLE_KEY` via `lib/supabaseAdmin.js` (bypasses RLS; anon reads are restricted to active rows by policy). Product photos upload to the public `product-images` storage bucket via `/api/admin/products/upload`. Input validation/sanitization lives in `lib/adminProducts.js`; the one-time database setup is `supabase/setup.sql` (documented in `docs/product-manager-setup.md`).
 
 ### i18n (client-side only, no routing)
 

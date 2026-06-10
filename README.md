@@ -4,7 +4,8 @@ A Next.js storefront for a premium Moroccan traditional fashion brand. Customers
 
 ## What is included
 
-- Homepage with brand story, FAQ, size guide, and a live product section from Supabase
+- Homepage with brand story, FAQ, size guide, and a live "New arrivals" section from Supabase
+- Admin product manager: add/edit/hide/delete products and upload photos from `/admin/products` (see `docs/product-manager-setup.md`)
 - Product listing and product detail pages (static catalog)
 - COD order form with Moroccan phone validation and risk scoring
 - Order saving to Google Sheets through a Google Apps Script Web App
@@ -58,6 +59,7 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY    # Supabase anon key
 Server-only variables (never prefix with `NEXT_PUBLIC_`):
 
 ```text
+SUPABASE_SERVICE_ROLE_KEY        # Supabase service_role key for the admin product manager
 GOOGLE_TRACKING_SCRIPT_URL       # Apps Script endpoint for order tracking
 GOOGLE_ADMIN_ORDERS_SCRIPT_URL   # Apps Script endpoint for the admin orders view
 MAISON_ADMIN_ROUTES_ENABLED      # "true" to enable /admin in production
@@ -89,5 +91,6 @@ The site runs without any of these set: the order form shows an error message, t
 
 - `docs/google-sheets-apps-script.md` — how to set up the Google Sheet and Apps Script for order saving.
 - `docs/wassilni-integration.md` — the planned migration to Wassilni/Base44 as the system of record.
+- `docs/product-manager-setup.md` — one-time setup to manage products and photos from the admin.
 - `docs/launch-checklist.md` — checks to run before a public deployment.
 - `CLAUDE.md` — architecture and convention guidance for AI coding assistants.
