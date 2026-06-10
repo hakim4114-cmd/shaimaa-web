@@ -1,4 +1,5 @@
 import { ArrowRight, MessageCircle, PackageCheck, PhoneCall, Ruler, Truck } from "lucide-react";
+import { BrandLogo } from "./BrandLogo";
 import { defaultLanguage, getLanguageDirection, getTranslation } from "@/data/translations";
 import { whatsappHref } from "@/lib/constants";
 
@@ -36,7 +37,10 @@ export function Footer() {
       <footer dir={direction} lang={language} className="border-t border-brass/20 px-4 py-8 text-center text-sm text-coffee sm:px-6 lg:px-8">
         <div className={`mx-auto grid max-w-7xl gap-8 lg:grid-cols-[1fr_1.4fr] ${textAlignment}`}>
           <div>
-            <p className="font-display text-2xl font-semibold text-cedar">Maison Shaimaa</p>
+            <div className="flex items-center gap-2.5">
+              <BrandLogo size={30} className="shrink-0" />
+              <p className="font-display text-2xl font-semibold text-cedar">Maison Shaimaa</p>
+            </div>
             <p className="mt-2 leading-6">{footer.brandText}</p>
             <a href={whatsappHref} className="mt-4 inline-flex items-center gap-2 font-bold text-henna">
               <MessageCircle size={18} />
