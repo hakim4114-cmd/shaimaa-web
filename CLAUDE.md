@@ -13,9 +13,10 @@ npm run dev        # start dev server
 npm run build      # production build
 npm run lint       # eslint . (eslint-config-next core-web-vitals + typescript)
 npm run typecheck  # tsc --noEmit
+npm test           # vitest run (tests live in lib/__tests__/)
 ```
 
-There is no test suite. Node 20 is required (`.nvmrc` pins 20.19.0; `engines` requires 20.x). Copy `.env.example` to `.env.local` for local config; server-only variables must never get a `NEXT_PUBLIC_` prefix.
+CI (`.github/workflows/ci.yml`) runs all four plus `npm run build` on pushes to main and on PRs. Node 20 is required (`.nvmrc` pins 20.19.0; `engines` requires 20.x). Copy `.env.example` to `.env.local` for local config; server-only variables must never get a `NEXT_PUBLIC_` prefix.
 
 ## Code conventions
 

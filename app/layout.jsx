@@ -1,4 +1,5 @@
 import { Cormorant_Garamond, IBM_Plex_Sans_Arabic, Inter, Noto_Naskh_Arabic } from "next/font/google";
+import { getSiteUrl } from "@/lib/siteUrl";
 import "./globals.css";
 
 const latinDisplay = Cormorant_Garamond({
@@ -30,6 +31,7 @@ const arabicBody = IBM_Plex_Sans_Arabic({
 });
 
 export const metadata = {
+  metadataBase: new URL(getSiteUrl()),
   title: "Maison Shaimaa | Moroccan Traditional Fashion",
   description:
     "Premium Moroccan djellaba and traditional fashion with elegant craftsmanship, limited collections, and cash on delivery in Morocco.",

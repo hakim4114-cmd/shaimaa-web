@@ -41,6 +41,7 @@ Other commands:
 npm run build      # production build
 npm run lint       # ESLint
 npm run typecheck  # TypeScript check (tsc --noEmit)
+npm test           # Vitest test suite
 ```
 
 ## Environment variables
@@ -49,6 +50,7 @@ Copy `.env.example` to `.env.local` and fill in what you need. Public variables 
 
 ```text
 NEXT_PUBLIC_GOOGLE_SCRIPT_URL    # Google Apps Script Web App URL for COD order saving
+NEXT_PUBLIC_SITE_URL             # production URL (sitemap, robots.txt, social previews)
 NEXT_PUBLIC_SUPABASE_URL         # Supabase project URL (homepage products)
 NEXT_PUBLIC_SUPABASE_ANON_KEY    # Supabase anon key
 ```

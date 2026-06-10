@@ -3,7 +3,13 @@ import { loginAdmin } from "./actions";
 
 export default async function AdminLoginPage({ searchParams }) {
   const resolvedSearchParams = await searchParams;
-  const hasError = resolvedSearchParams?.error === "1";
+  const errorCode = resolvedSearchParams?.error;
+  const errorMessage =
+    errorCode === "locked"
+      ? "Too many failed attempts. Please wait 15 minutes before trying again."
+      : errorCode === "1"
+        ? "The password could not be verified. Please try again."
+        : "";
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-pearl px-4 py-12">
@@ -30,10 +36,8 @@ export default async function AdminLoginPage({ searchParams }) {
             />
           </label>
 
-          {hasError ? (
-            <p className="bg-henna/10 px-4 py-3 text-sm font-semibold leading-6 text-henna">
-              The password could not be verified. Please try again.
-            </p>
+          {errorMessage ? (
+            <p className="bg-henna/10 px-4 py-3 text-sm font-semibold leading-6 text-henna">{errorMessage}</p>
           ) : null}
 
           <button
