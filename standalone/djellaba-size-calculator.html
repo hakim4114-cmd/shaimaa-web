@@ -1,37 +1,45 @@
 <!DOCTYPE html>
 <!--
   ============================================================================
-  Djellaba Sizing Calculator Widget — standalone, single file
+  Djellaba Sizing Calculator Widget — v2 — standalone, single file
   ============================================================================
   WHAT IT DOES
-    Converts a customer's height + weight + fit preference into the exact
-    Moroccan tailoring measurements a djellaba needs:
+    Converts height + weight + fit preference into 5 exact Moroccan tailoring
+    measurements:
       - الطول الكلي  (Total Length)
       - ربع الصدر    (Quarter Chest / Rubu')
       - عرض الكتفين  (Shoulders)
       - طول الكم     (Sleeve Length)
-    plus a recommended Western letter size (S–XXL), to cut RTO caused by
-    customers guessing Western sizes.
+      - التركيز      (Armhole / Armscye)
+    plus a recommended Western letter size (S–XXL).
+
+  CHANGES IN v2 (rebuilt from the professional Moroccan tailoring matrix)
+    - Algorithm is now fully table-driven, not formula-based:
+        • Rubu  ← weight lookup table (the master measurement)
+        • Shoulders, sleeve, length ← height lookup table
+        • Armhole (التركيز) = rubu − 1.5 cm  (tailor's proportional rule)
+    - Fit choices updated: إيفازي / عادية / مخزنية (replaces slim/regular/loose)
+    - Length choices updated: قياسية / فاخرة / عصرية
+    - Makhzania rule: shoulders +6 cm, sleeve −3 cm (dropped-shoulder silhouette)
+    - 5th measurement cell: التركيز
+    - Results note includes the "عطفة" (2 cm internal seam allowance) tip
 
   HOW TO EMBED IN SHOPIFY
-    1. In the theme editor, add a "Custom Liquid" block to the product page.
+    1. Theme editor → add a "Custom Liquid" block to the product page.
     2. Copy everything from <div id="ms-sizer"> down to the closing </script>
-       tag (you do NOT need the <html>/<head>/<body> wrappers — they only
-       exist so this file can be opened directly in a browser for testing).
-    3. Paste into the Custom Liquid block. Done — no external dependencies.
+       tag. The <html>/<head>/<body> wrappers are only for standalone testing.
+    3. Paste. No external dependencies needed.
 
   HOW TO TUNE THE ALGORITHM
-    All coefficients live in the CONFIG object at the top of the script.
-    Adjust them after comparing against your tailor's real measurement
-    tables — no other code changes needed.
+    All tables live in the CONFIG object at the top of the <script> block.
+    Adjust row values against your own tailor's cutting sheets.
   ============================================================================
 -->
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>حاسبة مقاس الجلابة</title>
-  <!-- Optional font; the widget falls back to system fonts if removed -->
+  <title>حاسبة مقاس الجلابة المغربية</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet" />
   <style>body { margin: 0; background: #efe9dd; padding: 24px 12px; }</style>
@@ -42,22 +50,24 @@
 <div id="ms-sizer" dir="rtl">
   <style>
     /* ------------------------------------------------------------------
-       All rules are scoped under #ms-sizer so the widget cannot leak
-       styles into (or inherit surprises from) the host Shopify theme.
-       Palette: cream / deep green / gold — premium heritage look.
+       All rules scoped to #ms-sizer — safe to paste into any Shopify theme.
+       Palette: cream / deep cedar green / gold — premium heritage brand.
        ------------------------------------------------------------------ */
     #ms-sizer {
-      --cream:      #faf6ee;
-      --cream-deep: #f1ead9;
-      --green:      #1e3b2d;
-      --green-soft: #2e5443;
-      --gold:       #b9974b;
-      --gold-soft:  #d9c490;
-      --ink:        #26221a;
-      --error:      #a33c2e;
+      --cream:       #faf6ee;
+      --cream-deep:  #f1ead9;
+      --cream-rule:  #e8dfc8;
+      --green:       #1e3b2d;
+      --green-soft:  #2e5443;
+      --green-faint: #e8f0ec;
+      --gold:        #b9974b;
+      --gold-soft:   #d9c490;
+      --ink:         #26221a;
+      --error:       #a33c2e;
+      --tarkiz-bg:   #f5f0e8;
 
       font-family: "Tajawal", "Segoe UI", Tahoma, Arial, sans-serif;
-      max-width: 420px;
+      max-width: 440px;
       margin: 0 auto;
       background: var(--cream);
       border: 1px solid var(--gold-soft);
@@ -73,43 +83,45 @@
       background: var(--green);
       color: var(--cream);
       text-align: center;
-      padding: 22px 18px 18px;
+      padding: 24px 20px 18px;
     }
     #ms-sizer .ms-head h2 {
       margin: 0 0 6px;
-      font-size: 1.35rem;
+      font-size: 1.4rem;
       font-weight: 800;
-      letter-spacing: 0.02em;
+      letter-spacing: 0.01em;
     }
     #ms-sizer .ms-head p {
       margin: 0;
-      font-size: 0.85rem;
+      font-size: 0.83rem;
       color: var(--gold-soft);
-      line-height: 1.6;
+      line-height: 1.65;
     }
-    #ms-sizer .ms-head .ms-rule {
-      width: 46px; height: 2px;
+    #ms-sizer .ms-rule {
+      width: 50px; height: 2px;
       background: var(--gold);
-      margin: 10px auto 0;
+      margin: 12px auto 0;
       border-radius: 2px;
     }
 
-    /* ---- Form ---- */
+    /* ---- Form body ---- */
     #ms-sizer .ms-form { padding: 20px 18px 22px; }
     #ms-sizer .ms-row { display: flex; gap: 10px; }
-    #ms-sizer .ms-field { flex: 1; margin-bottom: 14px; }
+    #ms-sizer .ms-field { flex: 1; margin-bottom: 16px; }
+
     #ms-sizer label {
       display: block;
-      font-size: 0.85rem;
+      font-size: 0.84rem;
       font-weight: 700;
       color: var(--green);
       margin-bottom: 6px;
     }
     #ms-sizer label small { font-weight: 400; color: var(--green-soft); }
+
     #ms-sizer input[type="number"] {
       width: 100%;
-      padding: 11px 12px;
-      font-size: 1rem;
+      padding: 11px 13px;
+      font-size: 1.05rem;
       font-family: inherit;
       border: 1.5px solid var(--gold-soft);
       border-radius: 10px;
@@ -120,15 +132,15 @@
       -moz-appearance: textfield;
     }
     #ms-sizer input::-webkit-outer-spin-button,
-    #ms-sizer input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+    #ms-sizer input::-webkit-inner-spin-button { -webkit-appearance: none; }
     #ms-sizer input:focus {
       border-color: var(--gold);
-      box-shadow: 0 0 0 3px rgba(185, 151, 75, 0.18);
+      box-shadow: 0 0 0 3px rgba(185,151,75,.18);
     }
     #ms-sizer input.ms-invalid { border-color: var(--error); }
 
-    /* ---- Segmented choice pills (fit & length) ---- */
-    #ms-sizer .ms-pills { display: flex; gap: 8px; }
+    /* ---- Segmented pill groups ---- */
+    #ms-sizer .ms-pills { display: flex; gap: 7px; }
     #ms-sizer .ms-pill {
       flex: 1;
       padding: 9px 4px;
@@ -142,23 +154,31 @@
       color: var(--green-soft);
       cursor: pointer;
       transition: all 0.15s;
+      line-height: 1.3;
     }
     #ms-sizer .ms-pill[aria-pressed="true"] {
       background: var(--green);
       border-color: var(--green);
       color: var(--cream);
     }
+    #ms-sizer .ms-pill-hint {
+      font-size: 0.68rem;
+      font-weight: 400;
+      opacity: 0.75;
+      display: block;
+      margin-top: 2px;
+    }
 
-    /* ---- Error message ---- */
+    /* ---- Error box ---- */
     #ms-sizer .ms-error {
       display: none;
       background: #f9e9e5;
       border: 1px solid #e4b8ae;
       color: var(--error);
       font-size: 0.85rem;
-      font-weight: 500;
+      font-weight: 600;
       border-radius: 10px;
-      padding: 10px 12px;
+      padding: 10px 13px;
       margin-bottom: 14px;
       line-height: 1.6;
     }
@@ -167,7 +187,7 @@
     /* ---- CTA button ---- */
     #ms-sizer .ms-cta {
       width: 100%;
-      padding: 14px;
+      padding: 15px;
       font-size: 1.05rem;
       font-weight: 800;
       font-family: inherit;
@@ -176,52 +196,54 @@
       border: none;
       border-radius: 12px;
       cursor: pointer;
-      transition: transform 0.12s, box-shadow 0.12s;
-      box-shadow: 0 6px 16px rgba(185, 151, 75, 0.35);
+      box-shadow: 0 6px 16px rgba(185,151,75,.35);
+      transition: transform .12s, box-shadow .12s;
     }
-    #ms-sizer .ms-cta:hover { transform: translateY(-1px); box-shadow: 0 9px 20px rgba(185, 151, 75, 0.45); }
+    #ms-sizer .ms-cta:hover { transform: translateY(-1px); box-shadow: 0 9px 20px rgba(185,151,75,.45); }
     #ms-sizer .ms-cta:active { transform: translateY(0); }
 
-    /* ---- Results card ---- */
+    /* ---- Results section ---- */
     #ms-sizer .ms-results {
       display: none;
       border-top: 1px dashed var(--gold-soft);
       background: var(--cream-deep);
       padding: 20px 18px 22px;
-      animation: ms-fade 0.35s ease;
+      animation: ms-fade .35s ease;
     }
     #ms-sizer .ms-results.ms-show { display: block; }
     @keyframes ms-fade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
 
+    /* Size badge */
     #ms-sizer .ms-size-badge {
       text-align: center;
       margin-bottom: 16px;
     }
-    #ms-sizer .ms-size-badge .ms-size-label {
-      font-size: 0.8rem;
+    #ms-sizer .ms-size-label {
+      font-size: 0.78rem;
       font-weight: 700;
       color: var(--green-soft);
-      letter-spacing: 0.06em;
-      margin-bottom: 4px;
+      letter-spacing: .06em;
+      margin-bottom: 5px;
     }
-    #ms-sizer .ms-size-badge .ms-size-value {
+    #ms-sizer .ms-size-value {
       display: inline-block;
-      min-width: 86px;
-      padding: 8px 26px;
-      font-size: 1.9rem;
+      min-width: 90px;
+      padding: 8px 28px;
+      font-size: 2rem;
       font-weight: 800;
       color: var(--cream);
       background: var(--green);
       border: 2px solid var(--gold);
       border-radius: 12px;
-      letter-spacing: 0.05em;
+      letter-spacing: .05em;
     }
 
+    /* 2×2 measurement grid */
     #ms-sizer .ms-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 10px;
-      margin-bottom: 14px;
+      margin-bottom: 10px;
     }
     #ms-sizer .ms-cell {
       background: #fff;
@@ -230,37 +252,94 @@
       padding: 12px 10px;
       text-align: center;
     }
-    #ms-sizer .ms-cell .ms-cell-name {
-      font-size: 0.78rem;
+    #ms-sizer .ms-cell-name {
+      font-size: 0.79rem;
       font-weight: 700;
       color: var(--green-soft);
-      margin-bottom: 2px;
+      margin-bottom: 1px;
     }
-    #ms-sizer .ms-cell .ms-cell-sub {
-      font-size: 0.66rem;
+    #ms-sizer .ms-cell-sub {
+      font-size: 0.64rem;
       color: var(--gold);
       font-weight: 500;
       margin-bottom: 6px;
     }
-    #ms-sizer .ms-cell .ms-cell-value {
-      font-size: 1.35rem;
+    #ms-sizer .ms-cell-value {
+      font-size: 1.4rem;
       font-weight: 800;
       color: var(--green);
     }
-    #ms-sizer .ms-cell .ms-cell-value small { font-size: 0.7rem; font-weight: 500; color: var(--green-soft); }
-
-    #ms-sizer .ms-note {
-      font-size: 0.78rem;
+    #ms-sizer .ms-cell-value small {
+      font-size: 0.7rem;
+      font-weight: 500;
       color: var(--green-soft);
-      line-height: 1.7;
+    }
+
+    /* التركيز cell: full-width, visually distinct (derived measurement) */
+    #ms-sizer .ms-tarkiz {
+      background: var(--tarkiz-bg);
+      border: 1px dashed var(--gold-soft);
+      border-radius: 12px;
+      padding: 11px 14px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    #ms-sizer .ms-tarkiz-label { font-size: 0.82rem; font-weight: 700; color: var(--green-soft); }
+    #ms-sizer .ms-tarkiz-sub   { font-size: 0.67rem; color: var(--gold); font-weight: 500; margin-top: 1px; }
+    #ms-sizer .ms-tarkiz-value { font-size: 1.3rem; font-weight: 800; color: var(--green); white-space: nowrap; }
+    #ms-sizer .ms-tarkiz-rule  {
+      font-size: 0.67rem;
+      color: var(--green-soft);
+      opacity: 0.75;
+      text-align: left;
+      line-height: 1.5;
+      max-width: 130px;
+    }
+
+    /* Makhzania badge */
+    #ms-sizer .ms-makhzani-badge {
+      display: none;
+      background: var(--green-faint);
+      border: 1px solid var(--green-soft);
+      border-radius: 10px;
+      padding: 9px 12px;
+      font-size: 0.78rem;
+      color: var(--green);
+      line-height: 1.65;
+      margin-bottom: 12px;
       text-align: center;
-      margin: 0 0 14px;
+    }
+    #ms-sizer .ms-makhzani-badge.ms-show { display: block; }
+
+    /* Note & confirmation */
+    #ms-sizer .ms-note {
+      font-size: 0.79rem;
+      color: var(--green-soft);
+      line-height: 1.75;
+      text-align: center;
+      margin: 0 0 6px;
     }
     #ms-sizer .ms-note strong { color: var(--green); }
 
+    #ms-sizer .ms-atfa {
+      font-size: 0.73rem;
+      color: var(--green-soft);
+      line-height: 1.65;
+      background: var(--cream);
+      border: 1px solid var(--cream-rule);
+      border-radius: 8px;
+      padding: 8px 11px;
+      margin-bottom: 14px;
+      text-align: center;
+    }
+
+    /* Copy button */
     #ms-sizer .ms-copy {
       width: 100%;
-      padding: 11px;
+      padding: 12px;
       font-size: 0.9rem;
       font-weight: 700;
       font-family: inherit;
@@ -269,71 +348,101 @@
       border: 1.5px solid var(--green);
       border-radius: 10px;
       cursor: pointer;
-      transition: background 0.15s, color 0.15s;
+      transition: background .15s, color .15s;
     }
     #ms-sizer .ms-copy:hover { background: var(--green); color: var(--cream); }
 
+    /* ---- Responsive ---- */
     @media (max-width: 360px) {
       #ms-sizer .ms-row { flex-direction: column; gap: 0; }
-      #ms-sizer .ms-pill { font-size: 0.76rem; }
+      #ms-sizer .ms-pill { font-size: 0.75rem; }
+      #ms-sizer .ms-pill-hint { display: none; }
     }
   </style>
 
-  <!-- Header -->
+  <!-- ── Header ────────────────────────────────────────────────────────── -->
   <div class="ms-head">
-    <h2>حاسبة مقاس الجلابة</h2>
-    <p>أدخل طولك ووزنك لتحصل على مقاسك المضبوط بالخياطة المغربية التقليدية</p>
+    <h2>حاسبة مقاس الجلابة المغربية</h2>
+    <p>
+      أدخل طولك ووزنك واختر قصّتك — ستظهر لك<br/>
+      مقاساتك الدقيقة بلغة الخيّاط المغربي
+    </p>
     <div class="ms-rule"></div>
   </div>
 
-  <!-- Inputs -->
+  <!-- ── Form ──────────────────────────────────────────────────────────── -->
   <div class="ms-form">
+
+    <!-- Height & Weight -->
     <div class="ms-row">
       <div class="ms-field">
         <label for="ms-height">الطول <small>(سم)</small></label>
-        <input type="number" id="ms-height" inputmode="numeric" min="140" max="210" placeholder="مثال: 175" />
+        <input type="number" id="ms-height" inputmode="numeric"
+               min="140" max="210" placeholder="مثال: 175" />
       </div>
       <div class="ms-field">
         <label for="ms-weight">الوزن <small>(كلغ)</small></label>
-        <input type="number" id="ms-weight" inputmode="numeric" min="40" max="160" placeholder="مثال: 78" />
+        <input type="number" id="ms-weight" inputmode="numeric"
+               min="40" max="160" placeholder="مثال: 78" />
       </div>
     </div>
 
+    <!-- Fit preference -->
     <div class="ms-field">
-      <label>تفضيل القَصّة</label>
-      <div class="ms-pills" id="ms-fit" role="group" aria-label="تفضيل القصة">
-        <button type="button" class="ms-pill" data-value="slim" aria-pressed="false">ضيّقة قليلاً</button>
-        <button type="button" class="ms-pill" data-value="regular" aria-pressed="true">عادية / تقليدية</button>
-        <button type="button" class="ms-pill" data-value="loose" aria-pressed="false">واسعة</button>
+      <label>القصّة</label>
+      <div class="ms-pills" id="ms-fit" role="group" aria-label="نوع القصة">
+        <button type="button" class="ms-pill" data-value="evase" aria-pressed="false">
+          إيفازي
+          <span class="ms-pill-hint">ضيّقة عصرية</span>
+        </button>
+        <button type="button" class="ms-pill" data-value="regular" aria-pressed="true">
+          عادية
+          <span class="ms-pill-hint">التقليدية</span>
+        </button>
+        <button type="button" class="ms-pill" data-value="makhzania" aria-pressed="false">
+          مخزنية
+          <span class="ms-pill-hint">فضفاضة / خليجية</span>
+        </button>
       </div>
     </div>
 
+    <!-- Length preference -->
     <div class="ms-field">
       <label>طول الجلابة</label>
       <div class="ms-pills" id="ms-length" role="group" aria-label="طول الجلابة">
-        <button type="button" class="ms-pill" data-value="ankle" aria-pressed="true">فوق الكعبين</button>
-        <button type="button" class="ms-pill" data-value="floor" aria-pressed="false">طويلة حتى الأرض</button>
+        <button type="button" class="ms-pill" data-value="standard" aria-pressed="true">
+          قياسية
+          <span class="ms-pill-hint">عند الكعبين</span>
+        </button>
+        <button type="button" class="ms-pill" data-value="luxury" aria-pressed="false">
+          فاخرة
+          <span class="ms-pill-hint">تغطي الحذاء</span>
+        </button>
+        <button type="button" class="ms-pill" data-value="modern" aria-pressed="false">
+          عصرية
+          <span class="ms-pill-hint">فوق الكاحل</span>
+        </button>
       </div>
     </div>
 
+    <!-- Error -->
     <div class="ms-error" id="ms-error" role="alert"></div>
 
-    <button type="button" class="ms-cta" id="ms-calc">احسب مقاسي بدقة</button>
+    <!-- CTA -->
+    <button type="button" class="ms-cta" id="ms-calc">✦ احسب مقاسي بدقة</button>
   </div>
 
-  <!-- Results -->
+  <!-- ── Results ────────────────────────────────────────────────────────── -->
   <div class="ms-results" id="ms-results" aria-live="polite">
+
+    <!-- Western size badge -->
     <div class="ms-size-badge">
-      <div class="ms-size-label">المقاس المُوصى به</div>
+      <div class="ms-size-label">المقاس الغربي المكافئ</div>
       <div class="ms-size-value" id="ms-size">—</div>
     </div>
 
+    <!-- 4 primary measurements -->
     <div class="ms-grid">
-      <div class="ms-cell">
-        <div class="ms-cell-name">الطول الكلي</div>
-        <div class="ms-cell-sub">Total Length</div>
-        <div class="ms-cell-value"><span id="ms-out-length">—</span> <small>سم</small></div>
-      </div>
       <div class="ms-cell">
         <div class="ms-cell-name">ربع الصدر</div>
         <div class="ms-cell-sub">Quarter Chest / Rubu'</div>
@@ -341,8 +450,13 @@
       </div>
       <div class="ms-cell">
         <div class="ms-cell-name">عرض الكتفين</div>
-        <div class="ms-cell-sub">Shoulders</div>
+        <div class="ms-cell-sub">Shoulders / Ktaf</div>
         <div class="ms-cell-value"><span id="ms-out-shoulders">—</span> <small>سم</small></div>
+      </div>
+      <div class="ms-cell">
+        <div class="ms-cell-name">الطول الكلي</div>
+        <div class="ms-cell-sub">Total Length</div>
+        <div class="ms-cell-value"><span id="ms-out-length">—</span> <small>سم</small></div>
       </div>
       <div class="ms-cell">
         <div class="ms-cell-name">طول الكم</div>
@@ -351,9 +465,35 @@
       </div>
     </div>
 
+    <!-- التركيز — full-width, derived row -->
+    <div class="ms-tarkiz" id="ms-tarkiz-row">
+      <div>
+        <div class="ms-tarkiz-label">التركيز (تقويرة الإبط)</div>
+        <div class="ms-tarkiz-sub">Armhole / Armscye</div>
+      </div>
+      <div class="ms-tarkiz-value"><span id="ms-out-tarkiz">—</span> <small style="font-size:.7rem;font-weight:500">سم</small></div>
+      <div class="ms-tarkiz-rule">= الربع − 1.5 سم<br/>(قاعدة المعلم)</div>
+    </div>
+
+    <!-- Makhzania notice -->
+    <div class="ms-makhzani-badge" id="ms-makhzani-badge">
+      🏛️ <strong>قصة مخزنية / خليجية:</strong> تم تعديل الكتاف تلقائياً (+6 سم "طيحة الكتف")
+      وتقليص الكم (−3 سم) للحفاظ على التوازن الجمالي.
+    </div>
+
+    <!-- Confirmation / note -->
     <p class="ms-note" id="ms-note"></p>
 
-    <button type="button" class="ms-copy" id="ms-copy">📋 نسخ المقاسات (لإرسالها عبر واتساب)</button>
+    <!-- عطفة tip -->
+    <div class="ms-atfa">
+      💡 <strong>عطفة داخلية 2 سم:</strong> جلاباتنا تأتي بعطفة داخلية 2 سم تتيح لك
+      تعديل الطول عند خيّاطك المحلي بدقة — ضمان إضافي لمقاس مثالي.
+    </div>
+
+    <!-- Copy button -->
+    <button type="button" class="ms-copy" id="ms-copy">
+      📋 نسخ المقاسات (لإرسالها عبر واتساب)
+    </button>
   </div>
 </div>
 
@@ -362,92 +502,115 @@
   "use strict";
 
   /* ======================================================================
-     CONFIG — every tunable number lives here.
-     Calibrate against your tailor's real cutting tables, nothing else
-     in the code needs to change.
+     CONFIG
+     All lookup tables come directly from the professional Moroccan tailoring
+     matrix. Change values here only — no other code needs to change.
      ====================================================================== */
   var CONFIG = {
-    // Accepted input ranges (outside these → friendly error)
     limits: { heightMin: 140, heightMax: 210, weightMin: 40, weightMax: 160 },
 
-    // --- Total length (الطول الكلي) ---
-    // Garment hangs from shoulder: height minus head/neck ≈ height × ratio.
-    // "ankle" leaves clearance above the ground; "floor" is the full drop.
-    length: { heightRatio: 0.84, ankleOffset: -6, floorOffset: 0 },
+    // ── RUBU (القماش) ──
+    // Weight → garment rubu for "regular" fit. Values are the professional
+    // matrix midpoints; the sizing matrix maps weight to size directly.
+    weightTable: [
+      { upTo: 54,   rubu: 26,   sizeIdx: 0 },  // below S
+      { upTo: 60,   rubu: 27,   sizeIdx: 0 },  // S
+      { upTo: 70,   rubu: 28.5, sizeIdx: 1 },  // M  (28-29 midpoint)
+      { upTo: 80,   rubu: 30.5, sizeIdx: 2 },  // L  (30-31 midpoint)
+      { upTo: 90,   rubu: 32.5, sizeIdx: 3 },  // XL (32-33 midpoint)
+      { upTo: 9999, rubu: 34.5, sizeIdx: 4 },  // XXL (34+)
+    ],
 
-    // --- Chest circumference estimate (body, cm) from weight + height ---
-    // chest = wCoef×weight + hCoef×height + base
-    // Calibrated against the standard Moroccan djellaba cutting table:
-    //   S(26cm) M(27.5cm) L(29cm) XL(31cm) XXL(33cm)
-    chest: { wCoef: 0.5, hCoef: 0.2, base: 24 },
-
-    // --- Quarter chest (ربع الصدر) = bodyChest/4 + ease for the chosen fit ---
-    // Djellaba ease is generous vs western garments (traditional silhouette).
-    rubuEase: { slim: 4, regular: 5.5, loose: 7 },
-
-    // --- Shoulders (عرض الكتفين) = hCoef×height + wCoef×weight + fit adj ---
-    shoulders: {
-      hCoef: 0.23, wCoef: 0.062,
-      fitAdj: { slim: -0.5, regular: 0, loose: 1 }
+    // Rubu adjustment by fit (cm) — relative to the regular-fit base above
+    rubuFitAdj: {
+      evase:    -1.5,  // إيفازي: fitted, minimal ease (+1.5 cm per pro guide)
+      regular:   0,    // عادية:  standard, no change
+      makhzania: 1.5   // مخزنية: generous ease (+3 cm khaleeji style)
     },
 
-    // --- Sleeve (طول الكم), shoulder point to wrist ---
-    sleeve: { heightRatio: 0.31 },
+    // ── ARMHOLE (التركيز) ──
+    // Tailor's rule: armhole = rubu − armholeOffset (pro guide: rubu − 1 to 2 cm)
+    armholeOffset: 1.5,
 
-    // --- Western size bands (consistent with the shaimaa.shop size advisor):
-    // take the LARGER of the height band and the weight band, because a
-    // djellaba must fit both the body and the drop. "loose" bumps one size.
+    // ── HEIGHT TABLE ──
+    // height → djellaba length (قياسية = height − 30, per pro formula),
+    //          sleeve and shoulders from the professional sizing matrix.
+    // Makhzania adjustments applied on top.
+    heightTable: [
+      { upTo: 155,  sleeve: 52, shoulders: 39, sizeIdx: 0 },
+      { upTo: 160,  sleeve: 54, shoulders: 40, sizeIdx: 0 },
+      { upTo: 165,  sleeve: 56, shoulders: 41, sizeIdx: 1 },
+      { upTo: 170,  sleeve: 58, shoulders: 42, sizeIdx: 1 },
+      { upTo: 175,  sleeve: 60, shoulders: 43, sizeIdx: 2 },
+      { upTo: 180,  sleeve: 62, shoulders: 44, sizeIdx: 2 },
+      { upTo: 9999, sleeve: 64, shoulders: 46, sizeIdx: 3 },
+    ],
+
+    // Total-length adjustment by length preference (cm)
+    // Base = height − 30 (قياسية / standard ankle-length, per pro formula)
+    lengthAdj: { standard: 0, luxury: 3, modern: -4 },
+
+    // ── MAKHZANIA RULE ──
+    // Dropped-shoulder silhouette: widen the shoulder point, compensate sleeve.
+    makhzaniaShoulderAdj: 6,
+    makhzaniaSleeveAdj:  -3,
+
     sizeOrder: ["S", "M", "L", "XL", "XXL"],
-    heightBands: [158, 166, 174, 184],   // <158→S, <166→M, <174→L, <184→XL, else XXL
-    weightBands: [55, 68, 82, 95],       // <55→S,  <68→M,  <82→L,  <95→XL, else XXL
 
-    // Rubu' at or above this needs the tailor's confirmation before cutting
+    // Rubu at or above this value → route to tailor confirmation
     rubuConfirmThreshold: 36
   };
 
   /* ======================================================================
-     CORE ALGORITHM — pure function: inputs in, measurements out.
+     CORE ALGORITHM
+     Pure function: inputs → measurements. No DOM access here.
      ====================================================================== */
-  function calculateDjellabaSize(heightCm, weightKg, fit, lengthPref) {
+  function calculateDjellabaSize(height, weight, fit, lengthPref) {
     var c = CONFIG;
 
-    // 1. Total length: drop from shoulder, adjusted for hem preference
-    var totalLength = Math.round(
-      heightCm * c.length.heightRatio +
-      (lengthPref === "floor" ? c.length.floorOffset : c.length.ankleOffset)
+    // -- Weight lookup --
+    var wRow = c.weightTable[c.weightTable.length - 1];
+    for (var i = 0; i < c.weightTable.length; i++) {
+      if (weight <= c.weightTable[i].upTo) { wRow = c.weightTable[i]; break; }
+    }
+
+    // -- Height lookup --
+    var hRow = c.heightTable[c.heightTable.length - 1];
+    for (var j = 0; j < c.heightTable.length; j++) {
+      if (height <= c.heightTable[j].upTo) { hRow = c.heightTable[j]; break; }
+    }
+
+    // -- Rubu: base from weight table + fit adjustment --
+    var rubu = roundHalf(wRow.rubu + c.rubuFitAdj[fit]);
+
+    // -- Armhole: tailor's proportional rule --
+    var armhole = roundHalf(rubu - c.armholeOffset);
+
+    // -- Shoulders: from height table, plus makhzania drop --
+    var shoulders = hRow.shoulders + (fit === "makhzania" ? c.makhzaniaShoulderAdj : 0);
+
+    // -- Sleeve: from height table, minus makhzania compensation --
+    var sleeve = hRow.sleeve + (fit === "makhzania" ? c.makhzaniaSleeveAdj : 0);
+
+    // -- Total length: height − 30 is the pro formula for standard ankle-length --
+    var totalLength = (height - 30) + c.lengthAdj[lengthPref];
+
+    // -- Western size: worst-case of height and weight bands --
+    var sizeIdx = Math.min(
+      Math.max(hRow.sizeIdx, wRow.sizeIdx),
+      c.sizeOrder.length - 1
     );
-
-    // 2. Quarter chest (Rubu'): estimated body chest / 4, plus fit ease
-    var bodyChest = c.chest.wCoef * weightKg + c.chest.hCoef * heightCm + c.chest.base;
-    var rubu = roundHalf(bodyChest / 4 + c.rubuEase[fit]);
-
-    // 3. Shoulders: driven by frame (height) with a build (weight) component
-    var shoulders = roundHalf(
-      c.shoulders.hCoef * heightCm + c.shoulders.wCoef * weightKg + c.shoulders.fitAdj[fit]
-    );
-
-    // 4. Sleeve: proportional to height (shoulder point → wrist)
-    var sleeve = Math.round(heightCm * c.sleeve.heightRatio);
-
-    // 5. Western letter size: worst-case of the height and weight bands
-    var sizeIndex = Math.max(bandIndex(heightCm, c.heightBands), bandIndex(weightKg, c.weightBands));
-    if (fit === "loose") sizeIndex = Math.min(sizeIndex + 1, c.sizeOrder.length - 1);
 
     return {
-      totalLength: totalLength,
-      rubu: rubu,
-      shoulders: shoulders,
-      sleeve: sleeve,
-      size: c.sizeOrder[sizeIndex],
+      totalLength:       totalLength,
+      rubu:              rubu,
+      shoulders:         shoulders,
+      sleeve:            sleeve,
+      armhole:           armhole,
+      size:              c.sizeOrder[sizeIdx],
+      isMakhzania:       fit === "makhzania",
       needsConfirmation: rubu >= c.rubuConfirmThreshold
     };
-  }
-
-  function bandIndex(value, bands) {
-    for (var i = 0; i < bands.length; i++) {
-      if (value < bands[i]) return i;
-    }
-    return bands.length;
   }
 
   function roundHalf(n) { return Math.round(n * 2) / 2; }
@@ -455,19 +618,18 @@
   /* ======================================================================
      UI WIRING
      ====================================================================== */
-  var root = document.getElementById("ms-sizer");
+  var root        = document.getElementById("ms-sizer");
   var heightInput = root.querySelector("#ms-height");
   var weightInput = root.querySelector("#ms-weight");
-  var errorBox = root.querySelector("#ms-error");
-  var resultsBox = root.querySelector("#ms-results");
+  var errorBox    = root.querySelector("#ms-error");
+  var resultsBox  = root.querySelector("#ms-results");
 
-  // Segmented pill groups: one pressed button per group
+  // Segmented pill groups: toggle aria-pressed, one active per group
   function wirePills(groupId) {
-    var group = root.querySelector("#" + groupId);
-    group.addEventListener("click", function (event) {
-      var pill = event.target.closest(".ms-pill");
+    root.querySelector("#" + groupId).addEventListener("click", function (e) {
+      var pill = e.target.closest(".ms-pill");
       if (!pill) return;
-      group.querySelectorAll(".ms-pill").forEach(function (b) {
+      root.querySelectorAll("#" + groupId + " .ms-pill").forEach(function (b) {
         b.setAttribute("aria-pressed", b === pill ? "true" : "false");
       });
     });
@@ -479,10 +641,11 @@
     return root.querySelector("#" + groupId + ' .ms-pill[aria-pressed="true"]').dataset.value;
   }
 
-  function showError(message) {
-    errorBox.textContent = message;
+  function showError(msg, fields) {
+    errorBox.textContent = msg;
     errorBox.classList.add("ms-show");
     resultsBox.classList.remove("ms-show");
+    (fields || []).forEach(function (f) { f.classList.add("ms-invalid"); });
   }
 
   function clearError() {
@@ -491,15 +654,13 @@
     weightInput.classList.remove("ms-invalid");
   }
 
-  function validate(height, weight) {
+  function validate(h, w) {
     var L = CONFIG.limits;
-    if (!height && !weight) return { ok: false, message: "المرجو إدخال الطول والوزن أولاً.", fields: [heightInput, weightInput] };
-    if (!height || height < L.heightMin || height > L.heightMax) {
-      return { ok: false, message: "المرجو إدخال طول صحيح بين " + L.heightMin + " و " + L.heightMax + " سم.", fields: [heightInput] };
-    }
-    if (!weight || weight < L.weightMin || weight > L.weightMax) {
-      return { ok: false, message: "المرجو إدخال وزن صحيح بين " + L.weightMin + " و " + L.weightMax + " كلغ.", fields: [weightInput] };
-    }
+    if (!h && !w) return { ok: false, msg: "المرجو إدخال الطول والوزن.", fields: [heightInput, weightInput] };
+    if (!h || h < L.heightMin || h > L.heightMax)
+      return { ok: false, msg: "الطول يجب أن يكون بين " + L.heightMin + " و " + L.heightMax + " سم.", fields: [heightInput] };
+    if (!w || w < L.weightMin || w > L.weightMax)
+      return { ok: false, msg: "الوزن يجب أن يكون بين " + L.weightMin + " و " + L.weightMax + " كلغ.", fields: [weightInput] };
     return { ok: true };
   }
 
@@ -510,69 +671,73 @@
 
     var height = parseFloat(heightInput.value);
     var weight = parseFloat(weightInput.value);
+    var check  = validate(height, weight);
+    if (!check.ok) { showError(check.msg, check.fields); return; }
 
-    var check = validate(height, weight);
-    if (!check.ok) {
-      check.fields.forEach(function (f) { f.classList.add("ms-invalid"); });
-      showError(check.message);
-      return;
-    }
-
-    var fit = selectedPill("ms-fit");
+    var fit        = selectedPill("ms-fit");
     var lengthPref = selectedPill("ms-length");
-    var result = calculateDjellabaSize(height, weight, fit, lengthPref);
-    lastResult = result;
+    var r          = calculateDjellabaSize(height, weight, fit, lengthPref);
+    lastResult     = r;
 
-    root.querySelector("#ms-size").textContent = result.size;
-    root.querySelector("#ms-out-length").textContent = result.totalLength;
-    root.querySelector("#ms-out-rubu").textContent = result.rubu;
-    root.querySelector("#ms-out-shoulders").textContent = result.shoulders;
-    root.querySelector("#ms-out-sleeve").textContent = result.sleeve;
+    // Populate output cells
+    root.querySelector("#ms-size").textContent         = r.size;
+    root.querySelector("#ms-out-rubu").textContent     = r.rubu;
+    root.querySelector("#ms-out-shoulders").textContent = r.shoulders;
+    root.querySelector("#ms-out-length").textContent   = r.totalLength;
+    root.querySelector("#ms-out-sleeve").textContent   = r.sleeve;
+    root.querySelector("#ms-out-tarkiz").textContent   = r.armhole;
 
-    root.querySelector("#ms-note").innerHTML = result.needsConfirmation
-      ? "⚠️ <strong>مقاسك يحتاج تأكيداً من الخيّاط</strong> — المرجو التواصل معنا عبر واتساب قبل الطلب لضمان قَصّة مثالية."
-      : "هذه المقاسات تقديرية بدقة عالية — <strong>سنؤكد معك المقاس قبل الشحن</strong> لضمان ملاءمة مثالية.";
+    // Makhzania notice
+    root.querySelector("#ms-makhzani-badge").classList.toggle("ms-show", r.isMakhzania);
+
+    // Main note
+    root.querySelector("#ms-note").innerHTML = r.needsConfirmation
+      ? "⚠️ <strong>مقاسك يتطلب تأكيداً من المعلم</strong> — سنتصل بك قبل التفصيل لضمان قَصّة مثالية."
+      : "هذه المقاسات مبنية على جدول الخياطة المغربية الاحترافي — <strong>سنؤكد معك كل قياس قبل الشحن</strong>.";
 
     resultsBox.classList.add("ms-show");
     resultsBox.scrollIntoView({ behavior: "smooth", block: "nearest" });
   });
 
-  // Copy a WhatsApp-ready summary of the measurements
+  // WhatsApp-ready copy
   root.querySelector("#ms-copy").addEventListener("click", function () {
     if (!lastResult) return;
     var r = lastResult;
+    var fitLabels = { evase: "إيفازي", regular: "عادية", makhzania: "مخزنية" };
+    var fit = selectedPill("ms-fit");
     var text =
-      "📏 مقاسات الجلابة:\n" +
-      "• المقاس: " + r.size + "\n" +
+      "📏 مقاسات الجلابة (" + fitLabels[fit] + "):\n" +
+      "• المقاس الغربي: " + r.size + "\n" +
+      "• ربع الصدر (الربع): " + r.rubu + " سم\n" +
+      "• عرض الكتفين (الكتاف): " + r.shoulders + " سم\n" +
+      "• التركيز (تقويرة الإبط): " + r.armhole + " سم\n" +
       "• الطول الكلي: " + r.totalLength + " سم\n" +
-      "• ربع الصدر: " + r.rubu + " سم\n" +
-      "• عرض الكتفين: " + r.shoulders + " سم\n" +
       "• طول الكم: " + r.sleeve + " سم";
 
-    var button = this;
-    function done() {
-      button.textContent = "✓ تم النسخ";
-      setTimeout(function () { button.textContent = "📋 نسخ المقاسات (لإرسالها عبر واتساب)"; }, 2000);
+    var btn = this;
+    function onDone() {
+      btn.textContent = "✓ تم النسخ";
+      setTimeout(function () { btn.textContent = "📋 نسخ المقاسات (لإرسالها عبر واتساب)"; }, 2200);
     }
 
     if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(text).then(done);
+      navigator.clipboard.writeText(text).then(onDone);
     } else {
-      // Fallback for older in-app browsers (Instagram/Facebook webviews)
-      var textarea = document.createElement("textarea");
-      textarea.value = text;
-      document.body.appendChild(textarea);
-      textarea.select();
+      // Fallback for Instagram / Facebook in-app browsers
+      var ta = document.createElement("textarea");
+      ta.value = text;
+      document.body.appendChild(ta);
+      ta.select();
       document.execCommand("copy");
-      document.body.removeChild(textarea);
-      done();
+      document.body.removeChild(ta);
+      onDone();
     }
   });
 
-  // Pressing Enter in either input triggers the calculation
-  [heightInput, weightInput].forEach(function (input) {
-    input.addEventListener("keydown", function (event) {
-      if (event.key === "Enter") root.querySelector("#ms-calc").click();
+  // Enter key triggers calculation from either input
+  [heightInput, weightInput].forEach(function (inp) {
+    inp.addEventListener("keydown", function (e) {
+      if (e.key === "Enter") root.querySelector("#ms-calc").click();
     });
   });
 })();
