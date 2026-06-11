@@ -377,11 +377,13 @@
 
     // --- Chest circumference estimate (body, cm) from weight + height ---
     // chest = wCoef×weight + hCoef×height + base
-    // 70kg/175cm → 95 cm · 95kg/180cm → 106 cm · 120kg/180cm → 116 cm
-    chest: { wCoef: 0.4, hCoef: 0.2, base: 32 },
+    // Calibrated against the standard Moroccan djellaba cutting table:
+    //   S(26cm) M(27.5cm) L(29cm) XL(31cm) XXL(33cm)
+    chest: { wCoef: 0.5, hCoef: 0.2, base: 24 },
 
     // --- Quarter chest (ربع الصدر) = bodyChest/4 + ease for the chosen fit ---
-    rubuEase: { slim: 1.5, regular: 3, loose: 4.5 },
+    // Djellaba ease is generous vs western garments (traditional silhouette).
+    rubuEase: { slim: 4, regular: 5.5, loose: 7 },
 
     // --- Shoulders (عرض الكتفين) = hCoef×height + wCoef×weight + fit adj ---
     shoulders: {
