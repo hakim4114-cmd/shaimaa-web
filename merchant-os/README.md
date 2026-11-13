@@ -32,7 +32,8 @@ npm run build
 
 1. Create a Supabase project (region close to Morocco, e.g. `eu-west`).
 2. Apply `supabase/migrations/*.sql` in filename order — with the Supabase CLI (`supabase db push`) or by pasting each file into the SQL editor.
-3. Copy `.env.example` to `.env.local` and fill `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY`.
+3. Copy `.env.example` to `.env.local` and fill `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` (the publishable key).
+   In Supabase → Auth → URL Configuration, set the Site URL to the app's public URL and add `https://<your-domain>/**` to Redirect URLs, or confirmation links will not work.
 4. On Vercel, create a **new project** with *Root Directory* = `merchant-os`.
 
 Never put the service-role key in a `NEXT_PUBLIC_` variable.

@@ -1,5 +1,21 @@
 # Changelog
 
+## 0.2.0 — Phase 2.1: authentication and organizations (2026-11-14)
+
+### Added
+- Supabase Auth with email + password through server actions (`@supabase/ssr`), session refresh and route protection in `proxy.ts`.
+- Sign-in, sign-up, "check your email" (with resend) pages; `/auth/confirm` handles confirmation links (PKCE `code` and `token_hash`).
+- Onboarding: create a business (name + identifier) through `create_organization`; the creator becomes owner.
+- Active organization (cookie, validated against memberships), user menu with business switcher and sign-out.
+- Command centre shows the workspace status for signed-in users; still no metrics until orders exist.
+- Typed database client generated from the live schema (`lib/supabase/database.types.ts`, `scripts/supabase-types.sh`).
+- Validation with Zod (password 10–72 characters, normalized email, slug pattern identical to the database), open-redirect protection for `next`, failed submissions keep non-secret values.
+- Tests: auth schemas, redirect safety, error mapping, translation coverage for every auth error code.
+
+### Supabase project configuration
+- Minimum password length raised from 6 to 10; redirect allow list set to `http://localhost:3000/**`.
+- Custom email templates are not available on the free plan without custom SMTP, so confirmation is by link only.
+
 ## 0.1.0 — Phase 1: foundations (2026-11-13)
 
 ### Added

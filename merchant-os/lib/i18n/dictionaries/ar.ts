@@ -73,6 +73,75 @@ const ar: Dictionary = {
     returned: "مُرتجع",
     exchange_requested: "طلب استبدال"
   },
+  auth: {
+    signInTitle: "تسجيل الدخول",
+    signInSubtitle: "مرحبًا بعودتك إلى Merchant OS.",
+    signUpTitle: "إنشاء حسابك",
+    signUpSubtitle: "ابدأ إدارة متجرك في دقائق.",
+    email: "البريد الإلكتروني",
+    password: "كلمة المرور",
+    passwordHint: "10 أحرف على الأقل. استخدم كلمة مرور لا تستعملها في أي مكان آخر.",
+    signInButton: "دخول",
+    signUpButton: "إنشاء الحساب",
+    noAccount: "جديد على Merchant OS؟",
+    haveAccount: "لديك حساب بالفعل؟",
+    goSignUp: "أنشئ حسابًا",
+    goSignIn: "سجّل الدخول",
+    verifyTitle: "تحقق من بريدك",
+    verifySubtitle: "أرسلنا رابط تأكيد إلى {email}. افتحه في هذا المتصفح لتفعيل حسابك. تنتهي صلاحية الرابط خلال ساعة.",
+    resend: "إعادة إرسال الرابط",
+    resent: "تم إرسال رابط جديد.",
+    linkFailed: "رابط التأكيد غير صالح أو منتهي الصلاحية. سجّل الدخول للحصول على رابط جديد.",
+    signOut: "تسجيل الخروج",
+    errors: {
+      EMAIL_INVALID: "أدخل بريدًا إلكترونيًا صحيحًا.",
+      PASSWORD_REQUIRED: "أدخل كلمة المرور.",
+      PASSWORD_TOO_SHORT: "استخدم 10 أحرف على الأقل.",
+      PASSWORD_TOO_LONG: "استخدم 72 حرفًا على الأكثر.",
+      INVALID_CREDENTIALS: "البريد الإلكتروني أو كلمة المرور غير صحيحة.",
+      EMAIL_NOT_CONFIRMED: "أكّد بريدك الإلكتروني أولًا.",
+      EMAIL_NOT_ALLOWED: "لا يمكن لهذا العنوان استقبال رسائل المشروع بعد. اطلب من المسؤول إعداد إرسال البريد.",
+      WEAK_PASSWORD: "كلمة المرور ضعيفة أو ظهرت في تسريب بيانات. اختر غيرها.",
+      RATE_LIMITED: "محاولات كثيرة. انتظر بضع دقائق ثم أعد المحاولة.",
+      NAME_REQUIRED: "أدخل اسمًا.",
+      NAME_TOO_LONG: "استخدم 120 حرفًا على الأكثر.",
+      SLUG_INVALID: "استخدم من 3 إلى 48 حرفًا لاتينيًا صغيرًا أو أرقامًا أو شرطات.",
+      SLUG_TAKEN: "هذا المعرّف مستخدم بالفعل.",
+      NOT_CONFIGURED: "الاتصال بقاعدة البيانات غير مُعدّ.",
+      UNKNOWN: "حدث خطأ. أعد المحاولة."
+    }
+  },
+  onboarding: {
+    title: "أنشئ نشاطك التجاري",
+    subtitle: "تضم مؤسستك منتجاتك وطلباتك وعملاءك وفريقك. يمكنك دعوة أشخاص لاحقًا.",
+    name: "اسم النشاط",
+    namePlaceholder: "Maison Shaimaa",
+    slug: "المعرّف",
+    slugHint: "أحرف لاتينية صغيرة وأرقام وشرطات. يُستخدم داخليًا وفي الروابط.",
+    submit: "إنشاء النشاط",
+    currencyNote: "العملة: الدرهم المغربي (MAD). المنطقة الزمنية: Africa/Casablanca."
+  },
+  userMenu: {
+    account: "الحساب",
+    organizations: "الأنشطة التجارية",
+    role: {
+      owner: "المالك",
+      admin: "مدير",
+      operator: "مشغّل",
+      warehouse: "المستودع",
+      finance: "المالية",
+      viewer: "قراءة فقط"
+    }
+  },
+  workspace: {
+    readyTitle: "مساحة عملك جاهزة",
+    readyDescription: "أنت مسجّل في {organization} بصفة {role}. تصل الوحدات تباعًا، وستعرض هذه الصفحة أرقامًا حقيقية فور وجود طلبات.",
+    stepDatabase: "قاعدة البيانات متصلة",
+    stepOrganization: "تم إنشاء النشاط",
+    stepCatalog: "أضف المنتجات والمخزون",
+    stepOrders: "سجّل أول طلباتك",
+    upcoming: "التالي"
+  },
   common: {
     cancel: "إلغاء",
     confirm: "تأكيد",

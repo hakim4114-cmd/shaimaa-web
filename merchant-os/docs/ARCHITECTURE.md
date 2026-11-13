@@ -37,6 +37,14 @@ Business invariants live in the database, not in the UI or API code, so every cl
 - **Keys:** the browser only ever has the anon key; it is useless without a user session because of RLS. The service-role key is server-only and not used in Phase 1.
 - **Headers:** `X-Frame-Options: DENY`, `nosniff`, strict referrer policy, restrictive permissions policy, no `X-Powered-By`.
 
+## Authentication
+
+- Supabase Auth, email + password. All auth calls run in server actions (`app/(auth)/actions.ts`) with Zod validation; the browser never talks to Supabase Auth directly.
+- `proxy.ts` refreshes the session cookie on every request (`auth.getUser()`, which validates the token with Supabase) and redirects signed-out visitors to `/sign-in`. It is routing only; data access is still decided by RLS.
+- Email confirmation: the Supabase email links to `/auth/confirm` on the origin that served the sign-up (or `NEXT_PUBLIC_SITE_URL`). With the PKCE flow the link must be opened in the same browser. Every deployment origin must be on the project's Redirect URLs allow list.
+- `lib/auth/session.ts` loads the user and memberships once per request; the active organization is the `mos-org` cookie if it matches a membership, otherwise the first one. Pages under `(app)` require a session and an organization (otherwise `/onboarding`).
+- Rate limiting: Supabase Auth's built-in limits apply. Because calls come from the app server, they are counted per server IP; revisit (CAPTCHA or browser-side auth calls) if sign-ups become public at scale.
+
 ## Frontend
 
 ```

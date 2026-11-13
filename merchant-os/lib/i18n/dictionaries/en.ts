@@ -71,6 +71,75 @@ const en = {
     returned: "Returned",
     exchange_requested: "Exchange requested"
   },
+  auth: {
+    signInTitle: "Sign in",
+    signInSubtitle: "Welcome back to Merchant OS.",
+    signUpTitle: "Create your account",
+    signUpSubtitle: "Start managing your store in a few minutes.",
+    email: "Email",
+    password: "Password",
+    passwordHint: "At least 10 characters. Use a password you don't use anywhere else.",
+    signInButton: "Sign in",
+    signUpButton: "Create account",
+    noAccount: "New to Merchant OS?",
+    haveAccount: "Already have an account?",
+    goSignUp: "Create an account",
+    goSignIn: "Sign in",
+    verifyTitle: "Check your email",
+    verifySubtitle: "We sent a confirmation link to {email}. Open it in this browser to activate your account. The link expires in one hour.",
+    resend: "Send the link again",
+    resent: "A new link is on its way.",
+    linkFailed: "That confirmation link is invalid or expired. Sign in to get a new one.",
+    signOut: "Sign out",
+    errors: {
+      EMAIL_INVALID: "Enter a valid email address.",
+      PASSWORD_REQUIRED: "Enter your password.",
+      PASSWORD_TOO_SHORT: "Use at least 10 characters.",
+      PASSWORD_TOO_LONG: "Use at most 72 characters.",
+      INVALID_CREDENTIALS: "Email or password is incorrect.",
+      EMAIL_NOT_CONFIRMED: "Confirm your email first.",
+      EMAIL_NOT_ALLOWED: "This email address can't receive emails from the project yet. Ask the administrator to configure email sending.",
+      WEAK_PASSWORD: "This password is too weak or has appeared in a data breach. Choose another one.",
+      RATE_LIMITED: "Too many attempts. Wait a few minutes and try again.",
+      NAME_REQUIRED: "Enter a name.",
+      NAME_TOO_LONG: "Use at most 120 characters.",
+      SLUG_INVALID: "Use 3–48 lowercase Latin letters, digits or hyphens.",
+      SLUG_TAKEN: "This identifier is already taken.",
+      NOT_CONFIGURED: "The database connection is not configured.",
+      UNKNOWN: "Something went wrong. Try again."
+    }
+  },
+  onboarding: {
+    title: "Create your business",
+    subtitle: "Your organization holds your products, orders, customers and team. You can invite people later.",
+    name: "Business name",
+    namePlaceholder: "Maison Shaimaa",
+    slug: "Identifier",
+    slugHint: "Lowercase Latin letters, digits and hyphens. Used internally and in links.",
+    submit: "Create business",
+    currencyNote: "Currency: Moroccan dirham (MAD). Timezone: Africa/Casablanca."
+  },
+  userMenu: {
+    account: "Account",
+    organizations: "Businesses",
+    role: {
+      owner: "Owner",
+      admin: "Admin",
+      operator: "Operator",
+      warehouse: "Warehouse",
+      finance: "Finance",
+      viewer: "Viewer"
+    }
+  },
+  workspace: {
+    readyTitle: "Your workspace is ready",
+    readyDescription: "Signed in to {organization} as {role}. Modules arrive one by one; this page shows real figures as soon as orders exist.",
+    stepDatabase: "Database connected",
+    stepOrganization: "Business created",
+    stepCatalog: "Add products and stock",
+    stepOrders: "Record your first orders",
+    upcoming: "Next"
+  },
   common: {
     cancel: "Cancel",
     confirm: "Confirm",

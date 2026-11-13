@@ -13,7 +13,7 @@ Not in Phase 1: authentication screens, module pages, data access from the app.
 ## Phase 2 — MVP
 In order, each step shippable:
 
-1. **Auth & organizations** — Supabase Auth (email + password, magic link optional), `@supabase/ssr` session handling in `proxy.ts`, sign-in/up pages, create organization onboarding, members & invitations (owner), rate-limited auth endpoints.
+1. **Auth & organizations** — ✅ sign-in/up, email confirmation by link, onboarding, active organization, user menu (0.2.0). Remaining: members & invitations (needs a server-only Supabase secret key), password reset. Original scope: Supabase Auth (email + password, magic link optional), `@supabase/ssr` session handling in `proxy.ts`, sign-in/up pages, create organization onboarding, members & invitations (owner), rate-limited auth endpoints.
 2. **Data layer** — typed server-side queries, Zod schemas for every mutation, mapping of database error codes to translated messages, generated database types.
 3. **Products & variants** — list, create/edit, archive, images in a private Storage bucket with signed URLs, size/type validation.
 4. **Inventory** — stock overview, receive/adjust/damage/write-off forms, movement history per variant, low-stock list, valuation.

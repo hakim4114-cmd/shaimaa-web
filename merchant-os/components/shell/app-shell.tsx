@@ -14,13 +14,16 @@ import { CommandMenu } from "./command-menu";
 import { NotificationsMenu } from "./notifications-menu";
 import { PreferencesMenu } from "./preferences-menu";
 import { SidebarNav } from "./sidebar-nav";
+import { UserMenu, type ShellAccount } from "./user-menu";
 
 export function AppShell({
   showDevTools,
   initialCollapsed,
+  account,
   children
 }: {
   showDevTools: boolean;
+  account: ShellAccount | null;
   initialCollapsed: boolean;
   children: ReactNode;
 }) {
@@ -99,6 +102,7 @@ export function AppShell({
           <div className="ms-auto flex items-center gap-1">
             <NotificationsMenu />
             <PreferencesMenu />
+            {account ? <UserMenu account={account} /> : null}
           </div>
         </header>
         <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-6 sm:px-6 lg:py-8">{children}</main>

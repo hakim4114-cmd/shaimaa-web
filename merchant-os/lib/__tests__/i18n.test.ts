@@ -36,3 +36,14 @@ describe("dictionaries", () => {
     expect(interpolate("{missing}", {})).toBe("{missing}");
   });
 });
+
+describe("auth error messages", () => {
+  it("exist for every internal auth error code", async () => {
+    const { authErrorCodes } = await import("@/lib/auth/errors");
+    for (const locale of locales) {
+      for (const code of authErrorCodes) {
+        expect(getDictionary(locale).auth.errors[code], `${locale}.${code}`).toBeTruthy();
+      }
+    }
+  });
+});
