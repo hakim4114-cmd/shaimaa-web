@@ -1,0 +1,111 @@
+const en = {
+  app: {
+    name: "Merchant OS",
+    tagline: "Operations for COD commerce"
+  },
+  nav: {
+    groups: { operations: "Operations", catalog: "Catalog", money: "Money", growth: "Growth", system: "System" },
+    commandCenter: "Command center",
+    orders: "Orders",
+    shipping: "Shipping",
+    returns: "Returns",
+    customers: "Customers",
+    support: "Support inbox",
+    products: "Products",
+    inventory: "Inventory",
+    production: "Production",
+    finance: "Finance",
+    cod: "COD collections",
+    marketing: "Marketing",
+    assistant: "AI assistant",
+    settings: "Settings",
+    designSystem: "Design system",
+    comingInPhase: "Phase {phase}",
+    collapse: "Collapse sidebar",
+    expand: "Expand sidebar",
+    openMenu: "Open menu",
+    closeMenu: "Close menu"
+  },
+  topbar: {
+    search: "Search…",
+    searchShortcut: "Ctrl K",
+    searchPlaceholder: "Search pages and actions",
+    searchEmpty: "No results.",
+    searchAvailable: "Pages",
+    searchSoon: "Not built yet",
+    notifications: "Notifications",
+    notificationsEmpty: "You're all caught up",
+    notificationsEmptyHint: "Stock alerts, delayed orders and COD reminders will appear here.",
+    preferences: "Preferences",
+    theme: "Theme",
+    themeLight: "Light",
+    themeDark: "Dark",
+    themeSystem: "System",
+    language: "Language"
+  },
+  commandCenter: {
+    title: "Command center",
+    description: "Your business at a glance, computed from real orders, stock and collections.",
+    setupTitle: "Connect your database to start",
+    setupDescription:
+      "Merchant OS never shows sample numbers. Metrics appear here once your Supabase project is connected and orders are recorded.",
+    stepProject: "Create a Supabase project",
+    stepMigrations: "Apply the migrations in supabase/migrations",
+    stepEnv: "Set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY",
+    configured: "Configured",
+    notConfigured: "Not configured",
+    manualStep: "Manual step",
+    nextTitle: "What comes next",
+    nextDescription: "Phase 2 adds sign-in, products, inventory, orders, shipping, returns and COD reporting on this database."
+  },
+  orderStatus: {
+    new: "New",
+    confirmation_pending: "Confirmation pending",
+    confirmed: "Confirmed",
+    preparing: "Preparing",
+    ready_to_ship: "Ready to ship",
+    shipped: "Shipped",
+    delivered: "Delivered",
+    cancelled: "Cancelled",
+    refused: "Refused",
+    returned: "Returned",
+    exchange_requested: "Exchange requested"
+  },
+  common: {
+    cancel: "Cancel",
+    confirm: "Confirm",
+    save: "Save",
+    delete: "Delete",
+    close: "Close",
+    loading: "Loading…",
+    required: "Required",
+    optional: "Optional"
+  },
+  designSystem: {
+    title: "Design system",
+    description: "Reference for the shared components. Visible in development only.",
+    buttons: "Buttons",
+    inputs: "Form controls",
+    badges: "Order status badges",
+    metrics: "Metric tiles",
+    table: "Table",
+    feedback: "Feedback",
+    emptyState: "Empty state",
+    skeleton: "Loading skeleton",
+    sampleLabel: "Example values below are illustrative and labelled as such.",
+    toastButton: "Show toast",
+    toastMessage: "Saved",
+    dialogButton: "Delete item",
+    dialogTitle: "Delete this item?",
+    dialogDescription: "This cannot be undone.",
+    deleted: "Item deleted",
+    fieldName: "Product name",
+    fieldPrice: "Price (MAD)",
+    fieldNotes: "Internal notes",
+    fieldCity: "City",
+    hintPrice: "Use a dot or comma for decimals, no thousands separators."
+  }
+};
+
+export type Dictionary = typeof en;
+export default en;
