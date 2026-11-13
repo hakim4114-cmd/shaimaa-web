@@ -37,6 +37,5 @@ Read-only tool layer over reporting functions, daily summary, anomaly explanatio
 Suppliers, purchase orders, production orders and artisan payments, quality control, multi-location transfers, advanced marketing analytics, SaaS capabilities (plans/billing) if needed.
 
 ## Known risks
-- Schema verified on PostgreSQL 16 with a Supabase stub, not yet on a live Supabase project.
 - Reporting formulas are specified but not implemented; they need fixture-based tests before any dashboard uses them.
 - Carrier API availability in Morocco is unverified per provider; manual and CSV flows must be good enough on their own.

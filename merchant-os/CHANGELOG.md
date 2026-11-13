@@ -18,5 +18,8 @@
 - Unit tests for money parsing/formatting, Moroccan phone normalization, dictionary completeness, and a guard that keeps the UI order workflow identical to the database transition table.
 - CI job for `merchant-os` (lint, typecheck, unit tests, database tests, build).
 
+### Deployed
+- Migrations applied to the Merchant OS Supabase project (PostgreSQL 17.11) and verified with `supabase/tests/live_smoke.sql` (12/12, rolled back). Added `scripts/supabase-sql.sh` to run SQL through the Management API.
+
 ### Changed (storefront, tooling only)
 - Root `eslint.config.mjs`, `tsconfig.json` and new `vitest.config.mjs` exclude `merchant-os/`. No storefront source file changed.

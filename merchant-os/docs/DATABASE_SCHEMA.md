@@ -103,4 +103,12 @@ Internal helpers in the private `app` schema (`move_stock`, `apply_order_transit
 - `supabase/tests/10_core.test.sql` — tenancy isolation, RLS per role, catalog constraints, inventory operations, order creation and pricing, every workflow path, COD reconciliation, returns inspection, immutability, ledger-equals-levels invariant, tenant deletion;
 - `supabase/tests/concurrency.sh` — 8 parallel sessions confirm 8 orders competing for 1 unit; exactly one must succeed.
 
-Not yet verified against a live Supabase project (none was available during Phase 1).
+### Live project
+
+The migrations are applied to the Merchant OS Supabase project (PostgreSQL 17.11, `eu-west-2`) and recorded in `supabase_migrations.schema_migrations`, so `supabase db push` will not re-apply them. Verified there: 25 tables all with RLS, 49 policies, no privileges for `anon` on any table or function, and `supabase/tests/live_smoke.sql` (12 checks with real `auth.uid()`, rolled back so it leaves no data):
+
+```bash
+SUPABASE_ACCESS_TOKEN=sbp_… scripts/supabase-sql.sh <project-ref> supabase/tests/live_smoke.sql
+```
+
+New migrations: apply with `supabase db push` (Supabase CLI linked to the project) or `scripts/supabase-sql.sh`, then run the live smoke test.
