@@ -57,3 +57,7 @@ Order tracking (`/track-order` → `POST /api/track-order`) proxies server-side 
 ### Planned migration
 
 `docs/wassilni-integration.md` defines the target state: Wassilni/Base44 becomes the system of record (products, orders, tracking, settings) and `lib/integrations/wassilni.js` already exposes `getProducts`/`getStoreSettings`/`trackOrder` stubs that return local fallbacks. Do not promote Wassilni to primary or remove the Google Sheets flow without explicit instruction. `docs/launch-checklist.md` lists the pre-deploy checks (lint + build + manual page pass).
+
+## Merchant OS (`merchant-os/`)
+
+A separate product (e-commerce operations platform) that shares this repository but nothing else: own `package.json`, TypeScript (strict, `.tsx`), Tailwind 4, its own Supabase project, its own Vercel project (Root Directory `merchant-os`). Root lint/typecheck/vitest ignore it; run its commands from `merchant-os/` (`npm run lint|typecheck|test|build`, `npm run db:test` for migrations + SQL tests against a local PostgreSQL). Business rules live in PostgreSQL (`merchant-os/supabase/migrations`); read `merchant-os/docs/BUSINESS_RULES.md` and `ARCHITECTURE.md` before changing workflows, stock or money logic. The storefront conventions above (JS-only, storefront palette) do not apply there.

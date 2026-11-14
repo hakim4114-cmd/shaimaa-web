@@ -1,0 +1,182 @@
+import type { Dictionary } from "./en";
+
+const fr: Dictionary = {
+  app: {
+    name: "Merchant OS",
+    tagline: "Opérations e-commerce en paiement à la livraison"
+  },
+  nav: {
+    groups: { operations: "Opérations", catalog: "Catalogue", money: "Finances", growth: "Croissance", system: "Système" },
+    commandCenter: "Tableau de bord",
+    orders: "Commandes",
+    shipping: "Expéditions",
+    returns: "Retours",
+    customers: "Clients",
+    support: "Service client",
+    products: "Produits",
+    inventory: "Stock",
+    production: "Production",
+    finance: "Finance",
+    cod: "Encaissements",
+    marketing: "Marketing",
+    assistant: "Assistant IA",
+    settings: "Paramètres",
+    designSystem: "Design system",
+    comingInPhase: "Phase {phase}",
+    collapse: "Réduire la barre latérale",
+    expand: "Agrandir la barre latérale",
+    openMenu: "Ouvrir le menu",
+    closeMenu: "Fermer le menu"
+  },
+  topbar: {
+    search: "Rechercher…",
+    searchShortcut: "Ctrl K",
+    searchPlaceholder: "Rechercher des pages et actions",
+    searchEmpty: "Aucun résultat.",
+    searchAvailable: "Pages",
+    searchSoon: "Pas encore disponible",
+    notifications: "Notifications",
+    notificationsEmpty: "Rien de nouveau",
+    notificationsEmptyHint: "Les alertes de stock, retards de commande et rappels COD apparaîtront ici.",
+    preferences: "Préférences",
+    theme: "Thème",
+    themeLight: "Clair",
+    themeDark: "Sombre",
+    themeSystem: "Système",
+    language: "Langue"
+  },
+  commandCenter: {
+    title: "Tableau de bord",
+    description: "Votre activité en un coup d'œil, calculée à partir des vraies commandes, du stock et des encaissements.",
+    setupTitle: "Connectez votre base de données pour commencer",
+    setupDescription:
+      "Merchant OS n'affiche jamais de chiffres fictifs. Les indicateurs apparaîtront une fois votre projet Supabase connecté et vos commandes enregistrées.",
+    stepProject: "Créer un projet Supabase",
+    stepMigrations: "Appliquer les migrations de supabase/migrations",
+    stepEnv: "Définir NEXT_PUBLIC_SUPABASE_URL et NEXT_PUBLIC_SUPABASE_ANON_KEY",
+    configured: "Configuré",
+    notConfigured: "Non configuré",
+    manualStep: "Étape manuelle",
+    nextTitle: "Prochaine étape",
+    nextDescription:
+      "La phase 2 ajoute la connexion, les produits, le stock, les commandes, les expéditions, les retours et le suivi COD sur cette base."
+  },
+  orderStatus: {
+    new: "Nouvelle",
+    confirmation_pending: "À confirmer",
+    confirmed: "Confirmée",
+    preparing: "En préparation",
+    ready_to_ship: "Prête à expédier",
+    shipped: "Expédiée",
+    delivered: "Livrée",
+    cancelled: "Annulée",
+    refused: "Refusée",
+    returned: "Retournée",
+    exchange_requested: "Échange demandé"
+  },
+  auth: {
+    signInTitle: "Connexion",
+    signInSubtitle: "Bon retour sur Merchant OS.",
+    signUpTitle: "Créer votre compte",
+    signUpSubtitle: "Commencez à gérer votre boutique en quelques minutes.",
+    email: "E-mail",
+    password: "Mot de passe",
+    passwordHint: "Au moins 10 caractères. Utilisez un mot de passe que vous n'utilisez nulle part ailleurs.",
+    signInButton: "Se connecter",
+    signUpButton: "Créer le compte",
+    noAccount: "Nouveau sur Merchant OS ?",
+    haveAccount: "Vous avez déjà un compte ?",
+    goSignUp: "Créer un compte",
+    goSignIn: "Se connecter",
+    verifyTitle: "Vérifiez votre e-mail",
+    verifySubtitle: "Nous avons envoyé un lien de confirmation à {email}. Ouvrez-le dans ce navigateur pour activer votre compte. Le lien expire dans une heure.",
+    resend: "Renvoyer le lien",
+    resent: "Un nouveau lien est en route.",
+    linkFailed: "Ce lien de confirmation est invalide ou expiré. Connectez-vous pour en recevoir un nouveau.",
+    signOut: "Se déconnecter",
+    errors: {
+      EMAIL_INVALID: "Saisissez une adresse e-mail valide.",
+      PASSWORD_REQUIRED: "Saisissez votre mot de passe.",
+      PASSWORD_TOO_SHORT: "Utilisez au moins 10 caractères.",
+      PASSWORD_TOO_LONG: "Utilisez au maximum 72 caractères.",
+      INVALID_CREDENTIALS: "E-mail ou mot de passe incorrect.",
+      EMAIL_NOT_CONFIRMED: "Confirmez d'abord votre e-mail.",
+      EMAIL_NOT_ALLOWED: "Cette adresse ne peut pas encore recevoir d'e-mails du projet. Demandez à l'administrateur de configurer l'envoi d'e-mails.",
+      WEAK_PASSWORD: "Ce mot de passe est trop faible ou a fuité lors d'une violation de données. Choisissez-en un autre.",
+      RATE_LIMITED: "Trop de tentatives. Patientez quelques minutes puis réessayez.",
+      NAME_REQUIRED: "Saisissez un nom.",
+      NAME_TOO_LONG: "Utilisez au maximum 120 caractères.",
+      SLUG_INVALID: "Utilisez 3 à 48 lettres latines minuscules, chiffres ou tirets.",
+      SLUG_TAKEN: "Cet identifiant est déjà utilisé.",
+      NOT_CONFIGURED: "La connexion à la base de données n'est pas configurée.",
+      UNKNOWN: "Une erreur est survenue. Réessayez."
+    }
+  },
+  onboarding: {
+    title: "Créer votre entreprise",
+    subtitle: "Votre organisation regroupe vos produits, commandes, clients et équipe. Vous pourrez inviter des personnes plus tard.",
+    name: "Nom de l'entreprise",
+    namePlaceholder: "Maison Shaimaa",
+    slug: "Identifiant",
+    slugHint: "Lettres latines minuscules, chiffres et tirets. Utilisé en interne et dans les liens.",
+    submit: "Créer l'entreprise",
+    currencyNote: "Devise : dirham marocain (MAD). Fuseau horaire : Africa/Casablanca."
+  },
+  userMenu: {
+    account: "Compte",
+    organizations: "Entreprises",
+    role: {
+      owner: "Propriétaire",
+      admin: "Administrateur",
+      operator: "Opérateur",
+      warehouse: "Entrepôt",
+      finance: "Finance",
+      viewer: "Lecture seule"
+    }
+  },
+  workspace: {
+    readyTitle: "Votre espace est prêt",
+    readyDescription: "Connecté à {organization} en tant que {role}. Les modules arrivent un par un ; cette page affichera de vrais chiffres dès qu'il y aura des commandes.",
+    stepDatabase: "Base de données connectée",
+    stepOrganization: "Entreprise créée",
+    stepCatalog: "Ajouter des produits et du stock",
+    stepOrders: "Enregistrer vos premières commandes",
+    upcoming: "À venir"
+  },
+  common: {
+    cancel: "Annuler",
+    confirm: "Confirmer",
+    save: "Enregistrer",
+    delete: "Supprimer",
+    close: "Fermer",
+    loading: "Chargement…",
+    required: "Obligatoire",
+    optional: "Facultatif"
+  },
+  designSystem: {
+    title: "Design system",
+    description: "Référence des composants partagés. Visible en développement uniquement.",
+    buttons: "Boutons",
+    inputs: "Champs de formulaire",
+    badges: "Statuts de commande",
+    metrics: "Indicateurs",
+    table: "Tableau",
+    feedback: "Retours visuels",
+    emptyState: "État vide",
+    skeleton: "Squelette de chargement",
+    sampleLabel: "Les valeurs ci-dessous sont des exemples et sont indiquées comme telles.",
+    toastButton: "Afficher une notification",
+    toastMessage: "Enregistré",
+    dialogButton: "Supprimer l'élément",
+    dialogTitle: "Supprimer cet élément ?",
+    dialogDescription: "Cette action est irréversible.",
+    deleted: "Élément supprimé",
+    fieldName: "Nom du produit",
+    fieldPrice: "Prix (MAD)",
+    fieldNotes: "Notes internes",
+    fieldCity: "Ville",
+    hintPrice: "Utilisez un point ou une virgule pour les décimales, sans séparateur de milliers."
+  }
+};
+
+export default fr;
