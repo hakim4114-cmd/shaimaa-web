@@ -38,6 +38,15 @@ npm run build
 
 Never put the service-role key in a `NEXT_PUBLIC_` variable.
 
+## Install on a phone, tablet or computer
+
+Open the app's address, then:
+- **iPhone / iPad (Safari):** Share → *Add to Home Screen*.
+- **Android (Chrome):** menu ⋮ → *Install app* (or *Add to Home screen*).
+- **Computer (Chrome / Edge):** the install icon in the address bar, or menu → *Install Merchant OS*.
+
+It opens full screen with its own icon. An internet connection is required.
+
 ## Documentation
 
 | Document | Contents |

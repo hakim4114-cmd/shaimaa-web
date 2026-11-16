@@ -2,10 +2,7 @@ import {
   Banknote,
   Boxes,
   ChartColumn,
-  Factory,
-  Inbox,
   LayoutDashboard,
-  Megaphone,
   Package,
   Palette,
   Settings,
@@ -32,44 +29,41 @@ export type NavItem = {
 
 export type NavGroup = { key: keyof Dictionary["nav"]["groups"]; items: NavItem[] };
 
+// `phase` = the roadmap step that delivers the module (IMPLEMENTATION_ROADMAP.md).
+// Deferred modules (production, marketing, support inbox) are not listed.
 export const navigation: NavGroup[] = [
   {
     key: "operations",
     items: [
       { key: "commandCenter", icon: LayoutDashboard, href: "/" },
-      { key: "orders", icon: Package, phase: 2 },
-      { key: "shipping", icon: Truck, phase: 2 },
-      { key: "returns", icon: Undo2, phase: 2 },
-      { key: "customers", icon: Users, phase: 2 },
-      { key: "support", icon: Inbox, phase: 3 }
+      { key: "orders", icon: Package, phase: 3 },
+      { key: "customers", icon: Users, phase: 3 },
+      { key: "shipping", icon: Truck, phase: 5 },
+      { key: "returns", icon: Undo2, phase: 5 }
     ]
   },
   {
     key: "catalog",
     items: [
       { key: "products", icon: Boxes, phase: 2 },
-      { key: "inventory", icon: ChartColumn, phase: 2 },
-      { key: "production", icon: Factory, phase: 5 }
+      { key: "inventory", icon: ChartColumn, phase: 2 }
     ]
   },
   {
     key: "money",
     items: [
-      { key: "finance", icon: Wallet, phase: 2 },
-      { key: "cod", icon: Banknote, phase: 2 }
+      { key: "cod", icon: Banknote, phase: 5 },
+      { key: "finance", icon: Wallet, phase: 5 }
     ]
   },
   {
     key: "growth",
-    items: [
-      { key: "marketing", icon: Megaphone, phase: 3 },
-      { key: "assistant", icon: Sparkles, phase: 4 }
-    ]
+    items: [{ key: "assistant", icon: Sparkles, phase: 7 }]
   },
   {
     key: "system",
     items: [
-      { key: "settings", icon: Settings, phase: 2 },
+      { key: "settings", icon: Settings, phase: 3 },
       { key: "designSystem", icon: Palette, href: "/design-system", devOnly: true }
     ]
   }

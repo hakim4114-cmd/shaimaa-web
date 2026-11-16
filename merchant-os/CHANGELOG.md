@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.3.1 — Phones, tablets and computers (2026-11-16)
+
+### Added
+- Installable app (PWA): web app manifest, app icons (favicon, Apple touch icon, 192/512 and maskable), Apple web-app metadata. "Add to Home Screen" on iPhone/iPad, "Install app" on Android and desktop Chrome/Edge. No offline mode: data is always live.
+- Touch-screen sizing (`pointer: coarse`): inputs at 16 px (stops iPhone/iPad zooming on focus) and 44 px tall; buttons, menu items and navigation at 40–44 px. Mouse screens keep the compact sizes.
+- Safe-area padding for notched phones and tablets when installed.
+
+### Changed
+- Navigation follows the revised roadmap steps; deferred modules (production, marketing, support inbox) removed from the menu.
+
+### Verified
+- iPhone 13, iPhone SE, Pixel 7, iPad portrait and landscape, Galaxy Tab S4, 1024 px laptop and 1440 px desktop: no horizontal scrolling, touch targets ≥ 40 px and 16 px inputs on every touch device.
+
 ## 0.3.0 — Revised plan and order essentials (2026-11-16)
 
 ### Changed

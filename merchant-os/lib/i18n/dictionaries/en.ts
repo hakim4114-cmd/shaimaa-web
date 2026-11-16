@@ -20,7 +20,7 @@ const en = {
     assistant: "AI assistant",
     settings: "Settings",
     designSystem: "Design system",
-    comingInPhase: "Phase {phase}",
+    comingInPhase: "Step {phase}",
     collapse: "Collapse sidebar",
     expand: "Expand sidebar",
     openMenu: "Open menu",

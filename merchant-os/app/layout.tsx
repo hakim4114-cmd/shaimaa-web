@@ -19,11 +19,18 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: { default: t.app.name, template: `%s · ${t.app.name}` },
     description: t.app.tagline,
-    robots: { index: false, follow: false }
+    applicationName: t.app.name,
+    robots: { index: false, follow: false },
+    appleWebApp: { capable: true, title: t.app.name, statusBarStyle: "default" },
+    formatDetection: { telephone: false }
   };
 }
 
 export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  // Content may extend under notches/home indicators; padding below keeps it clear.
+  viewportFit: "cover",
   themeColor: [
     { media: "(prefers-color-scheme: light)", color: "#f8f9fb" },
     { media: "(prefers-color-scheme: dark)", color: "#16181d" }

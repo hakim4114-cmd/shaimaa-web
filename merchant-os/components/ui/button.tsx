@@ -14,10 +14,10 @@ export const buttonVariants = cva(
         danger: "bg-danger text-white shadow-card hover:opacity-90"
       },
       size: {
-        sm: "h-8 px-3",
-        md: "h-9 px-4",
-        icon: "size-9",
-        "icon-sm": "size-8"
+        sm: "h-8 px-3 pointer-coarse:h-10",
+        md: "h-9 px-4 pointer-coarse:h-11",
+        icon: "size-9 pointer-coarse:size-11",
+        "icon-sm": "size-8 pointer-coarse:size-10"
       }
     },
     defaultVariants: { variant: "primary", size: "md" }

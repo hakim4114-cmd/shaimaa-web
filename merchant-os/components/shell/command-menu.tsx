@@ -98,7 +98,7 @@ export function CommandMenu({ groups, open, onOpenChange }: { groups: NavGroup[]
               }
             }}
             placeholder={t.topbar.searchPlaceholder}
-            className="h-12 w-full bg-transparent text-sm text-foreground outline-none placeholder:text-subtle-foreground"
+            className="h-12 w-full bg-transparent text-sm pointer-coarse:text-base text-foreground outline-none placeholder:text-subtle-foreground"
             aria-label={t.topbar.searchPlaceholder}
           />
           <Kbd>Esc</Kbd>
@@ -115,7 +115,7 @@ export function CommandMenu({ groups, open, onOpenChange }: { groups: NavGroup[]
               onMouseEnter={() => setActiveIndex(index)}
               onClick={() => go(entry)}
               className={cn(
-                "flex w-full items-center gap-3 rounded-md px-2 py-2 text-start text-sm text-foreground",
+                "flex w-full items-center gap-3 rounded-md px-2 py-2 pointer-coarse:py-3 text-start text-sm text-foreground",
                 index === safeIndex && "bg-surface-hover"
               )}
             >

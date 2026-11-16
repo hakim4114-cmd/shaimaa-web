@@ -29,7 +29,7 @@ export function SignInForm({ next, initialError }: { next: string; initialError?
       <Field label={t.auth.password} htmlFor="password" error={errorText(state?.fieldErrors?.password)}>
         <Input id="password" name="password" type="password" autoComplete="current-password" dir="ltr" required aria-invalid={Boolean(state?.fieldErrors?.password)} />
       </Field>
-      <Link href="/forgot-password" className="-mt-2 text-sm font-medium text-accent hover:underline">
+      <Link href="/forgot-password" className="-mt-2 self-start text-sm font-medium text-accent hover:underline pointer-coarse:-my-1 pointer-coarse:py-3">
         {t.auth.forgotLink}
       </Link>
       <Button type="submit" disabled={pending} className="mt-1 w-full">

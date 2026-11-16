@@ -38,7 +38,7 @@ export function SidebarNav({
             const phaseLabel = item.phase ? interpolate(t.nav.comingInPhase, { phase: item.phase }) : null;
             const active = item.href ? (item.href === "/" ? pathname === "/" : pathname.startsWith(item.href)) : false;
             const base = cn(
-              "group flex h-8 items-center gap-2.5 rounded-md px-2 text-sm transition-colors",
+              "group flex h-8 items-center gap-2.5 rounded-md px-2 text-sm transition-colors pointer-coarse:h-11",
               collapsed && "justify-center px-0"
             );
 

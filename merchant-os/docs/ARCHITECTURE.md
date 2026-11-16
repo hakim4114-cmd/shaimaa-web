@@ -89,6 +89,12 @@ The owner approved the design preview at https://claude.ai/artifact/MjJiLuyEYmdN
 
 Every figure on these screens comes from the database (BUSINESS_RULES.md formulas); a figure that cannot be computed shows its reason, never a placeholder number.
 
+### Devices and installation
+
+- One responsive app for phones, tablets and computers: the sidebar is fixed from 1024 px (tablet landscape, laptops); below that it opens as a drawer.
+- Sizes follow the input device, not the screen width: on touch screens (`pointer-coarse:` variant) inputs are 16 px text and 44 px tall, buttons and menu items 40–44 px; mouse screens stay compact.
+- Installable as an app (manifest in `app/manifest.ts`, icons generated in `app/icon.tsx`, `app/apple-icon.tsx`, `app/pwa-icon/[variant]`). The proxy lets these files through without a session, otherwise installation fails. There is deliberately no service worker or offline cache: business data must always be live.
+
 ### Theming
 
 `next-themes` toggles the `.dark` class (light / dark / system). The sidebar's collapsed state is a cookie so the server renders the right width.
