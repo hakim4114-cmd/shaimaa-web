@@ -21,7 +21,7 @@ Revised 2026-11-16 after a critical review with the owner: the plan had grown fa
 | Close public sign-up; revoke the shared management token | **owner** (Supabase dashboard) |
 | Rename the organization and the Vercel project | owner / later settings page |
 
-## Step 2 — Products and stock
+## Step 2 — Products and stock ✅ 0.4.0 (product images still to add)
 
 Products and variants (images in a private bucket), receive / adjust / damage, movement history, low-stock list, valuation. Built to the approved design (ARCHITECTURE.md → Approved screen direction).
 

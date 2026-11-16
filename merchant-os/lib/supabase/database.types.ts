@@ -1104,6 +1104,7 @@ export type Database = {
           id: string
           image_paths: string[]
           name: string
+          options: Json
           organization_id: string
           status: Database["public"]["Enums"]["product_status"]
           updated_at: string
@@ -1116,6 +1117,7 @@ export type Database = {
           id?: string
           image_paths?: string[]
           name: string
+          options?: Json
           organization_id: string
           status?: Database["public"]["Enums"]["product_status"]
           updated_at?: string
@@ -1128,6 +1130,7 @@ export type Database = {
           id?: string
           image_paths?: string[]
           name?: string
+          options?: Json
           organization_id?: string
           status?: Database["public"]["Enums"]["product_status"]
           updated_at?: string
@@ -1857,6 +1860,10 @@ export type Database = {
           isOneToOne: true
           isSetofReturn: false
         }
+      }
+      save_product: {
+        Args: { p_organization_id: string; p_payload: Json }
+        Returns: string
       }
       transition_order: {
         Args: {

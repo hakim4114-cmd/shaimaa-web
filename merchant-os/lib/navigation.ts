@@ -45,8 +45,8 @@ export const navigation: NavGroup[] = [
   {
     key: "catalog",
     items: [
-      { key: "products", icon: Boxes, phase: 2 },
-      { key: "inventory", icon: ChartColumn, phase: 2 }
+      { key: "products", icon: Boxes, href: "/products" },
+      { key: "inventory", icon: ChartColumn, href: "/inventory" }
     ]
   },
   {
