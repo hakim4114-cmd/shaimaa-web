@@ -7,6 +7,7 @@ Source of truth: `supabase/migrations/` (applied in filename order).
 | `20261113000100_core_schema.sql` | enums, tables, indexes, generic triggers, audit, tenant deletion |
 | `20261113000200_business_functions.sql` | transactional business operations (RPCs) |
 | `20261113000300_security.sql` | grants, Row Level Security policies, tenant/authorship guards |
+| `20261116000500_save_product.sql` | `products.options`, `save_product` (atomic product + variants) |
 | `20261116000400_order_workflow.sql` | cities reference, shipping rates, confirmation calls, blocklist, customer history, order editing, `create_order` v2 |
 
 ## Conventions

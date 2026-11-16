@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.4.0 — Products and stock (2026-11-16)
+
+### Added
+- **Products:** list with search and status filter; create/edit with generic options (up to 3, e.g. Size + Color, or Capacity) and generated variants (SKU suggestion, price, cost — empty when unknown — and low-stock threshold). Variants removed from a product are archived, never deleted. Categories created on the fly.
+- **Stock:** per-variant in stock / reserved / available / damaged / in inspection, value at cost (items without cost reported, not valued), low-stock filter, stock movements (receipt, count correction with required note, damaged, write-off) and an immutable movement history per variant.
+- Migration `20261116000500_save_product.sql` (applied live): `products.options` and `save_product(org, payload)` — product, category and variants saved in one transaction.
+- Data layer (`lib/data/`): active-organization context with role flags, database-error mapping to translated messages, typed catalog queries.
+- Tests: `30_products.test.sql` (save, edit, archive, errors, permissions), variant helper unit tests, translation coverage for data errors.
+
+### Not yet verified
+- The signed-in product and stock screens were not exercised in a browser (no test account available to the automated checks). Query shapes were validated against the live schema.
+
 ## 0.3.1 — Phones, tablets and computers (2026-11-16)
 
 ### Added

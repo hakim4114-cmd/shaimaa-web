@@ -47,3 +47,14 @@ describe("auth error messages", () => {
     }
   });
 });
+
+describe("data error messages", () => {
+  it("exist for every app error code", async () => {
+    const { appErrorCodes } = await import("@/lib/data/errors");
+    for (const locale of locales) {
+      for (const code of appErrorCodes) {
+        expect(getDictionary(locale).errors[code], `${locale}.${code}`).toBeTruthy();
+      }
+    }
+  });
+});

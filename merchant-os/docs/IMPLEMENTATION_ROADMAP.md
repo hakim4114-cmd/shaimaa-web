@@ -21,7 +21,7 @@ Revised 2026-11-16 after a critical review with the owner: the plan had grown fa
 | Close public sign-up; revoke the shared management token | **owner** (Supabase dashboard) |
 | Rename the organization and the Vercel project | owner / later settings page |
 
-## Step 2 — Products and stock
+## Step 2 — Products and stock ✅ 0.4.0 (product images still to add)
 
 Products and variants (images in a private bucket), receive / adjust / damage, movement history, low-stock list, valuation. Built to the approved design (ARCHITECTURE.md → Approved screen direction).
 
@@ -34,17 +34,21 @@ Products and variants (images in a private bucket), receive / adjust / damage, m
 5. **WhatsApp templates in one tap**: confirmation, delay, refusal follow-up in Darija/Arabic/French, opening WhatsApp with a prefilled message (`wa.me`), no WhatsApp API needed.
 6. **Order intake from outside**: CSV import; authenticated endpoint so a storefront (e.g. Maison Shaimaa) can push orders.
 
+7. **Exports and printing** (first use of the shared export framework): orders list to Excel/CSV/print, in Arabic, French or English. Details: INTEGRATIONS.md → *Exports, printing and Google Sheets*.
+
 ## Step 4 — Today view (new home page)
 
 "What do I do today?": calls to make (and call-backs due), packages to prepare, shipments without news for 48 h, remittances overdue, low stock. The metric dashboard moves to its own page.
 
 ## Step 5 — Shipping, returns, cash
 
-Manual + CSV shipping with any carrier, returns with partial quantities and exchanges, COD remittances, expenses, reporting functions (BUSINESS_RULES.md formulas) with fixture tests, the metric dashboard.
+Manual + CSV shipping with any carrier, printable delivery slips and daily packing list, returns with partial quantities and exchanges, COD remittances, expenses, reporting functions (BUSINESS_RULES.md formulas) with fixture tests, the metric dashboard.
 
 ## Step 6 — Owner routines
 
 Weekly review with the decision log, monthly close (net profit, fund allocation, owner pay, dormant stock), payables and cash accounts, complaints log. Details: BUSINESS_RULES.md → *Owner routines*.
+
+Reports from steps 5–6 (dashboard, weekly review, monthly close) get Excel/PDF/print, and the Google Sheets live link (level 2).
 
 ## Step 7 — Claude connection and carrier choice
 
