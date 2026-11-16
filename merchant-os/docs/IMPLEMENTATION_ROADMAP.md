@@ -19,7 +19,7 @@ In order, each step shippable:
 4. **Inventory** — stock overview, receive/adjust/damage/write-off forms, movement history per variant, low-stock list, valuation.
 5. **Customers** — list/search, profile with order history and computed totals, notes, tags.
 6. **Orders** — list with filters and saved views, create order (duplicate-phone warning), detail page with timeline, status actions allowed by role and workflow, notes.
-7. **Shipping (manual)** — carriers, create shipment, status updates, delayed-shipment list (> 48 h in `confirmed`/`preparing`/`ready_to_ship`).
+7. **Shipping (manual)** — carriers, create shipment, status updates, delayed-shipment list (> 48 h in `confirmed`/`preparing`/`ready_to_ship`); carrier scorecard (BUSINESS_RULES.md).
 8. **Returns** — receive, inspect, refund, close.
 9. **COD & finance** — receivables by carrier, remittance entry with exact-match validation, expenses, reporting SQL functions implementing BUSINESS_RULES formulas, command centre metrics with date range + previous-period comparison.
 10. **Notifications** — table + generation (low stock, delayed orders, overdue remittances).

@@ -128,6 +128,22 @@ These formulas will be implemented as SQL functions (one source for dashboards, 
 - Returns cover whole order lines; partial-quantity returns are added in Phase 2 by editing return items before receipt.
 - Order lines cannot be edited after creation yet (Phase 2: allowed only before confirmation).
 
+## Carrier scorecard (planned — with shipping, Phase 2)
+
+Carrier choice is decided on the merchant's own measured data, not on carriers' marketing. Per carrier, and per carrier × city, over a chosen period:
+
+| Measure | Definition (from shipments, returns, remittances) |
+| --- | --- |
+| Delivery rate | delivered ÷ (delivered + returned_to_sender) |
+| Time to deliver | median shipped_at → delivered_at |
+| COD payout delay | median delivered_at → remittance `received_on` |
+| Outstanding COD | Σ COD awaiting remittance, aged |
+| Cost per delivered order | (Σ shipping cost + return fees) ÷ delivered |
+| Return handling | returns received ÷ refused/returned; damaged on inspection |
+| COD discrepancies | remittances rejected for amount mismatch |
+
+Shown as a comparison table with sample sizes; a carrier with fewer than 20 shipments in the period is marked "too few to judge".
+
 ## Owner routines (planned — Phase 2b)
 
 Requested by the owner (2026-11-16), from the "numbers and weekly habits" method: a solo merchant runs the business through fixed daily / weekly / monthly / quarterly / yearly routines. Every figure below is computed from records; anything that depends on a choice the app cannot make (such as a religious ruling) is a setting the owner chooses, shown next to the result.
