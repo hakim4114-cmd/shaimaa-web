@@ -34,7 +34,7 @@ Built right after the Phase 2 MVP because the owner works alone; full rules in B
 3. Monthly close: net profit, fund allocation with owner-set percentages, dormant stock report.
 4. Yearly summary: zakat calculation aid (configurable inventory valuation, manual gold price, doubtful receivables separated), yearly evaluation and goals.
 
-Taxes: removed from the plan for now (2026-11-16); to be researched and specified separately.
+5. Tax assistant (after its rules are verified): `tax_rules` table by fiscal year with sources; auto-entrepreneur estimates, cap tracking and declaration reminders; CPU formula once the coefficient is confirmed; RNR export only. Draft spec: BUSINESS_RULES.md → *Taxes — draft specification*.
 
 ## Phase 3 — Integrations
 CSV import/export framework, first verified carrier adapter(s) chosen with the merchant, carrier webhooks, WhatsApp Business (when credentials exist), support inbox, manual/CSV ad spend, optional bridge to receive orders from storefronts (e.g. Maison Shaimaa) through an authenticated endpoint.

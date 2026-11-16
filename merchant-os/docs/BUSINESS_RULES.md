@@ -184,6 +184,48 @@ nisab      = value of 85 g of gold on the calculation day (gold price entered by
 - The page shows every line of the calculation with its source records, states that it is a calculation aid, and recommends confirming with a scholar. No price feed is assumed: the gold price is entered manually.
 - Optional monthly zakat provision through fund allocation.
 
-Taxes are deliberately out of scope for now: they will be researched and specified separately before anything is planned.
-
 Also yearly: full evaluation (12-month trend of the nine indicators, best/worst products, decision log outcomes) and goals for next year (target values for chosen indicators, tracked on the weekly page).
+
+## Taxes — draft specification (research 2026-11-16, NOT verified)
+
+Provided by the owner's research. Every value here must be checked against the official text (CGI, law 114.13, DGI/ae.gov.ma, CNSS) or an accountant before it is loaded into the app. Confidence labels are the owner's research labels, downgraded where the source is secondary.
+
+### Design rules (fixed)
+
+- No rate, cap or bracket in code. A **`tax_rules`** table keyed by regime, parameter and **fiscal year** (`valid_from`/`valid_to`), each row with its source URL and the date it was verified. A missing rule shows "not configured", never a guess.
+- Organization settings: `tax_regime` (`auto_entrepreneur_commerce`, `auto_entrepreneur_services`, `cpu`, `real_regime`, `not_registered`), registration date, declaration frequency (monthly/quarterly).
+- The app produces **estimates and reminders**, never a filing.
+
+### Regime 1 — auto-entrepreneur (the starting point)
+
+| Rule | Value | Status |
+| --- | --- | --- |
+| Tax | cashed turnover × 0.5 % (commerce) / 1 % (services); liberatory (not added to salary income) | [مرجَّح] — consistent across sources; verify CGI art. 42 ter / 73 |
+| Base | turnover actually **cashed** in the period; no expense deduction | [مرجَّح] |
+| Annual caps | 500,000 MAD commerce / 200,000 MAD services | [مرجَّح] |
+| Exceeding the cap | regime lost only after **two consecutive years** above it | [مرجَّح] |
+| Deregistration risk | no declaration, or zero turnover declared, from the second year | [مرجَّح] |
+| Services, single client | part above 80,000 MAD/year from one client: 30 % withholding | [مرجَّح]; not relevant to B2C commerce |
+| Declaration and payment | monthly or quarterly, before the end of the following month | [مرجَّح] |
+| AMO contribution | unknown | [تخمين] — no value until confirmed with CNSS |
+| Excluded activities | include importers/exporters and jewellery traders (wholesale and retail) | [مرجَّح] per DGI guide as reported; the app shows this list as help text when choosing the regime |
+
+Open question for the accountant: for COD, is "cashed" the gross amount paid by the customer or the net remittance after carrier fees? The app reports both.
+
+App behaviour: per-period cashed turnover and estimated tax; progress to the annual cap (warning at 80 %, alert at 100 %, note on the two-year rule); reminder before each declaration deadline; alert when a period with sales has no declaration recorded; alert when sales are recorded while `tax_regime = not_registered` ("register before your first real sales").
+
+### Regime 2 — CPU (after the auto-entrepreneur cap)
+
+- CPU = (turnover × profession coefficient) × 10 % + annual complementary amount. Commerce cap 2,000,000 MAD. [مرجَّح]
+- Complementary amount by CPU due (2021 schedule, check for changes): < 500 → 1,200; 500–1,000 → 1,560; 1,001–2,500 → 2,280; 2,501–5,000 → 2,880; 5,001–10,000 → 4,200; > 10,000 → 14,400 MAD. [مرجَّح, possibly outdated]
+- E-commerce coefficient: unknown (CGI art. 40 table). [تخمين] Without it the app shows the formula and "coefficient not configured".
+
+### Regime 3 — real regime (RNR)
+
+- Net profit is added to other income (e.g. salary) and taxed on the progressive income-tax scale. Scale reported for 2026: 0–40,000: 0 %; 40,001–60,000: 10 %; 60,001–80,000: 20 %; 80,001–100,000: 30 %; 100,001–180,000: 34 %; > 180,000: 37 %. [مرجَّح]; a reform to three brackets with a 30 % top rate was reported as proposed, unverified.
+- Out of scope for automatic calculation: it requires full accounting and the owner's other income. The app exports the year's profit figures for the accountant.
+
+### Not covered
+
+Customs and import duties, VAT (assumed not applicable to auto-entrepreneurs — to verify), local taxes. To be researched separately.
+
