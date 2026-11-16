@@ -51,6 +51,7 @@ export default async function InventoryPage({ searchParams }: { searchParams: Pr
       {allRows.length > 0 ? (
         <div className="grid gap-4 sm:grid-cols-2">
           <Metric
+            tone="hero"
             label={ti.valueTotal}
             value={can.seeCosts ? formatMoney(totalValue, locale) : null}
             unavailableReason={t.errors.FORBIDDEN}

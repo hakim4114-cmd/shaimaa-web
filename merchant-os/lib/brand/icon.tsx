@@ -1,8 +1,14 @@
 // Brand mark rendered as an image (favicon, Apple touch icon, PWA icons).
-// Colors are the accent token's sRGB equivalents: ImageResponse cannot read CSS variables.
-export const brandAccentHex = "#4b4fc9";
-export const brandBackgroundHex = "#f8f9fb";
+// Colours are the Ink identity's hex values: ImageResponse cannot read CSS variables.
+export const brandAccentHex = "#5b4bd6";
+export const brandInkHex = "#10142a";
+export const brandBackgroundHex = "#eef0f7";
+const brandDotHex = "#b9b1ff";
 
+/**
+ * The installed-app icon: the white mark on an ink tile, with a violet dot.
+ * `padding` is the safe margin (maskable icons need a larger one).
+ */
 export function BrandIcon({ size, padding = 0.18, rounded = true }: { size: number; padding?: number; rounded?: boolean }) {
   const inner = Math.round(size * (1 - padding * 2));
   return (
@@ -13,12 +19,13 @@ export function BrandIcon({ size, padding = 0.18, rounded = true }: { size: numb
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        background: brandAccentHex,
-        borderRadius: rounded ? Math.round(size * 0.22) : 0
+        background: brandInkHex,
+        borderRadius: rounded ? Math.round(size * 0.24) : 0
       }}
     >
       <svg width={inner} height={inner} viewBox="0 0 24 24" fill="none">
-        <path d="M4 18V6l8 7 8-7v12" stroke="#ffffff" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M4 18V7.5L12 14l8-6.5V18" stroke="#ffffff" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" />
+        <circle cx="12" cy="5" r="1.7" fill={brandDotHex} />
       </svg>
     </div>
   );

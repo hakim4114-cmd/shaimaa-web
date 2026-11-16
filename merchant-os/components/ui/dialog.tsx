@@ -24,7 +24,8 @@ export function DialogContent({
           "fixed z-50 border-border bg-surface shadow-popover focus:outline-none",
           variant === "center"
             ? "inset-x-4 top-[12vh] mx-auto max-w-lg rounded-lg border p-6 data-[state=open]:animate-scale-in"
-            : "inset-y-0 start-0 w-72 max-w-[85vw] overflow-y-auto border-e data-[state=open]:animate-fade-in",
+            : // The sheet is the mobile app frame: same dark surface as the desktop sidebar.
+              "inset-y-0 start-0 w-72 max-w-[85vw] overflow-y-auto border-e border-sidebar-border bg-sidebar text-sidebar-foreground data-[state=open]:animate-fade-in",
           className
         )}
         {...props}
@@ -32,7 +33,12 @@ export function DialogContent({
         {children}
         {closeLabel ? (
           <DialogPrimitive.Close
-            className="absolute end-4 top-4 rounded-md p-1 text-muted-foreground transition-colors hover:bg-surface-hover hover:text-foreground"
+            className={cn(
+              "absolute end-3 top-3 inline-flex size-8 items-center justify-center rounded-md transition-colors pointer-coarse:size-11",
+              variant === "sheet"
+                ? "text-sidebar-muted hover:bg-sidebar-hover hover:text-sidebar-foreground"
+                : "text-muted-foreground hover:bg-surface-hover hover:text-foreground"
+            )}
             aria-label={closeLabel}
           >
             <X className="size-4" />
