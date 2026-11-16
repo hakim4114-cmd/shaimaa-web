@@ -36,6 +36,23 @@ interface ShippingAdapter {
 
 Carrier-specific statuses are mapped to `shipment_status`; unmapped statuses are kept in the event note and flagged, never guessed.
 
+## Exports, printing and Google Sheets (requested 2026-11-16)
+
+Every list and report gets the same three actions; reports are produced in **Arabic or English**, chosen per export (independent of the interface language).
+
+| Output | How | Why this way |
+| --- | --- | --- |
+| **Excel (.xlsx)** | Generated on the server from the same query as the screen; real numbers and dates (not text), MAD format, frozen header, right-to-left sheet for Arabic. | Opens in Excel, Google Sheets, Numbers; totals and filters work. |
+| **CSV** | Same data, UTF-8 with BOM so Excel shows Arabic correctly. | For imports into other tools. |
+| **PDF / print** | Print-optimised pages (A4, business name, period, generation time, page numbers) printed or saved as PDF from the browser. | The browser shapes Arabic text and right-to-left layout correctly; server-side PDF generation with Arabic fonts is fragile. A server PDF is added only if a document must be produced without a person (e.g. emailed automatically). |
+
+Printable documents planned: **delivery slip per order** (customer, phone, city, address, items, COD amount, order number as barcode/QR), **daily packing list**, daily summary, weekly review, monthly close, zakat summary.
+
+**Google Sheets**, in three levels:
+1. **Now-level:** import the Excel/CSV export into Google Sheets (File → Import). Works from the first export, no setup.
+2. **Live link:** the owner creates a read-only, revocable link for one report; Google Sheets pulls it with `=IMPORTDATA("…")` and refreshes it periodically. No Google account connection needed. Customer phone numbers and addresses are excluded from these links by default.
+3. **Full connection** (only if levels 1–2 are not enough): Google Sheets API with the owner's Google account (OAuth). Needs a Google Cloud project and consent screen; writes reports into a chosen spreadsheet automatically.
+
 ## CSV import/export (Phase 3)
 
 Orders, products/stock and carrier statements. Every import: upload → column mapping → validation report → dry run → apply in one transaction → import log with row-level errors.
