@@ -5,6 +5,8 @@ export const authErrorCodes = [
   "PASSWORD_REQUIRED",
   "PASSWORD_TOO_SHORT",
   "PASSWORD_TOO_LONG",
+  "PASSWORD_MISMATCH",
+  "PASSWORD_SAME",
   "INVALID_CREDENTIALS",
   "EMAIL_NOT_CONFIRMED",
   "EMAIL_NOT_ALLOWED",
@@ -33,6 +35,8 @@ export function mapSupabaseAuthError(code: string | undefined): AuthErrorCode {
       return "EMAIL_NOT_CONFIRMED";
     case "weak_password":
       return "WEAK_PASSWORD";
+    case "same_password":
+      return "PASSWORD_SAME";
     case "over_email_send_rate_limit":
     case "over_request_rate_limit":
     case "over_sms_send_rate_limit":

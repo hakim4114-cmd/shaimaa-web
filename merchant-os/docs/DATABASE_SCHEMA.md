@@ -7,6 +7,7 @@ Source of truth: `supabase/migrations/` (applied in filename order).
 | `20261113000100_core_schema.sql` | enums, tables, indexes, generic triggers, audit, tenant deletion |
 | `20261113000200_business_functions.sql` | transactional business operations (RPCs) |
 | `20261113000300_security.sql` | grants, Row Level Security policies, tenant/authorship guards |
+| `20261116000400_order_workflow.sql` | cities reference, shipping rates, confirmation calls, blocklist, customer history, order editing, `create_order` v2 |
 
 ## Conventions
 
@@ -55,6 +56,14 @@ Source of truth: `supabase/migrations/` (applied in filename order).
 | `cod_remittances` | Money received from a carrier or courier: gross, fees withheld, net (`net = gross − fees`). |
 | `cod_remittance_items` | Orders settled by a remittance (each order at most once). |
 
+### Order workflow (0.3.0)
+| Table | Purpose |
+| --- | --- |
+| `cities` | Shared Moroccan city list (`organization_id` NULL) plus each organization's own entries; French/Arabic names, region, aliases. |
+| `shipping_rates` | Per city (and optionally per carrier): customer fee, carrier cost, return fee. |
+| `order_call_attempts` | Immutable confirmation-call log (outcome, note, call-back time, caller). `orders` gains `city_id`, `call_attempts`, `last_call_outcome`, `next_call_at`. |
+| `customer_blocklist` | Blocked phone numbers with a reason. |
+
 ### Returns, expenses, marketing, audit
 | Table | Purpose |
 | --- | --- |
@@ -79,6 +88,9 @@ Source of truth: `supabase/migrations/` (applied in filename order).
 | `receive_return(return, fee)` | Moves returned units into `inspection`. |
 | `inspect_return_item(item, condition)` | Restock, quarantine as damaged, or write off as missing. |
 | `record_refund(return, amount)` / `close_return(return)` | Refund bookkeeping and closing. |
+| `update_order_details(order, payload)` | Edit lines, fees, COD, city and contact before confirmation. |
+| `log_call_attempt(order, outcome, note, call_back_at)` | Record a confirmation call; confirms or cancels on those outcomes. |
+| `customer_history(org, phone)` | Delivery/refusal counts and blocklist status for a phone. |
 
 Internal helpers in the private `app` schema (`move_stock`, `apply_order_transition`, `next_counter`, …) are not executable by API roles.
 

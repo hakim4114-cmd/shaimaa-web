@@ -59,6 +59,47 @@ export type Database = {
           },
         ]
       }
+      cities: {
+        Row: {
+          aliases: string[]
+          created_at: string
+          id: number
+          is_active: boolean
+          name_ar: string
+          name_fr: string
+          organization_id: string | null
+          region: string
+        }
+        Insert: {
+          aliases?: string[]
+          created_at?: string
+          id?: never
+          is_active?: boolean
+          name_ar: string
+          name_fr: string
+          organization_id?: string | null
+          region?: string
+        }
+        Update: {
+          aliases?: string[]
+          created_at?: string
+          id?: never
+          is_active?: boolean
+          name_ar?: string
+          name_fr?: string
+          organization_id?: string | null
+          region?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cities_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       cod_remittance_items: {
         Row: {
           collected_cents: number
@@ -162,6 +203,41 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "shipping_providers"
             referencedColumns: ["id", "organization_id"]
+          },
+        ]
+      }
+      customer_blocklist: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          id: string
+          organization_id: string
+          phone: string
+          reason: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          organization_id: string
+          phone: string
+          reason: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          organization_id?: string
+          phone?: string
+          reason?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "customer_blocklist_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
           },
         ]
       }
@@ -479,6 +555,54 @@ export type Database = {
           },
         ]
       }
+      order_call_attempts: {
+        Row: {
+          actor_id: string | null
+          call_back_at: string | null
+          created_at: string
+          id: number
+          note: string | null
+          order_id: string
+          organization_id: string
+          outcome: Database["public"]["Enums"]["call_outcome"]
+        }
+        Insert: {
+          actor_id?: string | null
+          call_back_at?: string | null
+          created_at?: string
+          id?: never
+          note?: string | null
+          order_id: string
+          organization_id: string
+          outcome: Database["public"]["Enums"]["call_outcome"]
+        }
+        Update: {
+          actor_id?: string | null
+          call_back_at?: string | null
+          created_at?: string
+          id?: never
+          note?: string | null
+          order_id?: string
+          organization_id?: string
+          outcome?: Database["public"]["Enums"]["call_outcome"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "order_call_attempts_order_id_organization_id_fkey"
+            columns: ["order_id", "organization_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id", "organization_id"]
+          },
+          {
+            foreignKeyName: "order_call_attempts_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       order_contacts: {
         Row: {
           address: string
@@ -635,9 +759,11 @@ export type Database = {
       }
       orders: {
         Row: {
+          call_attempts: number
           campaign_id: string | null
           cancelled_at: string | null
           city: string
+          city_id: number | null
           cod_amount_cents: number
           confirmed_at: string | null
           created_at: string
@@ -648,7 +774,9 @@ export type Database = {
           exchange_of_order_id: string | null
           id: string
           internal_notes: string
+          last_call_outcome: Database["public"]["Enums"]["call_outcome"] | null
           location_id: string
+          next_call_at: string | null
           notes: string
           order_number: string
           organization_id: string
@@ -664,9 +792,11 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          call_attempts?: number
           campaign_id?: string | null
           cancelled_at?: string | null
           city?: string
+          city_id?: number | null
           cod_amount_cents?: number
           confirmed_at?: string | null
           created_at?: string
@@ -677,7 +807,9 @@ export type Database = {
           exchange_of_order_id?: string | null
           id?: string
           internal_notes?: string
+          last_call_outcome?: Database["public"]["Enums"]["call_outcome"] | null
           location_id: string
+          next_call_at?: string | null
           notes?: string
           order_number: string
           organization_id: string
@@ -693,9 +825,11 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          call_attempts?: number
           campaign_id?: string | null
           cancelled_at?: string | null
           city?: string
+          city_id?: number | null
           cod_amount_cents?: number
           confirmed_at?: string | null
           created_at?: string
@@ -706,7 +840,9 @@ export type Database = {
           exchange_of_order_id?: string | null
           id?: string
           internal_notes?: string
+          last_call_outcome?: Database["public"]["Enums"]["call_outcome"] | null
           location_id?: string
+          next_call_at?: string | null
           notes?: string
           order_number?: string
           organization_id?: string
@@ -728,6 +864,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "marketing_campaigns"
             referencedColumns: ["id", "organization_id"]
+          },
+          {
+            foreignKeyName: "orders_city_id_fkey"
+            columns: ["city_id"]
+            isOneToOne: false
+            referencedRelation: "cities"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "orders_customer_id_organization_id_fkey"
@@ -1305,6 +1448,64 @@ export type Database = {
           },
         ]
       }
+      shipping_rates: {
+        Row: {
+          carrier_cost_cents: number | null
+          city_id: number
+          created_at: string
+          customer_fee_cents: number
+          id: string
+          organization_id: string
+          provider_id: string | null
+          return_fee_cents: number | null
+          updated_at: string
+        }
+        Insert: {
+          carrier_cost_cents?: number | null
+          city_id: number
+          created_at?: string
+          customer_fee_cents?: number
+          id?: string
+          organization_id: string
+          provider_id?: string | null
+          return_fee_cents?: number | null
+          updated_at?: string
+        }
+        Update: {
+          carrier_cost_cents?: number | null
+          city_id?: number
+          created_at?: string
+          customer_fee_cents?: number
+          id?: string
+          organization_id?: string
+          provider_id?: string | null
+          return_fee_cents?: number | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "shipping_rates_city_id_fkey"
+            columns: ["city_id"]
+            isOneToOne: false
+            referencedRelation: "cities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "shipping_rates_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "shipping_rates_provider_id_organization_id_fkey"
+            columns: ["provider_id", "organization_id"]
+            isOneToOne: false
+            referencedRelation: "shipping_providers"
+            referencedColumns: ["id", "organization_id"]
+          },
+        ]
+      }
       stores: {
         Row: {
           created_at: string
@@ -1406,9 +1607,11 @@ export type Database = {
       create_order: {
         Args: { p_organization_id: string; p_payload: Json }
         Returns: {
+          call_attempts: number
           campaign_id: string | null
           cancelled_at: string | null
           city: string
+          city_id: number | null
           cod_amount_cents: number
           confirmed_at: string | null
           created_at: string
@@ -1419,7 +1622,9 @@ export type Database = {
           exchange_of_order_id: string | null
           id: string
           internal_notes: string
+          last_call_outcome: Database["public"]["Enums"]["call_outcome"] | null
           location_id: string
+          next_call_at: string | null
           notes: string
           order_number: string
           organization_id: string
@@ -1492,6 +1697,18 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      customer_history: {
+        Args: { p_organization_id: string; p_phone: string }
+        Returns: {
+          block_reason: string
+          blocked: boolean
+          cancelled: number
+          delivered: number
+          orders_total: number
+          refused: number
+          returned: number
+        }[]
+      }
       inspect_return_item: {
         Args: {
           p_condition: Database["public"]["Enums"]["item_condition"]
@@ -1511,6 +1728,53 @@ export type Database = {
         SetofOptions: {
           from: "*"
           to: "return_items"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      log_call_attempt: {
+        Args: {
+          p_call_back_at?: string
+          p_note?: string
+          p_order_id: string
+          p_outcome: Database["public"]["Enums"]["call_outcome"]
+        }
+        Returns: {
+          call_attempts: number
+          campaign_id: string | null
+          cancelled_at: string | null
+          city: string
+          city_id: number | null
+          cod_amount_cents: number
+          confirmed_at: string | null
+          created_at: string
+          created_by: string | null
+          customer_id: string
+          delivered_at: string | null
+          discount_cents: number
+          exchange_of_order_id: string | null
+          id: string
+          internal_notes: string
+          last_call_outcome: Database["public"]["Enums"]["call_outcome"] | null
+          location_id: string
+          next_call_at: string | null
+          notes: string
+          order_number: string
+          organization_id: string
+          payment_status: Database["public"]["Enums"]["payment_status"]
+          shipped_at: string | null
+          shipping_fee_cents: number
+          source: Database["public"]["Enums"]["order_source"]
+          status: Database["public"]["Enums"]["order_status"]
+          stock_state: Database["public"]["Enums"]["stock_state"]
+          store_id: string | null
+          subtotal_cents: number
+          total_cents: number
+          updated_at: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "orders"
           isOneToOne: true
           isSetofReturn: false
         }
@@ -1601,9 +1865,11 @@ export type Database = {
           p_to: Database["public"]["Enums"]["order_status"]
         }
         Returns: {
+          call_attempts: number
           campaign_id: string | null
           cancelled_at: string | null
           city: string
+          city_id: number | null
           cod_amount_cents: number
           confirmed_at: string | null
           created_at: string
@@ -1614,7 +1880,51 @@ export type Database = {
           exchange_of_order_id: string | null
           id: string
           internal_notes: string
+          last_call_outcome: Database["public"]["Enums"]["call_outcome"] | null
           location_id: string
+          next_call_at: string | null
+          notes: string
+          order_number: string
+          organization_id: string
+          payment_status: Database["public"]["Enums"]["payment_status"]
+          shipped_at: string | null
+          shipping_fee_cents: number
+          source: Database["public"]["Enums"]["order_source"]
+          status: Database["public"]["Enums"]["order_status"]
+          stock_state: Database["public"]["Enums"]["stock_state"]
+          store_id: string | null
+          subtotal_cents: number
+          total_cents: number
+          updated_at: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "orders"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      update_order_details: {
+        Args: { p_order_id: string; p_payload: Json }
+        Returns: {
+          call_attempts: number
+          campaign_id: string | null
+          cancelled_at: string | null
+          city: string
+          city_id: number | null
+          cod_amount_cents: number
+          confirmed_at: string | null
+          created_at: string
+          created_by: string | null
+          customer_id: string
+          delivered_at: string | null
+          discount_cents: number
+          exchange_of_order_id: string | null
+          id: string
+          internal_notes: string
+          last_call_outcome: Database["public"]["Enums"]["call_outcome"] | null
+          location_id: string
+          next_call_at: string | null
           notes: string
           order_number: string
           organization_id: string
@@ -1669,6 +1979,15 @@ export type Database = {
       }
     }
     Enums: {
+      call_outcome:
+        | "confirmed"
+        | "cancelled"
+        | "no_answer"
+        | "busy"
+        | "unreachable"
+        | "wrong_number"
+        | "call_back_requested"
+        | "other"
       data_source: "manual" | "import" | "api"
       expense_category:
         | "inventory_purchase"
@@ -1869,6 +2188,16 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      call_outcome: [
+        "confirmed",
+        "cancelled",
+        "no_answer",
+        "busy",
+        "unreachable",
+        "wrong_number",
+        "call_back_requested",
+        "other",
+      ],
       data_source: ["manual", "import", "api"],
       expense_category: [
         "inventory_purchase",
@@ -1952,3 +2281,4 @@ export const Constants = {
     },
   },
 } as const
+

@@ -78,6 +78,17 @@ The locale is stored in the `mos-locale` cookie (default Arabic) and read on the
 - `Metric` accepts `value={null}` plus a reason: unavailable data is explained, never replaced by a placeholder number.
 - Modules not built yet appear disabled in navigation with their roadmap phase — no dead links.
 
+### Approved screen direction (2026-11-14)
+
+The owner approved the design preview at https://claude.ai/artifact/MjJiLuyEYmdN44LcQgLDt9 (private to the owner; illustrative data). Build module screens to match it, using the existing tokens and components:
+
+- **Command centre:** KPI tiles (label, value, change badge, sparkline, one-line meaning) for delivered revenue, cash collected, COD receivable, net profit and return rate; a paired bar chart *delivered revenue vs cash collected*; order pipeline bars by status with a delayed-orders alert (confirmed and not shipped after 48 h); recent orders table; COD receivable split by carrier; low-stock list. Period switcher: today / 7 / 30 days / quarter, compared with the previous period.
+- **Orders:** status tabs with counts, search + filters (city, source, carrier), table with order status and payment status badges, and a side panel for the selected order: customer with their history, lines and COD amount, primary next action for the current status, WhatsApp, cancel, immutable timeline.
+- **Product:** header with status/category and actions (receive stock, edit, record damage, archive); summary tiles (available, reserved, in inspection, stock value at cost, 30-day sales); variant table with price, cost, margin, on hand, reserved, available, damaged and a stock-state badge; movement history.
+- **Mobile:** headline metric with mini bars, 2×2 KPI grid, alert banner, order cards, bottom navigation with a central "new order" button. Dark mode must look as finished as light mode.
+
+Every figure on these screens comes from the database (BUSINESS_RULES.md formulas); a figure that cannot be computed shows its reason, never a placeholder number.
+
 ### Theming
 
 `next-themes` toggles the `.dark` class (light / dark / system). The sidebar's collapsed state is a cookie so the server renders the right width.

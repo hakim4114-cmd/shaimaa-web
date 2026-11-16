@@ -12,7 +12,9 @@
 
 ## Shipping
 
-Moroccan carriers differ widely: some have documented APIs, many work by spreadsheet or a web portal only. Three levels are supported per provider (`shipping_providers.kind`):
+Moroccan carriers differ widely: some have documented APIs, many work by spreadsheet or a web portal only. No carrier API is assumed to exist until its documentation and test credentials are in hand. Candidates to research once the merchant has chosen carriers (selection order = the merchant's actual carriers, not popularity). Domestic COD specialists named in the owner's market research (2026-11-16; their claims about coverage, payout speed and return handling are the carriers' own marketing, unverified): Ozon Express, Cathedis, Ameex, Sendit, Forcelog, Truship, Quick Livraison, Atlas Livraison, Morino Express, Big Delivery; also Amana and CTM Messagerie. For each: is there a documented public API or webhook for third-party systems (a Shopify/YouCan plugin is not enough — Merchant OS needs the API itself), test credentials, status vocabulary, COD statement format.
+
+International carriers (DHL Express, Aramex, FedEx, UPS) matter only for cross-border sales or imports: out of scope until the business sells abroad. Every carrier, with or without an API, is usable through the manual and CSV levels. Three levels are supported per provider (`shipping_providers.kind`):
 
 | Level | How it works | Status |
 | --- | --- | --- |
@@ -47,6 +49,13 @@ Through the official WhatsApp Business Platform (Cloud API) only, after the merc
 Meta (Facebook/Instagram) Ads and TikTok Ads spend imports require the merchant's own app/token and the platforms' reporting APIs. Until connected, spend is entered manually or imported by CSV as `expenses` with `category = advertising` and a `campaign_id`. Attribution uses only what is recorded on the order (`source`, `campaign_id`); no modelled or inferred attribution.
 
 ## AI assistant (Phase 4)
+
+**Decision (2026-11-16): Claude is the AI provider.** The owner considers the Claude connection essential. Two complementary paths:
+
+1. **Claude inside Merchant OS** — server-side calls to the Anthropic API (`@anthropic-ai/sdk`, default model `claude-opus-5-5`), API key in a server-only environment variable, usage billed per token to the merchant's Anthropic account. Powers the in-app assistant: daily summary, questions about the business, reply drafts in Darija/Arabic/French.
+2. **Merchant OS inside Claude** — an MCP server exposing read-only business tools (sales, COD receivable, stock, delayed orders, weekly indicators), authorised with the merchant's own Merchant OS session, so the merchant can ask Claude (claude.ai / Claude app) about their store. No business data leaves Merchant OS except the answers to the tool calls the merchant triggers.
+
+Both paths use the same reporting functions and the same rules below.
 
 - Provider-independent service layer on the server; API keys in server environment variables.
 - The model never receives raw database access. It calls a fixed set of read tools (the Phase 2 reporting functions) executed with the **user's own session**, so RLS limits what it can see.

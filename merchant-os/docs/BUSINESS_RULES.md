@@ -127,3 +127,154 @@ These formulas will be implemented as SQL functions (one source for dashboards, 
 - Single currency (MAD) per organization.
 - Returns cover whole order lines; partial-quantity returns are added in Phase 2 by editing return items before receipt.
 - Order lines cannot be edited after creation yet (Phase 2: allowed only before confirmation).
+
+## Order intake and confirmation (0.3.0)
+
+Rules marked **[DB]** are enforced by migration `20261116000400_order_workflow.sql` and covered by `supabase/tests/20_order_workflow.test.sql`.
+
+### Cities and shipping fees
+- A shared reference list of Moroccan cities (French and Arabic names, region, lower-case aliases such as "casa") is seeded; each organization can add its own (villages, neighbourhoods) **[DB]**. Free-text cities are still accepted so an order is never blocked, but only referenced cities count in per-city analytics.
+- `shipping_rates` holds, per city, the fee charged to the customer, the carrier's cost and the return fee; `provider_id` empty = the default rate **[DB]**. A new order with a `city_id` and no explicit fee takes the default rate's customer fee **[DB]**.
+
+### Confirmation calls
+- Each call is an immutable record: outcome (`confirmed`, `cancelled`, `no_answer`, `busy`, `unreachable`, `wrong_number`, `call_back_requested`, `other`), note, call-back time, who called **[DB]**.
+- The first unanswered call moves a `new` order to `confirmation_pending`; `confirmed` confirms it (and reserves stock — if stock is short, the whole call is rejected and nothing is logged); `cancelled` cancels it and needs a reason; `call_back_requested` needs a time and schedules `next_call_at` **[DB]**.
+- Orders keep `call_attempts`, `last_call_outcome` and `next_call_at` for the "calls to make today" list **[DB]**.
+- Call notes are visible to owner, admin and operator only **[DB]**.
+
+### Risk and blocklist
+- `customer_history(org, phone)` returns orders, delivered, refused, returned and cancelled counts and whether the number is blocked, for display at order entry **[DB]**.
+- A blocked phone cannot get a new order; an owner or admin may override explicitly (`allow_blocked`) **[DB]**. Operators can add numbers; only owner/admin can edit or remove them **[DB]**.
+
+### Editing before confirmation
+- While an order is `new` or `confirmation_pending` (stock not reserved yet), lines, discount, shipping fee, COD, city, address and name can be changed; lines are re-priced from the catalog and totals recomputed; COD follows the total unless it was a deposit **[DB]**. After confirmation the order is locked (`ORDER_LOCKED`) **[DB]**. Every edit is logged in the timeline with what changed **[DB]**.
+
+## Carrier scorecard (planned — with shipping, Phase 2)
+
+Carrier choice is decided on the merchant's own measured data, not on carriers' marketing. Per carrier, and per carrier × city, over a chosen period:
+
+| Measure | Definition (from shipments, returns, remittances) |
+| --- | --- |
+| Delivery rate | delivered ÷ (delivered + returned_to_sender) |
+| Time to deliver | median shipped_at → delivered_at |
+| COD payout delay | median delivered_at → remittance `received_on` |
+| Outstanding COD | Σ COD awaiting remittance, aged |
+| Cost per delivered order | (Σ shipping cost + return fees) ÷ delivered |
+| Return handling | returns received ÷ refused/returned; damaged on inspection |
+| COD discrepancies | remittances rejected for amount mismatch |
+
+Shown as a comparison table with sample sizes; a carrier with fewer than 20 shipments in the period is marked "too few to judge".
+
+## Owner routines (planned — Phase 2b)
+
+Requested by the owner (2026-11-16), from the "numbers and weekly habits" method: a solo merchant runs the business through fixed daily / weekly / monthly / quarterly / yearly routines. Every figure below is computed from records; anything that depends on a choice the app cannot make (such as a religious ruling) is a setting the owner chooses, shown next to the result.
+
+### Additional records
+
+| Record | Purpose |
+| --- | --- |
+| **Payables** ("ما عليك") | Money owed to suppliers and others: counterparty, amount, due date, paid amount/date. Distinct from expenses (a payable can be paid in parts, later). |
+| **Cash accounts** | Cash box and bank accounts with an opening balance and dated movements, so *cash available today* is a real balance, not an estimate. COD remittances, expenses paid, refunds and owner withdrawals post to an account. |
+| **Complaints** | Lightweight log before the full support inbox: customer, order, category (size, quality, delay, wrong item, other), resolution. Feeds the "repeated pattern" indicator. |
+| **Decision log** | One decision per weekly review: what, why, the metric it should move; reviewed later as worked / did not work. |
+
+### Weekly review page
+
+The nine indicators, this week vs last week, each answering one question:
+
+| Indicator | Question | Definition |
+| --- | --- | --- |
+| Cash available | How much do I really have today? | Σ cash account balances |
+| Receivable | How much do carriers and customers owe me, since when? | COD awaiting remittance, aged (0–7, 8–14, 15+ days since delivery) |
+| Payable | How much do I owe, when? | Open payables by due date |
+| Inventory value | How much money is in stock? What is dormant? | Σ on_hand × cost; dormant share (see below) |
+| Delivered orders | How much did I really sell? | Orders delivered in the week |
+| Delivery rate | Improving or worsening? | delivered ÷ (delivered + refused + returned) among orders that reached `shipped` |
+| Cost per delivered order | What does each real customer cost me? | advertising spend ÷ delivered orders |
+| Contribution margin | What is left after variable costs? | delivered revenue − refunds − COGS − shipping cost − advertising (= net profit before fixed costs) |
+| Complaints & returns | Is there a repeated pattern? | counts by reason, product, city, carrier |
+
+Then: an ads review block (spend, delivered orders and cost per delivered order per campaign) and the **decision of the week** field.
+
+### Monthly close
+
+1. Net profit for the month (formulas above), with the unknown-cost indicator.
+2. **Fund allocation ("الصناديق")**: the owner sets percentages once (e.g. restock, reserve, owner pay, zakat provision); the app proposes amounts from the month's net profit, the owner confirms, and confirmed allocations are recorded. Owner pay is a withdrawal from a cash account, never taken from restock money.
+3. **Dormant stock report**: variants with no outbound movement for 30 / 60 / 90 days, quantity and value at cost.
+
+### Yearly: zakat summary (assistance, not a ruling)
+
+Zakat base on the owner's hawl date (set in the Hijri calendar):
+
+```
+zakat base = cash (all cash accounts)
+           + inventory held for sale (valuation method chosen by the owner)
+           + receivables expected to be collected
+           − debts due (open payables due by that date)
+zakat      = 2.5 % × zakat base, if base ≥ nisab
+nisab      = value of 85 g of gold on the calculation day (gold price entered by the owner, with its date)
+```
+
+- Inventory valuation method is a setting: *market (selling) value on the day* (majority view) or *current purchase/wholesale cost*. The default is left unset; the owner chooses.
+- Fixed assets (phone, computer, shelves, camera) are excluded.
+- Doubtful receivables (e.g. COD aged 60+ days, disputed) are listed separately and excluded by default, with a switch to include them; a note says many scholars pay their zakat when collected.
+- The page shows every line of the calculation with its source records, states that it is a calculation aid, and recommends confirming with a scholar. No price feed is assumed: the gold price is entered manually.
+- Optional monthly zakat provision through fund allocation.
+
+Also yearly: full evaluation (12-month trend of the nine indicators, best/worst products, decision log outcomes) and goals for next year (target values for chosen indicators, tracked on the weekly page).
+
+## Taxes — draft specification (research 2026-11-16, NOT verified)
+
+Provided by the owner's research. Every value here must be checked against the official text (CGI, law 114.13, DGI/ae.gov.ma, CNSS) or an accountant before it is loaded into the app. Confidence labels are the owner's research labels, downgraded where the source is secondary.
+
+### Design rules (fixed)
+
+- The app models a **merchant**: business figures only. It never asks for or stores the owner's personal situation (employment, salary, other income); combining activities is the owner's matter with their accountant.
+
+- No rate, cap or bracket in code. A **`tax_rules`** table keyed by regime, parameter and **fiscal year** (`valid_from`/`valid_to`), each row with its source URL and the date it was verified. A missing rule shows "not configured", never a guess.
+- **Every business form is supported by design**, not only auto-entrepreneurs. Three independent organization settings (each with an effective date, so a business can change form without losing history):
+  - `legal_form`: `auto_entrepreneur`, `sole_proprietorship` (entreprise individuelle), `sarl`, `sarlau`, `sa`, `snc`, `other`, `not_registered`.
+  - `tax_regime`: `auto_entrepreneur`, `cpu`, `rns` (résultat net simplifié), `rnr` (résultat net réel), `corporate_tax` (IS, companies), `not_set`.
+  - `vat_status`: `not_liable`, `liable_monthly`, `liable_quarterly`, `not_set`.
+  The valid combinations (e.g. IS only for companies; auto-entrepreneur regime only for the auto-entrepreneur form) are data, checked when the owner saves.
+- **Regimes are data, not code paths.** Each regime in `tax_rules` declares its *base* (cashed turnover, invoiced turnover, turnover × coefficient, net profit) and its *method* (flat rate, rate + fixed amount by bracket, progressive brackets, minimum contribution). Adding a regime or a new finance-law year means adding rows, not changing the app.
+- The app computes the base from its own records (cashed and invoiced turnover, expenses by category, net profit) and shows which figures each regime uses. Where a regime needs accounting the app does not keep (depreciation, payroll, non-deductible items), it exports the figures and marks the result as needing the accountant.
+- The app produces **estimates and reminders**, never a filing.
+
+### Regime 1 — auto-entrepreneur (the starting point)
+
+| Rule | Value | Status |
+| --- | --- | --- |
+| Tax | cashed turnover × 0.5 % (commerce) / 1 % (services); liberatory (final tax on this income) | [مرجَّح] — consistent across sources; verify CGI art. 42 ter / 73 |
+| Base | turnover actually **cashed** in the period; no expense deduction | [مرجَّح] |
+| Annual caps | 500,000 MAD commerce / 200,000 MAD services | [مرجَّح] |
+| Exceeding the cap | regime lost only after **two consecutive years** above it | [مرجَّح] |
+| Deregistration risk | no declaration, or zero turnover declared, from the second year | [مرجَّح] |
+| Services, single client | part above 80,000 MAD/year from one client: 30 % withholding | [مرجَّح]; not relevant to B2C commerce |
+| Declaration and payment | monthly or quarterly, before the end of the following month | [مرجَّح] |
+| AMO contribution | unknown | [تخمين] — no value until confirmed with CNSS |
+| Excluded activities | include importers/exporters and jewellery traders (wholesale and retail) | [مرجَّح] per DGI guide as reported; the app shows this list as help text when choosing the regime |
+
+Open question for the accountant: for COD, is "cashed" the gross amount paid by the customer or the net remittance after carrier fees? The app reports both.
+
+App behaviour: per-period cashed turnover and estimated tax; progress to the annual cap (warning at 80 %, alert at 100 %, note on the two-year rule); reminder before each declaration deadline; alert when a period with sales has no declaration recorded; alert when sales are recorded while `tax_regime = not_registered` ("register before your first real sales").
+
+### Regime 2 — CPU (after the auto-entrepreneur cap)
+
+- CPU = (turnover × profession coefficient) × 10 % + annual complementary amount. Commerce cap 2,000,000 MAD. [مرجَّح]
+- Complementary amount by CPU due (2021 schedule, check for changes): < 500 → 1,200; 500–1,000 → 1,560; 1,001–2,500 → 2,280; 2,501–5,000 → 2,880; 5,001–10,000 → 4,200; > 10,000 → 14,400 MAD. [مرجَّح, possibly outdated]
+- E-commerce coefficient: unknown (CGI art. 40 table). [تخمين] Without it the app shows the formula and "coefficient not configured".
+
+### Regime 3 — real regime (RNR)
+
+- Taxed on net profit (revenue − deductible expenses) with the progressive income-tax scale. Scale reported for 2026: 0–40,000: 0 %; 40,001–60,000: 10 %; 60,001–80,000: 20 %; 80,001–100,000: 30 %; 100,001–180,000: 34 %; > 180,000: 37 %. [مرجَّح]; a reform to three brackets with a 30 % top rate was reported as proposed, unverified.
+- Out of scope for automatic calculation: it requires full accounting. The app exports the year's revenue, expenses and profit for the accountant.
+
+### Companies — corporate tax (IS) and VAT (to research)
+
+Required for SARL / SARLAU / SA and any business that outgrows the individual regimes. Not yet researched: IS rates and minimum contribution (cotisation minimale), VAT rates and declaration rules, invoicing obligations. Nothing is specified until the official texts are checked. Supporting records the app will need regardless: invoices with sequential numbering, VAT per line (rate, base, amount) when `vat_status` is liable, purchase invoices with deductible VAT.
+
+### Not covered yet
+
+Customs and import duties, local taxes (e.g. professional tax), social contributions (AMO/CNSS). To be researched separately.
+
