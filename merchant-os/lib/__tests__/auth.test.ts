@@ -53,3 +53,18 @@ describe("mapSupabaseAuthError", () => {
     expect(mapSupabaseAuthError(undefined)).toBe("UNKNOWN");
   });
 });
+
+describe("resetPasswordSchema", () => {
+  it("requires matching passwords of 10–72 characters", async () => {
+    const { resetPasswordSchema } = await import("@/lib/auth/schemas");
+    expect(resetPasswordSchema.safeParse({ password: "0123456789", confirm: "0123456789" }).success).toBe(true);
+    const mismatch = resetPasswordSchema.safeParse({ password: "0123456789", confirm: "0123456780" });
+    expect(mismatch.success).toBe(false);
+    expect(mismatch.error?.issues[0]?.message).toBe("PASSWORD_MISMATCH");
+    expect(resetPasswordSchema.safeParse({ password: "short", confirm: "short" }).success).toBe(false);
+  });
+
+  it("maps Supabase same_password", () => {
+    expect(mapSupabaseAuthError("same_password")).toBe("PASSWORD_SAME");
+  });
+});

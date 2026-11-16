@@ -3,7 +3,7 @@
 import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { mapSupabaseAuthError, zodFieldErrors, type AuthErrorCode, type FormState } from "@/lib/auth/errors";
-import { emailSchema, safeNextPath, signInSchema, signUpSchema } from "@/lib/auth/schemas";
+import { emailSchema, resetPasswordSchema, safeNextPath, signInSchema, signUpSchema } from "@/lib/auth/schemas";
 import { activeOrganizationCookieName } from "@/lib/auth/session";
 import { getSupabasePublicConfig } from "@/lib/supabase/config";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
@@ -103,6 +103,48 @@ export async function resendCode(_state: ResendState, formData: FormData): Promi
     return { error: mapSupabaseAuthError(error.code) };
   }
   return { sent: true };
+}
+
+export type RequestResetState = { sent?: boolean; error?: AuthErrorCode; values?: Record<string, string> } | undefined;
+
+/**
+ * Sends a password-reset email. The answer is the same whether or not the
+ * address has an account, so this form never reveals who is registered.
+ */
+export async function requestPasswordReset(_state: RequestResetState, formData: FormData): Promise<RequestResetState> {
+  const values = { email: String(formData.get("email") ?? "") };
+  if (!getSupabasePublicConfig()) {
+    return { error: "NOT_CONFIGURED", values };
+  }
+  const parsed = emailSchema.safeParse(formData.get("email"));
+  if (!parsed.success) {
+    return { error: "EMAIL_INVALID", values };
+  }
+  const supabase = await createSupabaseServerClient();
+  const { error } = await supabase.auth.resetPasswordForEmail(parsed.data, {
+    redirectTo: await confirmRedirectUrl("/reset-password")
+  });
+  if (error) {
+    const code = mapSupabaseAuthError(error.code);
+    if (code === "RATE_LIMITED") {
+      return { error: code, values };
+    }
+  }
+  return { sent: true, values };
+}
+
+/** Sets a new password for the signed-in user (after a reset link, or from the user menu). */
+export async function updatePassword(_state: FormState, formData: FormData): Promise<FormState> {
+  const parsed = resetPasswordSchema.safeParse({ password: formData.get("password"), confirm: formData.get("confirm") });
+  if (!parsed.success) {
+    return zodFieldErrors(parsed.error.issues);
+  }
+  const supabase = await createSupabaseServerClient();
+  const { error } = await supabase.auth.updateUser({ password: parsed.data.password });
+  if (error) {
+    return { error: mapSupabaseAuthError(error.code) };
+  }
+  redirect("/");
 }
 
 export async function signOut() {

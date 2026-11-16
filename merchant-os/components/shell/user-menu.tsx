@@ -1,6 +1,6 @@
 "use client";
 
-import { Building2, LogOut } from "lucide-react";
+import { Building2, KeyRound, LogOut } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useTransition } from "react";
 import { signOut } from "@/app/(auth)/actions";
@@ -72,6 +72,9 @@ export function UserMenu({ account }: { account: ShellAccount }) {
           </>
         ) : null}
         <DropdownMenuSeparator />
+        <DropdownMenuItem onSelect={() => router.push("/reset-password")}>
+          <KeyRound /> {t.auth.changePassword}
+        </DropdownMenuItem>
         <DropdownMenuItem onSelect={() => startTransition(() => signOut())}>
           <LogOut className="rtl:rotate-180" /> {t.auth.signOut}
         </DropdownMenuItem>

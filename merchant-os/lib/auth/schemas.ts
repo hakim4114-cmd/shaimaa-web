@@ -14,6 +14,10 @@ export const signUpSchema = z.object({
   password: passwordSchema
 });
 
+export const resetPasswordSchema = z
+  .object({ password: passwordSchema, confirm: z.string() })
+  .refine((value) => value.password === value.confirm, { message: "PASSWORD_MISMATCH", path: ["confirm"] });
+
 export const slugPattern = /^[a-z0-9][a-z0-9-]{1,46}[a-z0-9]$/;
 
 export const organizationSchema = z.object({

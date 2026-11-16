@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.3.0 — Revised plan and order essentials (2026-11-16)
+
+### Changed
+- Roadmap rewritten after a critical review: order intake, confirmation calls and a "today" view come first; SaaS billing removed; production, WhatsApp API inbox, ads APIs, non-auto-entrepreneur taxes and international carriers deferred.
+
+### Added
+- Password recovery: "Forgot password?" request page, reset page (also reachable from the user menu as "Change password"), translated errors.
+- Application error page that never shows raw errors.
+- Migration `20261116000400_order_workflow.sql`, applied to the live project: Moroccan cities reference (40 cities, aliases, per-organization additions), shipping rates per city, confirmation call log with call-back scheduling, customer blocklist with owner override, customer delivery history, editing orders before confirmation, `create_order` v2 (city reference and default shipping fee).
+- Database tests for the workflow (`20_order_workflow.test.sql`); live smoke test extended to 15 checks.
+
+### Security
+- Next.js 16.4.3 → 16.4.5: fixes GHSA-mfr8-8qww-v76h (moderate). Next.js had started refusing to build the affected version.
+
 ## 0.2.0 — Phase 2.1: authentication and organizations (2026-11-14)
 
 ### Added

@@ -128,6 +128,27 @@ These formulas will be implemented as SQL functions (one source for dashboards, 
 - Returns cover whole order lines; partial-quantity returns are added in Phase 2 by editing return items before receipt.
 - Order lines cannot be edited after creation yet (Phase 2: allowed only before confirmation).
 
+## Order intake and confirmation (0.3.0)
+
+Rules marked **[DB]** are enforced by migration `20261116000400_order_workflow.sql` and covered by `supabase/tests/20_order_workflow.test.sql`.
+
+### Cities and shipping fees
+- A shared reference list of Moroccan cities (French and Arabic names, region, lower-case aliases such as "casa") is seeded; each organization can add its own (villages, neighbourhoods) **[DB]**. Free-text cities are still accepted so an order is never blocked, but only referenced cities count in per-city analytics.
+- `shipping_rates` holds, per city, the fee charged to the customer, the carrier's cost and the return fee; `provider_id` empty = the default rate **[DB]**. A new order with a `city_id` and no explicit fee takes the default rate's customer fee **[DB]**.
+
+### Confirmation calls
+- Each call is an immutable record: outcome (`confirmed`, `cancelled`, `no_answer`, `busy`, `unreachable`, `wrong_number`, `call_back_requested`, `other`), note, call-back time, who called **[DB]**.
+- The first unanswered call moves a `new` order to `confirmation_pending`; `confirmed` confirms it (and reserves stock — if stock is short, the whole call is rejected and nothing is logged); `cancelled` cancels it and needs a reason; `call_back_requested` needs a time and schedules `next_call_at` **[DB]**.
+- Orders keep `call_attempts`, `last_call_outcome` and `next_call_at` for the "calls to make today" list **[DB]**.
+- Call notes are visible to owner, admin and operator only **[DB]**.
+
+### Risk and blocklist
+- `customer_history(org, phone)` returns orders, delivered, refused, returned and cancelled counts and whether the number is blocked, for display at order entry **[DB]**.
+- A blocked phone cannot get a new order; an owner or admin may override explicitly (`allow_blocked`) **[DB]**. Operators can add numbers; only owner/admin can edit or remove them **[DB]**.
+
+### Editing before confirmation
+- While an order is `new` or `confirmation_pending` (stock not reserved yet), lines, discount, shipping fee, COD, city, address and name can be changed; lines are re-priced from the catalog and totals recomputed; COD follows the total unless it was a deposit **[DB]**. After confirmation the order is locked (`ORDER_LOCKED`) **[DB]**. Every edit is logged in the timeline with what changed **[DB]**.
+
 ## Carrier scorecard (planned — with shipping, Phase 2)
 
 Carrier choice is decided on the merchant's own measured data, not on carriers' marketing. Per carrier, and per carrier × city, over a chosen period:

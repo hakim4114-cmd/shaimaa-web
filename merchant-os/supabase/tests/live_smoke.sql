@@ -51,8 +51,23 @@ insert into results (check_name, outcome) select 'direct money edit blocked', pg
 insert into results (check_name, outcome) select 'direct stock edit blocked', pg_temp.fails('update public.inventory_levels set on_hand = 99', 'permission denied');
 insert into results (check_name, outcome) select 'stock reserved', case when (select reserved from public.inventory_levels where variant_id = pg_temp.v('var')) = 1 then 'ok' else 'FAIL' end;
 
+-- 0.3.0 order workflow
+insert into public.shipping_rates (organization_id, city_id, customer_fee_cents)
+  select pg_temp.v('org'), id, 2500 from public.cities where name_fr = 'Casablanca' and organization_id is null;
+select pg_temp.keep('o3', (select id from public.create_order(pg_temp.v('org'), jsonb_build_object(
+  'customer', jsonb_build_object('full_name', 'Smoke Three', 'phone', '+212612345677'),
+  'city_id', (select id from public.cities where name_fr = 'Casablanca' and organization_id is null),
+  'items', jsonb_build_array(jsonb_build_object('variant_id', pg_temp.v('var'), 'quantity', 1))))));
+insert into results (check_name, outcome) select 'shipping fee from city rate',
+  case when (select shipping_fee_cents from public.orders where id = pg_temp.v('o3')) = 2500 then 'ok' else 'FAIL' end;
+select public.log_call_attempt(pg_temp.v('o3'), 'no_answer');
+insert into results (check_name, outcome) select 'call attempt moves order to confirmation pending',
+  case when (select status::text from public.orders where id = pg_temp.v('o3')) = 'confirmation_pending' then 'ok' else 'FAIL' end;
+insert into results (check_name, outcome) select 'customer history available',
+  case when (select orders_total from public.customer_history(pg_temp.v('org'), '+212612345677')) = 1 then 'ok' else 'FAIL' end;
+
 select pg_temp.login('22222222-2222-4222-8222-222222222222');
-insert into results (check_name, outcome) select 'viewer sees orders', case when (select count(*) from public.orders) = 2 then 'ok' else 'FAIL' end;
+insert into results (check_name, outcome) select 'viewer sees orders', case when (select count(*) from public.orders) = 3 then 'ok' else 'FAIL' end;
 insert into results (check_name, outcome) select 'viewer cannot read customer PII', case when (select count(*) from public.customers) = 0 then 'ok' else 'FAIL' end;
 insert into results (check_name, outcome) select 'viewer cannot confirm', pg_temp.fails(format('select public.transition_order(%L, %L, %L)', pg_temp.v('o2'), 'cancelled', 'x'), 'FORBIDDEN');
 
