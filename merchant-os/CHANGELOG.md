@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.4.1 — Phone fixes (2026-11-16)
+
+### Fixed
+- Stock page was 1022 px wide on a 360 px phone: hidden screen-reader labels inside the scrollable table escaped it, widening the page and pushing the menu drawer off-screen (reported by the owner from a phone). Tables now contain their positioned children.
+- Long product names overlapped the next column; name cells wrap.
+
+### Changed
+- Stock shows as cards on phones (table from 640 px up).
+- Command centre: "Add products and stock" links to Products and is ticked once a product exists.
+
 ## 0.4.0 — Products and stock (2026-11-16)
 
 ### Added

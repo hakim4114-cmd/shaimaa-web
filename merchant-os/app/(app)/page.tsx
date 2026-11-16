@@ -2,7 +2,9 @@ import { ArrowRight, CircleCheck, CircleDashed, Database } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardBody, CardHeader } from "@/components/ui/card";
 import { PageHeader } from "@/components/ui/page-header";
+import Link from "next/link";
 import { getSessionContext } from "@/lib/auth/session";
+import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { isSupabaseConfigured } from "@/lib/env";
 import { interpolate } from "@/lib/i18n/dictionaries";
 import { getI18n } from "@/lib/i18n/server";
@@ -13,10 +15,15 @@ export default async function CommandCenterPage() {
   const session = configured ? await getSessionContext() : null;
 
   if (session?.active) {
-    const readySteps = [
+    const supabase = await createSupabaseServerClient();
+    const { count: productCount } = await supabase
+      .from("products")
+      .select("id", { count: "exact", head: true })
+      .eq("organization_id", session.active.organization.id);
+    const readySteps: { label: string; done: boolean; href?: string }[] = [
       { label: t.workspace.stepDatabase, done: true },
       { label: t.workspace.stepOrganization, done: true },
-      { label: t.workspace.stepCatalog, done: false },
+      { label: t.workspace.stepCatalog, done: (productCount ?? 0) > 0, href: "/products" },
       { label: t.workspace.stepOrders, done: false }
     ];
     return (
@@ -39,8 +46,14 @@ export default async function CommandCenterPage() {
                   ) : (
                     <CircleDashed className="size-5 shrink-0 text-subtle-foreground" aria-hidden />
                   )}
-                  <span className="min-w-0 flex-1 text-sm text-foreground">{step.label}</span>
-                  {step.done ? null : <Badge>{t.workspace.upcoming}</Badge>}
+                  {step.href && !step.done ? (
+                    <Link href={step.href} className="min-w-0 flex-1 text-sm font-medium text-accent hover:underline">
+                      {step.label}
+                    </Link>
+                  ) : (
+                    <span className="min-w-0 flex-1 text-sm text-foreground">{step.label}</span>
+                  )}
+                  {step.done || step.href ? null : <Badge>{t.workspace.upcoming}</Badge>}
                 </li>
               ))}
             </ol>
