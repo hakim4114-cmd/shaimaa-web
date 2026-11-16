@@ -195,7 +195,13 @@ Provided by the owner's research. Every value here must be checked against the o
 - The app models a **merchant**: business figures only. It never asks for or stores the owner's personal situation (employment, salary, other income); combining activities is the owner's matter with their accountant.
 
 - No rate, cap or bracket in code. A **`tax_rules`** table keyed by regime, parameter and **fiscal year** (`valid_from`/`valid_to`), each row with its source URL and the date it was verified. A missing rule shows "not configured", never a guess.
-- Organization settings: `tax_regime` (`auto_entrepreneur_commerce`, `auto_entrepreneur_services`, `cpu`, `real_regime`, `not_registered`), registration date, declaration frequency (monthly/quarterly).
+- **Every business form is supported by design**, not only auto-entrepreneurs. Three independent organization settings (each with an effective date, so a business can change form without losing history):
+  - `legal_form`: `auto_entrepreneur`, `sole_proprietorship` (entreprise individuelle), `sarl`, `sarlau`, `sa`, `snc`, `other`, `not_registered`.
+  - `tax_regime`: `auto_entrepreneur`, `cpu`, `rns` (résultat net simplifié), `rnr` (résultat net réel), `corporate_tax` (IS, companies), `not_set`.
+  - `vat_status`: `not_liable`, `liable_monthly`, `liable_quarterly`, `not_set`.
+  The valid combinations (e.g. IS only for companies; auto-entrepreneur regime only for the auto-entrepreneur form) are data, checked when the owner saves.
+- **Regimes are data, not code paths.** Each regime in `tax_rules` declares its *base* (cashed turnover, invoiced turnover, turnover × coefficient, net profit) and its *method* (flat rate, rate + fixed amount by bracket, progressive brackets, minimum contribution). Adding a regime or a new finance-law year means adding rows, not changing the app.
+- The app computes the base from its own records (cashed and invoiced turnover, expenses by category, net profit) and shows which figures each regime uses. Where a regime needs accounting the app does not keep (depreciation, payroll, non-deductible items), it exports the figures and marks the result as needing the accountant.
 - The app produces **estimates and reminders**, never a filing.
 
 ### Regime 1 — auto-entrepreneur (the starting point)
@@ -227,7 +233,11 @@ App behaviour: per-period cashed turnover and estimated tax; progress to the ann
 - Taxed on net profit (revenue − deductible expenses) with the progressive income-tax scale. Scale reported for 2026: 0–40,000: 0 %; 40,001–60,000: 10 %; 60,001–80,000: 20 %; 80,001–100,000: 30 %; 100,001–180,000: 34 %; > 180,000: 37 %. [مرجَّح]; a reform to three brackets with a 30 % top rate was reported as proposed, unverified.
 - Out of scope for automatic calculation: it requires full accounting. The app exports the year's revenue, expenses and profit for the accountant.
 
-### Not covered
+### Companies — corporate tax (IS) and VAT (to research)
 
-Customs and import duties, VAT (assumed not applicable to auto-entrepreneurs — to verify), local taxes. To be researched separately.
+Required for SARL / SARLAU / SA and any business that outgrows the individual regimes. Not yet researched: IS rates and minimum contribution (cotisation minimale), VAT rates and declaration rules, invoicing obligations. Nothing is specified until the official texts are checked. Supporting records the app will need regardless: invoices with sequential numbering, VAT per line (rate, base, amount) when `vat_status` is liable, purchase invoices with deductible VAT.
+
+### Not covered yet
+
+Customs and import duties, local taxes (e.g. professional tax), social contributions (AMO/CNSS). To be researched separately.
 
