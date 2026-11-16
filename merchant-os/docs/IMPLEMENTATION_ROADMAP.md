@@ -34,7 +34,7 @@ Products and variants (images in a private bucket), receive / adjust / damage, m
 5. **WhatsApp templates in one tap**: confirmation, delay, refusal follow-up in Darija/Arabic/French, opening WhatsApp with a prefilled message (`wa.me`), no WhatsApp API needed.
 6. **Order intake from outside**: CSV import; authenticated endpoint so a storefront (e.g. Maison Shaimaa) can push orders.
 
-7. **Exports and printing** (first use of the shared export framework): orders list to Excel/CSV/print, in Arabic or English. Details: INTEGRATIONS.md → *Exports, printing and Google Sheets*.
+7. **Exports and printing** (first use of the shared export framework): orders list to Excel/CSV/print, in Arabic, French or English. Details: INTEGRATIONS.md → *Exports, printing and Google Sheets*.
 
 ## Step 4 — Today view (new home page)
 

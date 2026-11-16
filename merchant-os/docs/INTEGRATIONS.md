@@ -38,7 +38,7 @@ Carrier-specific statuses are mapped to `shipment_status`; unmapped statuses are
 
 ## Exports, printing and Google Sheets (requested 2026-11-16)
 
-Every list and report gets the same three actions; reports are produced in **Arabic or English**, chosen per export (independent of the interface language).
+Every list and report gets the same three actions; reports are produced in **Arabic, French or English**, chosen per export (independent of the interface language, which also stays trilingual — decision 2026-11-16).
 
 | Output | How | Why this way |
 | --- | --- | --- |
