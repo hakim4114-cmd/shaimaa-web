@@ -33,7 +33,7 @@ export function UserMenu({ account }: { account: ShellAccount }) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
-        className="ms-1 flex size-8 items-center justify-center rounded-full bg-accent-soft text-xs font-semibold text-accent-soft-foreground ring-offset-2 transition hover:ring-2 hover:ring-border-strong"
+        className="ms-1 flex size-8 pointer-coarse:size-10 items-center justify-center rounded-full bg-accent-soft text-xs font-semibold text-accent-soft-foreground ring-offset-2 transition hover:ring-2 hover:ring-border-strong"
         aria-label={t.userMenu.account}
         disabled={pending}
       >

@@ -93,7 +93,7 @@ export function AppShell({
           <button
             type="button"
             onClick={() => setSearchOpen(true)}
-            className="flex h-9 w-full max-w-sm items-center gap-2 rounded-md border border-border bg-surface px-3 text-sm text-subtle-foreground shadow-card transition-colors hover:border-border-strong"
+            className="flex h-9 pointer-coarse:h-11 w-full max-w-sm items-center gap-2 rounded-md border border-border bg-surface px-3 text-sm text-subtle-foreground shadow-card transition-colors hover:border-border-strong"
           >
             <Search className="size-4" aria-hidden />
             <span className="truncate">{t.topbar.search}</span>

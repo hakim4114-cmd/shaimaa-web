@@ -22,7 +22,7 @@ const fr: Dictionary = {
     assistant: "Assistant IA",
     settings: "Paramètres",
     designSystem: "Design system",
-    comingInPhase: "Phase {phase}",
+    comingInPhase: "Étape {phase}",
     collapse: "Réduire la barre latérale",
     expand: "Agrandir la barre latérale",
     openMenu: "Ouvrir le menu",

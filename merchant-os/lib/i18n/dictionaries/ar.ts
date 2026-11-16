@@ -22,7 +22,7 @@ const ar: Dictionary = {
     assistant: "المساعد الذكي",
     settings: "الإعدادات",
     designSystem: "نظام التصميم",
-    comingInPhase: "المرحلة {phase}",
+    comingInPhase: "الخطوة {phase}",
     collapse: "طي الشريط الجانبي",
     expand: "توسيع الشريط الجانبي",
     openMenu: "فتح القائمة",
