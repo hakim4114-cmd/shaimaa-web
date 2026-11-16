@@ -28,12 +28,13 @@ In order, each step shippable:
 Exit criteria: end-to-end flow (order → confirm → ship → deliver → remit → profit report) works on a real Supabase project; Playwright smoke tests in CI; all figures traceable to records.
 
 ## Phase 2b — Owner routines (requested 2026-11-16)
-Built right after the Phase 2 MVP because the owner works alone; full rules in BUSINESS_RULES.md → *Owner routines and compliance*.
+Built right after the Phase 2 MVP because the owner works alone; full rules in BUSINESS_RULES.md → *Owner routines*.
 1. Payables, cash accounts with opening balances, complaints log, decision log (migrations + RLS + tests).
 2. Weekly review page (nine indicators vs last week, ads review, decision of the week).
 3. Monthly close: net profit, fund allocation with owner-set percentages, dormant stock report.
-4. Quarterly tax summary driven by a `tax_rules` data table with sources and verification dates; CSV export. Rules verified against official texts before release.
-5. Yearly summary: zakat calculation aid (configurable inventory valuation, manual gold price, doubtful receivables separated), yearly evaluation and goals.
+4. Yearly summary: zakat calculation aid (configurable inventory valuation, manual gold price, doubtful receivables separated), yearly evaluation and goals.
+
+Taxes: removed from the plan for now (2026-11-16); to be researched and specified separately.
 
 ## Phase 3 — Integrations
 CSV import/export framework, first verified carrier adapter(s) chosen with the merchant, carrier webhooks, WhatsApp Business (when credentials exist), support inbox, manual/CSV ad spend, optional bridge to receive orders from storefronts (e.g. Maison Shaimaa) through an authenticated endpoint.
