@@ -99,7 +99,7 @@ export default async function ProductsPage({ searchParams }: { searchParams: Pro
                 const low = active.some((v) => v.stock.available <= v.minStockLevel);
                 return (
                   <TR key={product.id}>
-                    <TD className="max-w-80">
+                    <TD className="min-w-44 max-w-80 whitespace-normal">
                       <Link href={`/products/${product.id}`} className="font-medium text-foreground hover:text-accent">
                         {product.name}
                       </Link>

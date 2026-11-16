@@ -3,7 +3,9 @@ import { cn } from "@/lib/utils";
 
 export function Table({ className, ...props }: ComponentProps<"table">) {
   return (
-    <div className="overflow-x-auto">
+    // `relative` keeps absolutely positioned children (e.g. sr-only labels) inside the
+    // scroll box; without it they escape and widen the whole page on phones.
+    <div className="relative overflow-x-auto">
       <table className={cn("w-full border-collapse text-sm", className)} {...props} />
     </div>
   );
