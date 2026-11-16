@@ -26,9 +26,9 @@ export function SidebarNav({
       {groups.map((group) => (
         <div key={group.key} className="flex flex-col gap-0.5">
           {collapsed ? (
-            <div className="mx-auto mb-1 h-px w-5 bg-border" aria-hidden />
+            <div className="mx-auto mb-1 h-px w-5 bg-sidebar-border" aria-hidden />
           ) : (
-            <p className="px-2 pb-1 text-[11px] font-medium uppercase tracking-wider text-subtle-foreground">
+            <p className="px-2 pb-1 text-[11px] font-semibold uppercase tracking-wider text-sidebar-muted">
               {t.nav.groups[group.key]}
             </p>
           )}
@@ -38,16 +38,16 @@ export function SidebarNav({
             const phaseLabel = item.phase ? interpolate(t.nav.comingInPhase, { phase: item.phase }) : null;
             const active = item.href ? (item.href === "/" ? pathname === "/" : pathname.startsWith(item.href)) : false;
             const base = cn(
-              "group flex h-8 items-center gap-2.5 rounded-md px-2 text-sm transition-colors pointer-coarse:h-11",
+              "group relative flex h-9 items-center gap-2.5 rounded-md px-2.5 text-sm transition-colors pointer-coarse:h-11",
               collapsed && "justify-center px-0"
             );
 
             const content = (
               <>
-                <Icon className={cn("size-4 shrink-0", active ? "text-accent" : "text-subtle-foreground")} aria-hidden />
+                <Icon className={cn("size-4 shrink-0", active ? "text-sidebar-accent" : "text-sidebar-muted group-hover:text-sidebar-foreground")} aria-hidden />
                 {collapsed ? <span className="sr-only">{label}</span> : <span className="truncate">{label}</span>}
                 {!collapsed && phaseLabel ? (
-                  <span className="ms-auto shrink-0 whitespace-nowrap rounded bg-surface-muted px-1.5 py-px text-[10px] font-medium text-subtle-foreground">
+                  <span className="ms-auto shrink-0 whitespace-nowrap rounded bg-sidebar-hover px-1.5 py-px text-[10px] font-medium text-sidebar-muted">
                     {phaseLabel}
                   </span>
                 ) : null}
@@ -62,15 +62,15 @@ export function SidebarNav({
                 className={cn(
                   base,
                   active
-                    ? "bg-surface font-medium text-foreground shadow-card ring-1 ring-border"
-                    : "text-muted-foreground hover:bg-surface-hover hover:text-foreground"
+                    ? "bg-sidebar-active font-semibold text-sidebar-foreground before:absolute before:inset-y-2 before:start-0 before:w-[3px] before:rounded-full before:bg-sidebar-accent"
+                    : "text-sidebar-muted hover:bg-sidebar-hover hover:text-sidebar-foreground"
                 )}
               >
                 {content}
               </Link>
             ) : (
               // Modules that are not built yet are shown as clearly disabled, never as dead links.
-              <span aria-disabled="true" className={cn(base, "cursor-not-allowed text-subtle-foreground/80")}>
+              <span aria-disabled="true" className={cn(base, "cursor-not-allowed text-sidebar-muted/70")}>
                 {content}
               </span>
             );

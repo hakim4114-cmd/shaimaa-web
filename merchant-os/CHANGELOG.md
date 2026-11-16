@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.4.2 — Identity "Ink" (2026-11-16)
+
+### Changed
+- New visual identity chosen by the owner from three directions: ink-navy sidebar and mobile drawer, tinted background instead of plain white, electric-violet accent (darker in light mode for contrast), redesigned status colours checked to WCAG AA in light and dark.
+- New brand mark (an M with a dot) on the sidebar, sign-in, favicon, Apple icon and installed-app icons; the installed icon is an ink tile.
+- Manrope replaces Inter for Latin text and numbers; slightly rounder corners.
+- `Metric` gains a `hero` tone; stock value is the hero figure on the stock page.
+
 ## 0.4.1 — Phone fixes (2026-11-16)
 
 ### Fixed

@@ -45,23 +45,30 @@ export function AppShell({
       {/* Desktop sidebar */}
       <aside
         className={cn(
-          "sticky top-0 hidden h-dvh shrink-0 flex-col border-e border-border bg-surface-muted/50 transition-[width] duration-200 lg:flex",
+          "sticky top-0 hidden h-dvh shrink-0 flex-col bg-sidebar text-sidebar-foreground dark:border-e dark:border-sidebar-border transition-[width] duration-200 lg:flex",
           collapsed ? "w-16" : "w-60"
         )}
       >
-        <div className={cn("flex h-14 items-center gap-2.5 border-b border-border px-4", collapsed && "justify-center px-0")}>
+        <div className={cn("flex h-14 items-center gap-2.5 px-4", collapsed && "justify-center px-0")}>
           <BrandMark />
-          {collapsed ? null : <span className="truncate text-sm font-semibold tracking-tight text-foreground">{t.app.name}</span>}
+          {collapsed ? null : (
+            <span dir="ltr" className="truncate font-brand text-[15px] font-extrabold tracking-tight">
+              {t.app.name}
+            </span>
+          )}
         </div>
         <div className="flex-1 overflow-y-auto">
           <SidebarNav groups={groups} collapsed={collapsed} />
         </div>
-        <div className="border-t border-border p-3">
+        <div className="border-t border-sidebar-border p-3">
           <Button
             variant="ghost"
             size="sm"
             onClick={toggleCollapsed}
-            className={cn("w-full justify-start", collapsed && "justify-center px-0")}
+            className={cn(
+              "w-full justify-start text-sidebar-muted hover:bg-sidebar-hover hover:text-sidebar-foreground",
+              collapsed && "justify-center px-0"
+            )}
             aria-label={collapsed ? t.nav.expand : t.nav.collapse}
             aria-expanded={!collapsed}
           >
@@ -78,8 +85,11 @@ export function AppShell({
           closeLabel={t.nav.closeMenu}
           variant="sheet"
         >
-          <DialogTitle className="flex h-14 items-center gap-2.5 border-b border-border px-4 text-sm">
-            <BrandMark /> {t.app.name}
+          <DialogTitle className="flex h-14 items-center gap-2.5 px-4 text-sidebar-foreground">
+            <BrandMark />
+            <span dir="ltr" className="font-brand text-[15px] font-extrabold tracking-tight">
+              {t.app.name}
+            </span>
           </DialogTitle>
           <SidebarNav groups={groups} onNavigate={() => setMobileOpen(false)} />
         </DialogContent>
