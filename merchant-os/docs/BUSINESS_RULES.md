@@ -192,6 +192,8 @@ Provided by the owner's research. Every value here must be checked against the o
 
 ### Design rules (fixed)
 
+- The app models a **merchant**: business figures only. It never asks for or stores the owner's personal situation (employment, salary, other income); combining activities is the owner's matter with their accountant.
+
 - No rate, cap or bracket in code. A **`tax_rules`** table keyed by regime, parameter and **fiscal year** (`valid_from`/`valid_to`), each row with its source URL and the date it was verified. A missing rule shows "not configured", never a guess.
 - Organization settings: `tax_regime` (`auto_entrepreneur_commerce`, `auto_entrepreneur_services`, `cpu`, `real_regime`, `not_registered`), registration date, declaration frequency (monthly/quarterly).
 - The app produces **estimates and reminders**, never a filing.
@@ -200,7 +202,7 @@ Provided by the owner's research. Every value here must be checked against the o
 
 | Rule | Value | Status |
 | --- | --- | --- |
-| Tax | cashed turnover × 0.5 % (commerce) / 1 % (services); liberatory (not added to salary income) | [مرجَّح] — consistent across sources; verify CGI art. 42 ter / 73 |
+| Tax | cashed turnover × 0.5 % (commerce) / 1 % (services); liberatory (final tax on this income) | [مرجَّح] — consistent across sources; verify CGI art. 42 ter / 73 |
 | Base | turnover actually **cashed** in the period; no expense deduction | [مرجَّح] |
 | Annual caps | 500,000 MAD commerce / 200,000 MAD services | [مرجَّح] |
 | Exceeding the cap | regime lost only after **two consecutive years** above it | [مرجَّح] |
@@ -222,8 +224,8 @@ App behaviour: per-period cashed turnover and estimated tax; progress to the ann
 
 ### Regime 3 — real regime (RNR)
 
-- Net profit is added to other income (e.g. salary) and taxed on the progressive income-tax scale. Scale reported for 2026: 0–40,000: 0 %; 40,001–60,000: 10 %; 60,001–80,000: 20 %; 80,001–100,000: 30 %; 100,001–180,000: 34 %; > 180,000: 37 %. [مرجَّح]; a reform to three brackets with a 30 % top rate was reported as proposed, unverified.
-- Out of scope for automatic calculation: it requires full accounting and the owner's other income. The app exports the year's profit figures for the accountant.
+- Taxed on net profit (revenue − deductible expenses) with the progressive income-tax scale. Scale reported for 2026: 0–40,000: 0 %; 40,001–60,000: 10 %; 60,001–80,000: 20 %; 80,001–100,000: 30 %; 100,001–180,000: 34 %; > 180,000: 37 %. [مرجَّح]; a reform to three brackets with a 30 % top rate was reported as proposed, unverified.
+- Out of scope for automatic calculation: it requires full accounting. The app exports the year's revenue, expenses and profit for the accountant.
 
 ### Not covered
 
