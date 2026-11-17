@@ -57,6 +57,8 @@ export const appErrorCodes = [
   "FUNDS_OVER_100",
   "MONTH_ALREADY_CLOSED",
   "TOO_MANY_TOKENS",
+  "OVER_SAFE_LIMIT",
+  "ALREADY_PAID",
   "UNKNOWN"
 ] as const;
 
@@ -98,7 +100,9 @@ const raised: Partial<Record<string, AppErrorCode>> = {
   PARCEL_NOT_FOUND: "INVOICE_HAS_MISMATCHES",
   RETURN_NOT_FOUND: "NOT_FOUND",
   RETURN_ITEM_NOT_FOUND: "NOT_FOUND",
-  ORDER_NOT_EXCHANGEABLE: "ORDER_NOT_EXCHANGEABLE"
+  ORDER_NOT_EXCHANGEABLE: "ORDER_NOT_EXCHANGEABLE",
+  AMOUNT_REQUIRED: "AMOUNT_REQUIRED",
+  ALREADY_PAID: "ALREADY_PAID"
 };
 
 export function mapDatabaseError(error: { code?: string; message?: string } | null | undefined): AppErrorCode {

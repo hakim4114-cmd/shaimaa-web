@@ -1,5 +1,18 @@
 # Changelog
 
+## 1.3.0 — Owner pay and cash (2026-11-17)
+
+### Added
+- **«You can safely withdraw today»** (`/pay`): one number, with its calculation shown line by line. It is the smaller of:
+  1. **pay earned**: the owner-pay share of closed months, minus what was already withdrawn;
+  2. **free cash**: the cash balance, minus obligations due within 30 days, minus a minimum reserve.
+
+  A month counts only once it is closed. When the amount is 0, the page says why (no closed month, pay not earned, cash tight, limited by cash).
+- **Cash balance**: opening balance and date, money put in, and corrections. Carrier payouts and expenses are counted automatically.
+- **Obligations**: who, how much and when. Paying one records it as an expense, so it is counted once.
+- **Withdrawals**: recorded by the database itself. Up to the safe amount they go through freely. Above it, a written reason of 10+ characters is required and the withdrawal is flagged. Entries cannot be edited or deleted.
+- Database: `cash_settings`, `cash_entries`, `payables`, `safe_withdrawal`, `record_owner_withdrawal` and `pay_payable`. New database tests in `90_safe_pay.test.sql`.
+
 ## 1.2.0 — Pricing center, phase 1 (2026-11-17)
 
 ### Added

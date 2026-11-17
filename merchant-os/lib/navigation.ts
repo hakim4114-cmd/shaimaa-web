@@ -5,6 +5,7 @@ import {
   CalendarCheck,
   CalendarRange,
   ChartColumn,
+  HandCoins,
   LayoutDashboard,
   Megaphone,
   Package,
@@ -58,6 +59,7 @@ export const navigation: NavGroup[] = [
     items: [
       { key: "cod", icon: Banknote, href: "/cash" },
       { key: "finance", icon: Wallet, href: "/finance" },
+      { key: "pay", icon: HandCoins, href: "/pay" },
       { key: "review", icon: CalendarCheck, href: "/review" },
       { key: "close", icon: CalendarRange, href: "/close" }
     ]
