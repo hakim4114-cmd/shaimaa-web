@@ -10,7 +10,18 @@ const intlLocale: Record<Locale, string> = {
   en: "en-MA"
 };
 
+// Left-to-right isolate (LRI … PDI): an amount like "450,00 د.م." mixes digits
+// and Arabic letters, and inside right-to-left text the bidi algorithm would
+// reorder its parts ("د.م0,00."). Isolating it keeps it intact everywhere.
+const LRI = "\u2066";
+const PDI = "\u2069";
+
 export function formatMoney(cents: number | bigint, locale: Locale, options: { compact?: boolean } = {}): string {
+  return `${LRI}${formatMoneyPlain(cents, locale, options)}${PDI}`;
+}
+
+/** Same without bidi isolation, for exports and plain-text contexts (WhatsApp, CSV). */
+export function formatMoneyPlain(cents: number | bigint, locale: Locale, options: { compact?: boolean } = {}): string {
   const value = Number(cents) / 100;
   return new Intl.NumberFormat(intlLocale[locale], {
     style: "currency",
