@@ -1,5 +1,26 @@
 # Changelog
 
+## 0.7.0 — Cash, returns, expenses, marketing, real dashboard (2026-11-17)
+
+### Added
+- **Dashboard with real figures**:
+  - «Today» block: calls due, orders to prepare, parcels waiting for pickup, delivery problems, returns to receive.
+  - Range tabs, with net profit, delivered revenue, money still with the carrier, ad cost per delivered order, confirmation rate and refusal rate.
+- **Cash (COD)**:
+  - What is still with the carrier, and what was delivered more than 10 days ago without being paid.
+  - **Sendit invoices** checked parcel by parcel before recording. A parcel whose amount differs from the order blocks the invoice. Refusal and pickup fees and credits are kept as «other charges», so the recorded payout always equals the money received.
+  - Payout history.
+- **Returns**: receive the parcel (with the return fee), mark each item resellable (back to stock), damaged or missing, then close.
+- **Finance**: expense entry by category; profit and loss for a range, following BUSINESS_RULES.md (stock purchases are cash out, not P&L); and a warning when cost prices are missing.
+- **Marketing**:
+  - Campaigns, and ad spend recorded per campaign.
+  - Each order can be attributed to a campaign, at entry or later.
+  - Report per campaign: spend, orders, confirmation rate, deliveries and refusals, cost per delivered order, and return on ad spend on delivered revenue.
+- Database: `report_summary`, `campaign_report` and `record_carrier_invoice` (exact reconciliation), plus `other_charges_cents` on payouts. New database tests in `50_money.test.sql`.
+
+### Not included (on purpose)
+- Reading Meta / TikTok ad accounts automatically. Spend is entered by hand: the APIs need app review and add little for a single merchant at this stage.
+
 ## 0.6.0 — Shipping with Sendit (2026-11-17)
 
 ### Added

@@ -38,11 +38,11 @@ Order intake from outside (item 6) waits until the owner chooses where they will
 
 7. **Exports and printing** (first use of the shared export framework): orders list to Excel/CSV/print, in Arabic, French or English. Details: INTEGRATIONS.md → *Exports, printing and Google Sheets*.
 
-## Step 4 — Today view (new home page)
+## Step 4 — Today view (new home page) ✅ 0.7.0 (today block + real metrics on the dashboard)
 
 "What do I do today?": calls to make (and call-backs due), packages to prepare, shipments without news for 48 h, remittances overdue, low stock. The metric dashboard moves to its own page.
 
-## Step 5 — Shipping, returns, cash (0.6.0: Sendit parcels, labels, pickup, webhook tracking ✅)
+## Step 5 — Shipping, returns, cash (0.6.0 Sendit ✅; 0.7.0 returns, Sendit invoice reconciliation, expenses, P&L ✅)
 
 Manual + CSV shipping with any carrier, printable delivery slips and daily packing list, returns with partial quantities and exchanges, COD remittances, expenses, reporting functions (BUSINESS_RULES.md formulas) with fixture tests, the metric dashboard.
 
@@ -73,7 +73,7 @@ Reports from steps 5–6 (dashboard, weekly review, monthly close) get Excel/PDF
 | SaaS plans and billing for other merchants | **Removed**. The schema stays multi-organization; nothing more is built for SaaS. |
 | Production, purchasing, artisans | Deferred: only if the business manufactures. |
 | Support inbox on the WhatsApp Business API | Deferred: WhatsApp Business app + one-tap templates first. |
-| Meta / TikTok ads API connections | Deferred: ad spend entered manually. |
+| Meta / TikTok ads API connections | Deferred: ad spend entered manually; campaigns, attribution and the campaign report exist since 0.7.0. |
 | CPU, real regime, company taxes (IS, VAT) | Deferred until the business needs them. |
 | International carriers | Deferred until selling abroad. |
 

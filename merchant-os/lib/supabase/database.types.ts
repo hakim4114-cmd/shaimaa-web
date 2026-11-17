@@ -220,6 +220,7 @@ export type Database = {
           net_received_cents: number
           note: string
           organization_id: string
+          other_charges_cents: number
           provider_id: string | null
           received_on: string
           reference: string
@@ -233,6 +234,7 @@ export type Database = {
           net_received_cents: number
           note?: string
           organization_id: string
+          other_charges_cents?: number
           provider_id?: string | null
           received_on: string
           reference?: string
@@ -246,6 +248,7 @@ export type Database = {
           net_received_cents?: number
           note?: string
           organization_id?: string
+          other_charges_cents?: number
           provider_id?: string | null
           received_on?: string
           reference?: string
@@ -1680,6 +1683,20 @@ export type Database = {
         }
         Returns: string
       }
+      campaign_report: {
+        Args: { p_from: string; p_organization_id: string; p_to: string }
+        Returns: {
+          campaign_id: string
+          confirmed: number
+          delivered: number
+          delivered_revenue_cents: number
+          name: string
+          orders: number
+          platform: Database["public"]["Enums"]["marketing_platform"]
+          refused: number
+          spend_cents: number
+        }[]
+      }
       close_return: {
         Args: { p_return_id: string }
         Returns: {
@@ -1913,6 +1930,37 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      record_carrier_invoice: {
+        Args: {
+          p_invoice_amount_cents: number
+          p_items: Json
+          p_note?: string
+          p_organization_id: string
+          p_provider_id: string
+          p_received_on: string
+          p_reference: string
+        }
+        Returns: {
+          created_at: string
+          created_by: string | null
+          fees_cents: number
+          gross_collected_cents: number
+          id: string
+          net_received_cents: number
+          note: string
+          organization_id: string
+          other_charges_cents: number
+          provider_id: string | null
+          received_on: string
+          reference: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "cod_remittances"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       record_cod_remittance: {
         Args: {
           p_items: Json
@@ -1931,6 +1979,7 @@ export type Database = {
           net_received_cents: number
           note: string
           organization_id: string
+          other_charges_cents: number
           provider_id: string | null
           received_on: string
           reference: string
@@ -2006,6 +2055,10 @@ export type Database = {
           isOneToOne: true
           isSetofReturn: false
         }
+      }
+      report_summary: {
+        Args: { p_from: string; p_organization_id: string; p_to: string }
+        Returns: Json
       }
       save_product: {
         Args: { p_organization_id: string; p_payload: Json }

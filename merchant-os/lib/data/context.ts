@@ -38,7 +38,10 @@ export async function requireOrganization() {
       prepareOrders: fulfilment.includes(role),
       seeContacts: contactReaders.includes(role),
       // Only owners and admins may create an order for a blocked number or unblock it.
-      overrideBlocklist: role === "owner" || role === "admin"
+      overrideBlocklist: role === "owner" || role === "admin",
+      // Money pages (reports, cash, expenses, marketing spend).
+      seeMoney: role === "owner" || role === "admin" || role === "finance",
+      receiveReturns: role === "owner" || role === "admin" || role === "warehouse"
     }
   };
 }

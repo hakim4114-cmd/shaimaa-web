@@ -145,3 +145,94 @@ export function madToCents(value: unknown): number {
   const n = typeof value === "number" ? value : Number(String(value ?? "").replace(",", "."));
   return Number.isFinite(n) && n >= 0 ? Math.round(n * 100) : 0;
 }
+
+// ---------------------------------------------------------------------------
+// Invoices (COD payouts)
+// ---------------------------------------------------------------------------
+
+export type SenditInvoiceLine =
+  | { type: "delivery"; code: string; status: string; amountCents: number; feeCents: number }
+  | { type: "pickup"; code: string; feeCents: number }
+  | { type: "extra"; code: string; label: string; amountCents: number; paidBySendit: boolean }
+  | { type: "credit"; code: string; amountCents: number };
+
+export function readInvoiceLines(items: unknown): SenditInvoiceLine[] {
+  if (!Array.isArray(items)) return [];
+  return items.flatMap((raw): SenditInvoiceLine[] => {
+    if (!raw || typeof raw !== "object") return [];
+    const r = raw as Record<string, unknown>;
+    const code = typeof r.code === "string" ? r.code : "";
+    switch (r.type) {
+      case "delivery":
+        return [{ type: "delivery", code, status: String(r.status ?? ""), amountCents: madToCents(r.amount), feeCents: madToCents(r.fee) }];
+      case "pickup":
+        return [{ type: "pickup", code, feeCents: madToCents(r.fee) }];
+      case "extra":
+        return [{ type: "extra", code, label: String(r.label ?? ""), amountCents: madToCents(r.amount), paidBySendit: /^oui|yes|1|true$/i.test(String(r.paid_by_sendit ?? "")) }];
+      case "credit":
+        return [{ type: "credit", code, amountCents: madToCents(r.amount) }];
+      default:
+        return [];
+    }
+  });
+}
+
+export type KnownParcel = { orderId: string; orderNumber: string; codAmountCents: number; paymentStatus: string };
+
+export type InvoicePreview = {
+  settle: { trackingNumber: string; orderNumber: string; collectedCents: number; feeCents: number }[];
+  mismatches: { trackingNumber: string; orderNumber: string; expectedCents: number; invoicedCents: number }[];
+  alreadySettled: string[];
+  unknown: string[];
+  otherLines: SenditInvoiceLine[];
+  deliveredGrossCents: number;
+  deliveredFeesCents: number;
+  /** Other charges implied by the invoice amount (what record_carrier_invoice stores). */
+  impliedOtherCents: number;
+  /** Other charges explained by the non-delivery lines (best reading of their signs). */
+  explainedOtherCents: number;
+};
+
+/**
+ * Compares an invoice with our parcels. Only delivered parcels whose amount
+ * equals the order's COD can be settled; any mismatch blocks recording.
+ * Refusal and cancellation lines carry a fee and no money; pickups are fees;
+ * extras paid by Sendit and credits are in the merchant's favour (assumed:
+ * the guide does not document their sign, so the preview shows any gap).
+ */
+export function previewInvoice(invoiceAmountCents: number, lines: SenditInvoiceLine[], parcels: Map<string, KnownParcel>): InvoicePreview {
+  const preview: InvoicePreview = {
+    settle: [],
+    mismatches: [],
+    alreadySettled: [],
+    unknown: [],
+    otherLines: [],
+    deliveredGrossCents: 0,
+    deliveredFeesCents: 0,
+    impliedOtherCents: 0,
+    explainedOtherCents: 0
+  };
+  for (const line of lines) {
+    if (line.type === "delivery" && line.status === "DELIVERED") {
+      const parcel = parcels.get(line.code);
+      if (!parcel) {
+        preview.unknown.push(line.code);
+      } else if (parcel.paymentStatus === "settled") {
+        preview.alreadySettled.push(line.code);
+      } else if (parcel.codAmountCents !== line.amountCents || parcel.paymentStatus !== "awaiting_remittance") {
+        preview.mismatches.push({ trackingNumber: line.code, orderNumber: parcel.orderNumber, expectedCents: parcel.codAmountCents, invoicedCents: line.amountCents });
+      } else {
+        preview.settle.push({ trackingNumber: line.code, orderNumber: parcel.orderNumber, collectedCents: line.amountCents, feeCents: line.feeCents });
+        preview.deliveredGrossCents += line.amountCents;
+        preview.deliveredFeesCents += line.feeCents;
+      }
+      continue;
+    }
+    preview.otherLines.push(line);
+    if (line.type === "delivery" || line.type === "pickup") preview.explainedOtherCents += line.feeCents;
+    else if (line.type === "extra") preview.explainedOtherCents += line.paidBySendit ? -line.amountCents : line.amountCents;
+    else preview.explainedOtherCents -= line.amountCents;
+  }
+  preview.impliedOtherCents = preview.deliveredGrossCents - preview.deliveredFeesCents - invoiceAmountCents;
+  return preview;
+}
