@@ -326,6 +326,7 @@ const ar: Dictionary = {
     TOO_MANY_TOKENS: "5 روابط على الأكثر. ألغي واحد قديم أولًا.",
     OVER_SAFE_LIMIT: "فوق المبلغ الآمن: خاص سبب مكتوب.",
     ALREADY_PAID: "تخلّص من قبل.",
+    MONTH_NOT_OVER: "الشهر ما كيتسدش حتى يسالي.",
     UNKNOWN: "حدث خطأ. أعد المحاولة.",
   },
   orders: {
@@ -870,7 +871,8 @@ const ar: Dictionary = {
     closedBadge: "مغلق",
     dormantTitle: "السلعة النايمة",
     dormantDescription: "القطع اللي ما تباعتش (ولا من أول استلام إلا عمرها ما تباعت)، محسوبة بالتكلفة.",
-    idleOver: "بلا بيع {days} يوم ولا أكثر"
+    idleOver: "بلا بيع {days} يوم ولا أكثر",
+    monthNotOver: "هاد الشهر مازال ما سالاش: تقدر تسدّو من نهار 1 ديال الشهر الجاي (خانة الشهر الماضي). الاقتراح اللي فوق غير معاينة."
   },
   assistant: {
     title: "Claude (قراءة فقط)",

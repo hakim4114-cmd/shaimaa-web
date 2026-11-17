@@ -64,7 +64,7 @@ select tests.expect_error(format($$select public.record_owner_withdrawal(%L, 500
 
 -- A closed month with 300 MAD set aside as owner pay.
 insert into public.monthly_closes (organization_id, month, net_profit_cents, allocations)
-  values (:'org', date_trunc('month', current_date)::date, 1000000, '[{"name": "Restock", "cents": 700000}, {"name": "Owner pay", "cents": 300000}]');
+  values (:'org', (date_trunc('month', current_date) - interval '1 month')::date, 1000000, '[{"name": "Restock", "cents": 700000}, {"name": "Owner pay", "cents": 300000}]');
 select tests.eq((public.safe_withdrawal(:'org') ->> 'pay_earned_cents')::bigint, 300000::bigint, 'pay earned from the owner fund');
 select tests.eq((public.safe_withdrawal(:'org') ->> 'safe_cents')::bigint, 230000::bigint, 'limited by free cash');
 select tests.eq(public.safe_withdrawal(:'org') ->> 'reason', 'limited_by_cash', 'reason explains the limit');

@@ -324,6 +324,7 @@ const en = {
     TOO_MANY_TOKENS: "At most 5 links. Revoke an old one first.",
     OVER_SAFE_LIMIT: "Above the safe amount: a written reason is required.",
     ALREADY_PAID: "Already paid.",
+    MONTH_NOT_OVER: "A month can be closed only once it is over.",
     UNKNOWN: "Something went wrong. Try again.",
   },
   orders: {
@@ -868,7 +869,8 @@ const en = {
     closedBadge: "Closed",
     dormantTitle: "Dormant stock",
     dormantDescription: "Units with no sale (or since first receipt when never sold), valued at cost.",
-    idleOver: "No sale for {days}+ days"
+    idleOver: "No sale for {days}+ days",
+    monthNotOver: "This month is not over yet: you can close it from the 1st of next month (Last month tab). The proposal above is only a preview."
   },
   assistant: {
     title: "Claude (read-only)",

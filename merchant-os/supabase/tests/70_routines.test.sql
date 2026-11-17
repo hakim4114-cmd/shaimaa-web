@@ -66,9 +66,10 @@ select tests.eq((select outcome from public.owner_decisions where organization_i
 
 insert into public.fund_plan (organization_id, name, percent, position) values (:'org', 'Restock', 50, 1), (:'org', 'Reserve', 20, 2), (:'org', 'Owner pay', 30, 3);
 insert into public.monthly_closes (organization_id, month, net_profit_cents, allocations)
-  values (:'org', date_trunc('month', current_date)::date, 100000, '[{"name": "Restock", "cents": 50000}]');
-select tests.expect_error(format($$insert into public.monthly_closes (organization_id, month, net_profit_cents) values (%L, date_trunc('month', current_date)::date, 1)$$, :'org'), 'monthly_closes_organization_id_month_key');
+  values (:'org', (date_trunc('month', current_date) - interval '1 month')::date, 100000, '[{"name": "Restock", "cents": 50000}]');
+select tests.expect_error(format($$insert into public.monthly_closes (organization_id, month, net_profit_cents) values (%L, (date_trunc('month', current_date) - interval '1 month')::date, 1)$$, :'org'), 'monthly_closes_organization_id_month_key');
 select tests.expect_error($$update public.monthly_closes set note = 'changed'$$, 'permission denied');
+select tests.expect_error(format($$insert into public.monthly_closes (organization_id, month, net_profit_cents) values (%L, date_trunc('month', current_date)::date, 1)$$, :'org'), 'row-level security');
 
 select tests.login(:'viewer');
 select tests.eq((select count(*)::int from public.owner_decisions), 0, 'viewer cannot read decisions');

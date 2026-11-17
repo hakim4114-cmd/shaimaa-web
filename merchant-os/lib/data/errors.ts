@@ -59,6 +59,7 @@ export const appErrorCodes = [
   "TOO_MANY_TOKENS",
   "OVER_SAFE_LIMIT",
   "ALREADY_PAID",
+  "MONTH_NOT_OVER",
   "UNKNOWN"
 ] as const;
 

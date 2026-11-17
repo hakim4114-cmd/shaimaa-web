@@ -1,0 +1,4 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "ignoreCommand": "if [ \"$VERCEL_GIT_COMMIT_REF\" != \"main\" ]; then echo 'Preview skipped: only main is deployed'; exit 0; fi; if git diff --quiet HEAD^ HEAD -- . 2>/dev/null; then echo 'No change in merchant-os: skipped'; exit 0; fi; exit 1"
+}
