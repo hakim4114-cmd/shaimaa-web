@@ -10,11 +10,17 @@ export const expenseCategories: readonly ExpenseCategory[] = [
   "advertising",
   "packaging",
   "shipping",
+  "transport",
+  "internet",
+  "phone",
+  "electricity",
+  "ai_tools",
+  "software",
+  "rent",
+  "salaries",
   "inventory_purchase",
   "production",
-  "salaries",
-  "rent",
-  "software",
+  "debt_repayment",
   "other"
 ];
 export const marketingPlatforms: readonly MarketingPlatform[] = ["meta", "instagram", "tiktok", "google", "whatsapp", "website", "other"];

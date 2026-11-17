@@ -620,7 +620,13 @@ const ar: Dictionary = {
       salaries: "الأجور",
       rent: "الكراء",
       software: "البرامج والاشتراكات",
-      other: "أخرى"
+      other: "أخرى",
+      internet: "الإنترنت",
+      phone: "الهاتف",
+      ai_tools: "أدوات الذكاء الاصطناعي (ChatGPT، Claude…)",
+      electricity: "الكهرباء والماء",
+      transport: "التنقل",
+      debt_repayment: "تسديد الديون"
     },
     campaign: "الحملة",
     noCampaign: "بلا حملة",
@@ -629,7 +635,7 @@ const ar: Dictionary = {
     date: "التاريخ",
     description: "ملاحظة",
     addExpense: "إضافة مصروف",
-    expenseHint: "شراء السلعة كيتحسب خروج ديال الفلوس، ماشي مصروف فالربح (التكلفة ديالها كتدخل ملي كتتباع).",
+    expenseHint: "شراء السلعة وتسديد الديون كيتحسبو خروج ديال الفلوس، ماشي مصاريف فالربح (السلعة كتدخل ملي كتتباع؛ والتسديد غير كترجع فلوس تسلفتيها).",
     expenses: "المصاريف",
     noExpenses: "لا مصاريف فهاد الفترة.",
     deleteExpense: "حذف هذا المصروف؟",
