@@ -1,5 +1,19 @@
 # Changelog
 
+## 1.1.0 — Claude connection (2026-11-17)
+
+### Added
+- **Claude, read-only (MCP)**:
+  - In Settings, create a private connector link (shown once) and add it to Claude as a custom connector.
+  - Claude can answer from seven tools: today's tasks, business summary for any range, orders (filters), one order, stock with dormant days, campaigns, and cash.
+- **Security**:
+  - Only the link's SHA-256 hash is stored, and the link can be revoked in one tap.
+  - Every call runs as the user who created the link, and their owner/admin role is checked again on each call. Removing that user cuts access.
+  - Read-only. Customer phone numbers, addresses and names are never returned.
+  - At most 5 links per organization; each shows when it was last used.
+- Endpoint `/api/mcp/<link>`: Streamable HTTP with JSON responses (initialize, tools/list, tools/call, ping).
+- Database: `assistant_tokens`, `create_assistant_token`, `assistant_call`. New database tests in `80_assistant.test.sql`.
+
 ## 1.0.0 — Weekly review and monthly close (2026-11-17)
 
 ### Added

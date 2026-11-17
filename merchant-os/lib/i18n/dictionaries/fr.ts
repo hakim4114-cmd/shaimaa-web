@@ -320,6 +320,7 @@ const fr: Dictionary = {
     ORDER_NOT_EXCHANGEABLE: "Seule une commande livrée peut être échangée.",
     FUNDS_OVER_100: "Les pourcentages dépassent 100 %.",
     MONTH_ALREADY_CLOSED: "Ce mois est déjà clôturé.",
+    TOO_MANY_TOKENS: "5 liens au maximum. Révoquez-en un d'abord.",
     UNKNOWN: "Une erreur est survenue. Réessayez.",
   },
   orders: {
@@ -855,6 +856,21 @@ const fr: Dictionary = {
     dormantTitle: "Stock dormant",
     dormantDescription: "Articles sans vente (ou depuis la première réception s'ils n'ont jamais été vendus), valorisés au coût.",
     idleOver: "Sans vente depuis {days} j et plus"
+  },
+  assistant: {
+    title: "Claude (lecture seule)",
+    description: "Posez vos questions à Claude sur vos chiffres : bénéfice, commandes, stock, campagnes, encaissements. Claude lit via un lien privé ; il ne peut rien modifier.",
+    step1: "Créez un lien ci-dessous et copiez-le (affiché une seule fois).",
+    step2: "Dans Claude : Paramètres → Connecteurs → Ajouter un connecteur personnalisé, collez le lien.",
+    step3: "Demandez par exemple : « Quel est mon bénéfice net cette semaine et quelle campagne coûte le plus par commande livrée ? »",
+    linkName: "Nom du lien",
+    create: "Créer un lien",
+    copyNow: "Copiez ce lien maintenant : il ne sera plus affiché. Toute personne qui l'a peut lire vos chiffres — gardez-le privé.",
+    lastUsed: "utilisé le",
+    neverUsed: "jamais utilisé",
+    revoke: "Révoquer le lien",
+    revokeHint: "Claude perdra l'accès immédiatement.",
+    privacy: "Les téléphones et adresses des clients ne sont jamais envoyés. L'accès s'arrête si le lien est révoqué ou si son créateur n'est plus propriétaire ou admin."
   },
   common: {
     cancel: "Annuler",

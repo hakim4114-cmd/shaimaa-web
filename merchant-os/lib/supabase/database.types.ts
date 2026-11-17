@@ -15,6 +15,44 @@ export type Database = {
   }
   public: {
     Tables: {
+      assistant_tokens: {
+        Row: {
+          created_at: string
+          id: string
+          last_used_at: string | null
+          name: string
+          organization_id: string
+          token_hash: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          last_used_at?: string | null
+          name: string
+          organization_id: string
+          token_hash: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          last_used_at?: string | null
+          name?: string
+          organization_id?: string
+          token_hash?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "assistant_tokens_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       audit_logs: {
         Row: {
           action: string
@@ -1809,6 +1847,10 @@ export type Database = {
         }
         Returns: string
       }
+      assistant_call: {
+        Args: { p_args?: Json; p_token_hash: string; p_tool: string }
+        Returns: Json
+      }
       campaign_report: {
         Args: { p_from: string; p_organization_id: string; p_to: string }
         Returns: {
@@ -1847,6 +1889,14 @@ export type Database = {
           isOneToOne: true
           isSetofReturn: false
         }
+      }
+      create_assistant_token: {
+        Args: {
+          p_name: string
+          p_organization_id: string
+          p_token_hash: string
+        }
+        Returns: string
       }
       create_exchange_order: {
         Args: { p_order_id: string; p_payload: Json }

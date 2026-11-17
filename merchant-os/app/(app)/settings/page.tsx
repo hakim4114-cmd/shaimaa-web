@@ -7,6 +7,7 @@ import { requireOrganization } from "@/lib/data/context";
 import { getSenditProvider } from "@/lib/data/shipping";
 import { defaultShippingFees, listCities } from "@/lib/data/orders";
 import { ShippingRatesForm } from "@/components/shipping/shipping-rates-form";
+import { AssistantLinks } from "@/components/shipping/assistant-links";
 import { getI18n } from "@/lib/i18n/server";
 import { formatMoroccanPhone } from "@/lib/phone";
 import { senditKeys } from "@/lib/shipping/sendit";
@@ -21,7 +22,12 @@ export default async function SettingsPage() {
   const ts = t.shipping;
   const { supabase, organizationId, can } = await requireOrganization();
   if (!can.overrideBlocklist) redirect("/");
-  const [provider, cities, fees] = await Promise.all([getSenditProvider(supabase, organizationId), listCities(supabase), defaultShippingFees(supabase, organizationId)]);
+  const [provider, cities, fees, tokens] = await Promise.all([
+    getSenditProvider(supabase, organizationId),
+    listCities(supabase),
+    defaultShippingFees(supabase, organizationId),
+    supabase.from("assistant_tokens").select("id, name, created_at, last_used_at").eq("organization_id", organizationId).order("created_at", { ascending: false })
+  ]);
 
   const h = await headers();
   const host = h.get("x-forwarded-host") ?? h.get("host");
@@ -49,6 +55,12 @@ export default async function SettingsPage() {
               allowTry: s?.allowTry ?? true
             }}
           />
+        </CardBody>
+      </Card>
+      <Card>
+        <CardHeader title={t.assistant.title} description={t.assistant.description} />
+        <CardBody>
+          <AssistantLinks links={(tokens.data ?? []).map((k) => ({ id: k.id, name: k.name, createdAt: k.created_at, lastUsedAt: k.last_used_at }))} />
         </CardBody>
       </Card>
       <Card>

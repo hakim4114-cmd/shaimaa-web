@@ -52,7 +52,7 @@ Weekly review with the decision log, monthly close (net profit, fund allocation,
 
 Reports from steps 5–6 (dashboard, weekly review, monthly close) get Excel/PDF/print, and the Google Sheets live link (level 2).
 
-## Step 7 — Claude connection and carrier choice
+## Step 7 — Claude connection and carrier choice (1.1.0: read-only MCP connector ✅; carrier = Sendit ✅)
 
 1. **Merchant OS inside Claude first** (MCP server, read-only tools under the merchant's own session): uses the owner's Claude plan, no in-app chat to build.
 2. Carrier scorecard from the merchant's own shipments.
