@@ -1,5 +1,34 @@
 # Changelog
 
+## 0.6.0 — Shipping with Sendit (2026-11-17)
+
+### Added
+- **Ship with Sendit** from a confirmed order:
+  - Search Sendit's cities and neighbourhoods, with Sendit's fee and delay.
+  - The parcel is created at Sendit with the customer, the address, the amount to collect and the order number as reference.
+  - The order moves to «ready to ship» on its own.
+- **Labels**: 10×10 thermal or A4, per parcel or for every parcel waiting.
+- **Pickup request** for every parcel waiting, with the pickup details from Settings (Kénitra).
+- **Automatic delivery updates** by Sendit webhook, verified by signature:
+  - Pickup ships the order and takes the stock out.
+  - Delivery marks the order delivered and awaiting payout.
+  - Refusal marks the order refused and opens a return awaiting the parcel.
+  - Unreachable / postponed show the courier's message, the next attempt and the count of failed calls.
+  - Each event is applied once and logged.
+- **Shipping page**: tabs To pick up / On the way / Problems / Closed.
+- **Settings → Sendit**:
+  - Test the connection, set the pickup city and details, and the open / try options (both allowed, as the owner chose).
+  - Shows the webhook address to paste into Sendit.
+- Database: provider settings, carrier fields on shipments, a `carrier_events` log, `register_carrier_shipment`, and `apply_carrier_event` (server key only). New database tests cover it.
+
+### Setup (owner)
+- In Vercel, set `SENDIT_PUBLIC_KEY`, `SENDIT_SECRET_KEY` and `SUPABASE_SERVICE_ROLE_KEY`, then redeploy.
+- Then Settings → Sendit, and create the webhook in Sendit.
+
+### Not yet
+- Payout reconciliation from Sendit invoices.
+- Exchanges.
+
 ## 0.5.0 — Orders: entry and confirmation (2026-11-17)
 
 ### Added

@@ -3,11 +3,13 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { BlockNumberButton, CallPanel, NoteForm, StatusActions, WhatsappPanel } from "@/components/orders/order-actions";
 import { CustomerHistoryNote } from "@/components/orders/order-form";
+import { ShipmentPanel } from "@/components/shipping/shipment-panel";
 import { buttonVariants } from "@/components/ui/button";
 import { Card, CardBody, CardHeader } from "@/components/ui/card";
 import { OrderStatusBadge } from "@/components/ui/order-status-badge";
 import { requireOrganization } from "@/lib/data/context";
 import { getCustomerHistory, getOrder } from "@/lib/data/orders";
+import { getActiveShipment, getSenditProvider } from "@/lib/data/shipping";
 import { formatDateTime } from "@/lib/datetime";
 import { interpolate } from "@/lib/i18n/dictionaries";
 import { getI18n } from "@/lib/i18n/server";
@@ -34,6 +36,11 @@ export default async function OrderPage({ params }: { params: Promise<{ id: stri
   if (!order) notFound();
 
   const awaitingConfirmation = order.status === "new" || order.status === "confirmation_pending";
+  const shippable = ["confirmed", "preparing", "ready_to_ship"].includes(order.status);
+  const [shipment, sendit] = await Promise.all([
+    getActiveShipment(supabase, organizationId, order.id),
+    shippable ? getSenditProvider(supabase, organizationId) : Promise.resolve(null)
+  ]);
   const history = can.manageOrders && order.contact ? await getCustomerHistory(supabase, organizationId, order.contact.phone) : null;
   const itemsText = order.items.map((item) => `• ${item.productName}${item.variantTitle ? ` (${item.variantTitle})` : ""} × ${item.quantity}`).join("\n");
   const defaultTemplate: WhatsappTemplate =
@@ -107,7 +114,17 @@ export default async function OrderPage({ params }: { params: Promise<{ id: stri
             </dl>
           </Card>
 
-          {can.manageOrders || can.prepareOrders ? (
+          {shipment || (shippable && can.prepareOrders) ? (
+            <ShipmentPanel
+              orderId={order.id}
+              orderCity={order.city}
+              shipment={shipment}
+              senditEnabled={Boolean(sendit?.isActive)}
+              canShip={can.prepareOrders && can.seeContacts}
+            />
+          ) : null}
+
+          {(can.manageOrders || can.prepareOrders) && !shipment ? (
             <Card>
               <CardHeader title={to.statusActions} />
               <CardBody>

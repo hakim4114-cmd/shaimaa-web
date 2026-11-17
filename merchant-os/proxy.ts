@@ -3,7 +3,8 @@ import { NextResponse, type NextRequest } from "next/server";
 import { getSupabasePublicConfig } from "@/lib/supabase/config";
 
 // Routes reachable without a session.
-const publicPaths = ["/sign-in", "/sign-up", "/verify", "/forgot-password", "/auth/confirm"];
+// Carrier webhooks authenticate with their own signature, not a session.
+const publicPaths = ["/sign-in", "/sign-up", "/verify", "/forgot-password", "/auth/confirm", "/api/webhooks"];
 
 function isPublic(pathname: string) {
   return publicPaths.some((path) => pathname === path || pathname.startsWith(`${path}/`));

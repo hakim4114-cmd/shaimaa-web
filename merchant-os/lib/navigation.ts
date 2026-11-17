@@ -38,7 +38,7 @@ export const navigation: NavGroup[] = [
       { key: "commandCenter", icon: LayoutDashboard, href: "/" },
       { key: "orders", icon: Package, href: "/orders" },
       { key: "customers", icon: Users, href: "/customers" },
-      { key: "shipping", icon: Truck, phase: 5 },
+      { key: "shipping", icon: Truck, href: "/shipping" },
       { key: "returns", icon: Undo2, phase: 5 }
     ]
   },
@@ -63,7 +63,7 @@ export const navigation: NavGroup[] = [
   {
     key: "system",
     items: [
-      { key: "settings", icon: Settings, phase: 5 },
+      { key: "settings", icon: Settings, href: "/settings" },
       { key: "designSystem", icon: Palette, href: "/design-system", devOnly: true }
     ]
   }

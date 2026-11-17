@@ -36,6 +36,36 @@ interface ShippingAdapter {
 
 Carrier-specific statuses are mapped to `shipment_status`; unmapped statuses are kept in the event note and flagged, never guessed.
 
+### Sendit (first carrier adapter, 0.6.0)
+
+Chosen by the owner on 2026-11-17 (account with API access). Sources: the Sendit OpenAPI file (`https://app.sendit.ma/docs/api-docs.json`, behind Cloudflare, so it has to be downloaded from a browser) and `guide-webhook-sendit.pdf`.
+
+- **Auth**: `POST /api/v1/login` with `public_key` + `secret_key` returns a bearer token. Its lifetime is not documented, so it is cached for 45 min and renewed on 401. The rate limit is 1000 requests/hour.
+- **Keys**: server-only environment variables `SENDIT_PUBLIC_KEY` and `SENDIT_SECRET_KEY` (Vercel). They are never stored in the database and never sent to the browser.
+- **Parcel**: `POST /deliveries` takes `district_id` (Sendit's own city/neighbourhood id, chosen in the app from `GET /districts`), `pickup_district_id`, name, phone (`06…`), address, `amount` (COD, MAD), comment, `reference` = our order number, `allow_open`, `allow_try`, and `products_from_stock = 0`. If our database refuses the shipment afterwards, the parcel is deleted at Sendit, so no orphan parcels are left.
+- **Labels**: `POST /deliveries/getlabels` returns a signed PDF URL (10×10 thermal or A4). It is opened directly and never stored.
+- **Pickup**: `POST /pickups` with every parcel still `PENDING`, using the pickup details from Settings (owner's choice: Kénitra).
+- **Webhook**: `POST /api/webhooks/sendit/{providerId}`.
+  - Signature: `X-Sendit-Signature` is an HMAC-SHA256 of the raw body, using the API key chosen for the webhook. The guide does not say which key or which encoding, so the secret and public keys are tried in hex and base64 with constant-time comparison. Confirm and narrow this after the first real event.
+  - Valid events go to `apply_carrier_event` (service role only). It is idempotent per tracking code, status and `lastActionAt`, and every event is logged in `carrier_events`.
+  - The server needs `SUPABASE_SERVICE_ROLE_KEY` for this route only.
+- **Status mapping** (`lib/shipping/sendit-core.ts`):
+
+  | Sendit status | Our status |
+  | --- | --- |
+  | PENDING, TO_PREPARE, TO_PICKUP, NEW_DESTINATION | unchanged (details only) |
+  | PICKEDUP | picked_up: order shipped, stock out |
+  | WAREHOUSE, TRANSIT, DISTRIBUTED | in_transit |
+  | DELIVERING | out_for_delivery |
+  | UNREACHABLE | failed_attempt |
+  | POSTPONED, SCHEDULED | unchanged (details only) |
+  | DELIVERED | delivered: order delivered, awaiting remittance |
+  | REJECTED | returned_to_sender: order refused, return awaiting receipt |
+  | CANCELED | cancelled |
+
+- **Fallback**: «Update status» on the order calls `GET /deliveries/{code}`.
+- **Not yet**: payout reconciliation from `GET /invoices` (next step); exchanges (`option_exchange`); Sendit-held stock.
+
 ## Exports, printing and Google Sheets (requested 2026-11-16)
 
 Every list and report gets the same three actions; reports are produced in **Arabic, French or English**, chosen per export (independent of the interface language, which also stays trilingual — decision 2026-11-16).
