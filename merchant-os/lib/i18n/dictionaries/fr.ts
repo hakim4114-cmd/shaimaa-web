@@ -47,7 +47,9 @@ const fr: Dictionary = {
     themeLight: "Clair",
     themeDark: "Sombre",
     themeSystem: "Système",
-    language: "Langue"
+    language: "Langue",
+    notificationsAllClear: "Rien ne demande votre attention pour l'instant.",
+    alerts: { obligationsOverdue: "Dettes en retard", obligationsSoon: "Dettes à payer sous 7 jours", callsDue: "Appels à passer", deliveryProblems: "Problèmes de livraison", returnsWaiting: "Retours à recevoir", lowStock: "Produits en stock bas" }
   },
   commandCenter: {
     title: "Tableau de bord",
@@ -611,6 +613,9 @@ const fr: Dictionary = {
       last_month: "Mois dernier"
     },
     saved: "Enregistré",
+    duplicateWarning: "Une dette ouverte envers « {who} » (échéance {date}) a la même catégorie et le même montant. Si c'est le même argent, marquez-la payée dans Dettes — sinon elle serait comptée deux fois.",
+    duplicateGoPay: "Aller aux dettes",
+    duplicateDifferent: "C'est une autre dépense, l'ajouter",
     category: "Catégorie",
     categories: {
       advertising: "Publicité",
@@ -672,7 +677,8 @@ const fr: Dictionary = {
       prepare: "À préparer",
       pickup: "En attente de ramassage",
       problems: "Problèmes de livraison",
-      returns: "Retours à recevoir"
+      returns: "Retours à recevoir",
+      obligations: "Dettes à payer (7 j)"
     },
     adSpend: "Dépense pub",
     costPerDelivered: "Coût par commande livrée",
@@ -985,7 +991,10 @@ const fr: Dictionary = {
     reserveFloorHint: "Jamais retirée — ex. un mois de charges fixes.",
     ownerFund: "Votre caisse de rémunération",
     ownerFundHint: "Parmi les caisses de la clôture mensuelle.",
-    noFunds: "Créez d'abord vos caisses dans Clôture du mois."
+    noFunds: "Créez d'abord vos caisses dans Clôture du mois.",
+    recurrence: "Répétition",
+    recurrenceHint: "Quand vous la marquez payée, la suivante est créée automatiquement.",
+    recurrences: { none: "Une fois", monthly: "Chaque mois", weekly: "Chaque semaine", yearly: "Chaque année" }
   },
   common: {
     cancel: "Annuler",

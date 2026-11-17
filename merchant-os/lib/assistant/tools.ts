@@ -51,6 +51,11 @@ export const assistantTools = [
     }
   },
   {
+    name: "obligations",
+    description: "What the business owes and has not paid yet (suppliers, rent, internet, debts…): to whom, amount (cents of MAD), due date, overdue flag, and whether it repeats (weekly, monthly, yearly).",
+    inputSchema: { type: "object", properties: {}, additionalProperties: false }
+  },
+  {
     name: "cash",
     description: "COD still held by carriers by age since delivery (0–7, 8–14, 15+ days) and the last carrier payouts (cents of MAD).",
     inputSchema: { type: "object", properties: {}, additionalProperties: false }

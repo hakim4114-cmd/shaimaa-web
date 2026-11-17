@@ -44,6 +44,25 @@ export async function addExpense(input: z.infer<typeof expenseInput>): Promise<M
   return { ok: true };
 }
 
+/** Open obligations that look like this expense (same category and amount): probably the same money, to be paid from Obligations instead. */
+export async function findMatchingObligation(category: string, amount: string): Promise<{ id: string; counterparty: string; dueOn: string } | null> {
+  const cents = parseMoneyToCents(amount);
+  if (!cents || !(expenseCategories as readonly string[]).includes(category)) return null;
+  const { supabase, organizationId, can } = await requireOrganization();
+  if (!can.seeMoney) return null;
+  const { data } = await supabase
+    .from("payables")
+    .select("id, counterparty, due_on")
+    .eq("organization_id", organizationId)
+    .is("paid_on", null)
+    .eq("category", category as (typeof expenseCategories)[number])
+    .eq("amount_cents", cents)
+    .order("due_on")
+    .limit(1)
+    .maybeSingle();
+  return data ? { id: data.id, counterparty: data.counterparty, dueOn: data.due_on } : null;
+}
+
 export async function deleteExpense(id: string): Promise<MoneyResult> {
   if (!z.string().uuid().safeParse(id).success) return { error: "NOT_FOUND" };
   const { supabase, organizationId, can } = await requireOrganization();

@@ -47,7 +47,9 @@ const ar: Dictionary = {
     themeLight: "فاتح",
     themeDark: "داكن",
     themeSystem: "حسب النظام",
-    language: "اللغة"
+    language: "اللغة",
+    notificationsAllClear: "والو كيتسناك دابا.",
+    alerts: { obligationsOverdue: "التزامات فات الوقت ديالها", obligationsSoon: "التزامات حالّة فـ 7 أيام", callsDue: "مكالمات خاصك تديرها", deliveryProblems: "مشاكل التوصيل", returnsWaiting: "مرتجعات للاستلام", lowStock: "منتجات المخزون ديالها ناقص" }
   },
   commandCenter: {
     title: "لوحة القيادة",
@@ -610,6 +612,9 @@ const ar: Dictionary = {
       last_month: "الشهر الماضي"
     },
     saved: "تم الحفظ",
+    duplicateWarning: "كاين التزام مفتوح لـ «{who}» (كيحل {date}) بنفس الفئة ونفس المبلغ. إلا كانت نفس الفلوس، ضغط «تخلّص» فالالتزامات بلاصة هادي — وإلا غادي تتحسب جوج مرات.",
+    duplicateGoPay: "سير للالتزامات",
+    duplicateDifferent: "مصروف آخر، زيدو",
     category: "الفئة",
     categories: {
       advertising: "الإشهار",
@@ -671,7 +676,8 @@ const ar: Dictionary = {
       prepare: "للتحضير",
       pickup: "في انتظار الرمّاس",
       problems: "مشاكل التوصيل",
-      returns: "مرتجعات للاستلام"
+      returns: "مرتجعات للاستلام",
+      obligations: "التزامات حالّة (7 أيام)"
     },
     adSpend: "مصاريف الإشهار",
     costPerDelivered: "التكلفة لكل طلب مسلَّم",
@@ -984,7 +990,10 @@ const ar: Dictionary = {
     reserveFloorHint: "عمرو ما كيتسحب — مثلًا شهر ديال المصاريف الثابتة.",
     ownerFund: "صندوق الأجرة ديالك",
     ownerFundHint: "من الصناديق ديال الإغلاق الشهري.",
-    noFunds: "خلق الصناديق أولًا فالإغلاق الشهري."
+    noFunds: "خلق الصناديق أولًا فالإغلاق الشهري.",
+    recurrence: "التكرار",
+    recurrenceHint: "ملي تضغط «تخلّص»، الجاي كيتخلق بوحدو.",
+    recurrences: { none: "مرة وحدة", monthly: "كل شهر", weekly: "كل سيمانة", yearly: "كل عام" }
   },
   common: {
     cancel: "إلغاء",
