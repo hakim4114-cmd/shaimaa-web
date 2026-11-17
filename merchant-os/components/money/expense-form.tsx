@@ -4,7 +4,8 @@ import { Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useId, useState, useTransition } from "react";
 import { toast } from "sonner";
-import { addExpense, deleteExpense } from "@/app/(app)/finance/actions";
+import { addExpense, deleteExpense, findMatchingObligation } from "@/app/(app)/finance/actions";
+import Link from "next/link";
 import { FormAlert } from "@/components/auth/form-alert";
 import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
@@ -36,6 +37,9 @@ export function ExpenseForm({
   const [campaignId, setCampaignId] = useState(campaigns[0]?.id ?? "");
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<AppErrorCode | null>(null);
+  // An open obligation with the same category and amount is probably this same money.
+  const [match, setMatch] = useState<{ counterparty: string; dueOn: string } | null>(null);
+  const [confirmedDifferent, setConfirmedDifferent] = useState(false);
 
   return (
     <form
@@ -44,6 +48,15 @@ export function ExpenseForm({
         event.preventDefault();
         setError(null);
         startTransition(async () => {
+          if (!confirmedDifferent) {
+            const found = await findMatchingObligation(category, amount);
+            if (found) {
+              setMatch(found);
+              return;
+            }
+          }
+          setMatch(null);
+          setConfirmedDifferent(false);
           const result = await addExpense({ category, amount, incurredOn, description, campaignId: category === "advertising" && campaignId ? campaignId : null });
           if (result.error) {
             setError(result.error);
@@ -57,6 +70,19 @@ export function ExpenseForm({
       }}
     >
       {error ? <FormAlert>{t.errors[error]}</FormAlert> : null}
+      {match ? (
+        <div className="flex flex-col gap-2 rounded-md bg-warning-soft p-3 text-sm text-warning">
+          <p>{tm.duplicateWarning.replace("{who}", match.counterparty).replace("{date}", match.dueOn)}</p>
+          <div className="flex flex-wrap gap-2">
+            <Link href="/pay" className="font-semibold underline">
+              {tm.duplicateGoPay}
+            </Link>
+            <button type="button" className="underline" onClick={() => { setConfirmedDifferent(true); setMatch(null); }}>
+              {tm.duplicateDifferent}
+            </button>
+          </div>
+        </div>
+      ) : null}
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         {adsOnly ? null : (
           <Field label={tm.category} htmlFor={`${id}-cat`}>

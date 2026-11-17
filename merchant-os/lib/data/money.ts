@@ -257,18 +257,22 @@ export async function listRemittances(supabase: Client, organizationId: string):
 export async function getTodayCounts(supabase: Client, organizationId: string) {
   const nowIso = new Date().toISOString();
   const head = { count: "exact" as const, head: true };
-  const [callsDue, toPrepare, ready, problems, returnsWaiting] = await Promise.all([
+  const in7 = new Date(Date.now() + 7 * 86400000).toISOString().slice(0, 10);
+  const [callsDue, toPrepare, ready, problems, returnsWaiting, obligations] = await Promise.all([
     supabase.from("orders").select("id", head).eq("organization_id", organizationId).in("status", ["new", "confirmation_pending"]).or(`next_call_at.is.null,next_call_at.lte.${nowIso}`),
     supabase.from("orders").select("id", head).eq("organization_id", organizationId).in("status", ["confirmed", "preparing"]),
     supabase.from("shipments").select("id", head).eq("organization_id", organizationId).eq("status", "pending"),
     supabase.from("shipments").select("id", head).eq("organization_id", organizationId).eq("status", "failed_attempt"),
-    supabase.from("returns").select("id", head).eq("organization_id", organizationId).eq("status", "awaiting_receipt")
+    supabase.from("returns").select("id", head).eq("organization_id", organizationId).eq("status", "awaiting_receipt"),
+    supabase.from("payables").select("id", head).eq("organization_id", organizationId).is("paid_on", null).lte("due_on", in7)
   ]);
   return {
     callsDue: callsDue.count ?? 0,
     toPrepare: toPrepare.count ?? 0,
     toPickUp: ready.count ?? 0,
     deliveryProblems: problems.count ?? 0,
-    returnsWaiting: returnsWaiting.count ?? 0
+    returnsWaiting: returnsWaiting.count ?? 0,
+    // Overdue or due within 7 days (0 when the role cannot read obligations).
+    obligationsDue: obligations.count ?? 0
   };
 }

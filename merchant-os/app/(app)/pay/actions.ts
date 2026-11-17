@@ -57,9 +57,16 @@ export async function withdraw(input: { amount: string; date: string; note: stri
   return done();
 }
 
-export async function addPayable(input: { counterparty: string; description: string; category: string; amount: string; dueOn: string }): Promise<PayResult> {
+export async function addPayable(input: { counterparty: string; description: string; category: string; amount: string; dueOn: string; recurrence: string }): Promise<PayResult> {
   const parsed = z
-    .object({ counterparty: z.string().trim().min(1).max(120), description: z.string().trim().max(500), category: z.enum(expenseCategories as [string, ...string[]]), amount: z.string().max(20), dueOn: day })
+    .object({
+      counterparty: z.string().trim().min(1).max(120),
+      description: z.string().trim().max(500),
+      category: z.enum(expenseCategories as [string, ...string[]]),
+      amount: z.string().max(20),
+      dueOn: day,
+      recurrence: z.enum(["none", "weekly", "monthly", "yearly"])
+    })
     .safeParse(input);
   if (!parsed.success) return { error: "NAME_REQUIRED" };
   const cents = parseMoneyToCents(parsed.data.amount);
@@ -72,7 +79,8 @@ export async function addPayable(input: { counterparty: string; description: str
     description: parsed.data.description,
     category: parsed.data.category as (typeof expenseCategories)[number],
     amount_cents: cents,
-    due_on: parsed.data.dueOn
+    due_on: parsed.data.dueOn,
+    recurrence: parsed.data.recurrence
   });
   return error ? { error: mapDatabaseError(error) } : done();
 }

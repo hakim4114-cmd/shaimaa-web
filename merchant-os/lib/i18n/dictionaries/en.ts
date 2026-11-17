@@ -45,7 +45,9 @@ const en = {
     themeLight: "Light",
     themeDark: "Dark",
     themeSystem: "System",
-    language: "Language"
+    language: "Language",
+    notificationsAllClear: "Nothing needs your attention right now.",
+    alerts: { obligationsOverdue: "Obligations overdue", obligationsSoon: "Obligations due within 7 days", callsDue: "Calls to make", deliveryProblems: "Delivery problems", returnsWaiting: "Returns to receive", lowStock: "Products low in stock" }
   },
   commandCenter: {
     title: "Command center",
@@ -608,6 +610,9 @@ const en = {
       last_month: "Last month"
     },
     saved: "Saved",
+    duplicateWarning: "An open obligation to «{who}» (due {date}) has the same category and amount. If this is the same money, mark it paid in Obligations instead — otherwise it would be counted twice.",
+    duplicateGoPay: "Go to Obligations",
+    duplicateDifferent: "It is a different expense, add it",
     category: "Category",
     categories: {
       advertising: "Advertising",
@@ -669,7 +674,8 @@ const en = {
       prepare: "To prepare",
       pickup: "Waiting for pickup",
       problems: "Delivery problems",
-      returns: "Returns to receive"
+      returns: "Returns to receive",
+      obligations: "Obligations due (7 days)"
     },
     adSpend: "Ad spend",
     costPerDelivered: "Cost per delivered order",
@@ -982,7 +988,10 @@ const en = {
     reserveFloorHint: "Never withdrawn — e.g. one month of fixed costs.",
     ownerFund: "Your pay fund",
     ownerFundHint: "From the funds of Monthly close.",
-    noFunds: "Create your funds first in Monthly close."
+    noFunds: "Create your funds first in Monthly close.",
+    recurrence: "Repeats",
+    recurrenceHint: "When you mark it paid, the next one is created automatically.",
+    recurrences: { none: "Once", monthly: "Every month", weekly: "Every week", yearly: "Every year" }
   },
   common: {
     cancel: "Cancel",

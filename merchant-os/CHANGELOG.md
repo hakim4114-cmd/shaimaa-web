@@ -1,5 +1,21 @@
 # Changelog
 
+## 1.4.0 — Reminders and recurring obligations (2026-11-17)
+
+### Added
+- **Recurring obligations**: rent, internet, phone, electricity… are entered once as weekly, monthly or yearly. Marking one paid creates the next one automatically.
+- **Bell with real alerts**, computed on each page from live records:
+  - obligations overdue or due within 7 days;
+  - calls due;
+  - delivery problems;
+  - returns to receive;
+  - products low in stock.
+
+  A red dot appears when something is overdue, and each alert links to the page that fixes it.
+- **Today block**: a new «obligations due (7 days)» tile.
+- **Duplicate guard**: entering an expense with the same category and amount as an open obligation asks whether it is the same money, so it is not counted twice.
+- **Claude**: a new `obligations` tool («what do I have to pay this week?»).
+
 ## 1.3.1 — More expense categories (2026-11-17)
 
 ### Added

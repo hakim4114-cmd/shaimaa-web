@@ -3,6 +3,8 @@ import { redirect } from "next/navigation";
 import type { ReactNode } from "react";
 import { AppShell } from "@/components/shell/app-shell";
 import { getSessionContext } from "@/lib/auth/session";
+import { getAlerts } from "@/lib/data/alerts";
+import { requireOrganization } from "@/lib/data/context";
 import { isDevelopment } from "@/lib/env";
 import { sidebarCookieName } from "@/lib/shell";
 import { getSupabasePublicConfig } from "@/lib/supabase/config";
@@ -28,8 +30,10 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
         }
       : null;
 
+  const alerts = session && session.active ? await getAlerts(await requireOrganization()).catch(() => []) : [];
+
   return (
-    <AppShell showDevTools={isDevelopment} initialCollapsed={collapsed} account={account}>
+    <AppShell showDevTools={isDevelopment} initialCollapsed={collapsed} account={account} alerts={alerts}>
       {children}
     </AppShell>
   );

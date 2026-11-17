@@ -78,6 +78,10 @@ select tests.eq((public.record_owner_withdrawal(:'org', 200000, current_date, 'M
 select public.pay_payable(:'pay1', current_date);
 select tests.eq((select count(*)::int from public.expenses where organization_id = :'org' and category = 'inventory_purchase' and amount_cents = 150000), 1, 'paid obligation becomes an expense');
 select tests.expect_error(format($$select public.pay_payable(%L, current_date)$$, :'pay1'), 'ALREADY_PAID');
+select tests.eq((select count(*)::int from public.payables where organization_id = :'org' and counterparty = 'Supplier A' and paid_on is null), 0, 'one-off obligation does not repeat');
+insert into public.payables (organization_id, counterparty, category, amount_cents, due_on, recurrence) values (:'org', 'Internet', 'internet', 20000, '2026-01-31', 'monthly') returning id as net \gset
+select public.pay_payable(:'net', current_date);
+select tests.eq((select due_on::text from public.payables where organization_id = :'org' and counterparty = 'Internet' and paid_on is null), '2026-02-28', 'paying a monthly obligation creates the next month (end of month kept)');
 select tests.expect_error(format($$insert into public.cash_entries (organization_id, kind, amount_cents, entry_date) values (%L, 'owner_withdrawal', -1, current_date)$$, :'org'), 'row-level security');
 select tests.expect_error($$delete from public.cash_entries$$, 'permission denied');
 

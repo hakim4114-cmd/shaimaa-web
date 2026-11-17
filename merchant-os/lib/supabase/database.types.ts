@@ -1317,6 +1317,7 @@ export type Database = {
           id: string
           organization_id: string
           paid_on: string | null
+          recurrence: string
         }
         Insert: {
           amount_cents: number
@@ -1330,6 +1331,7 @@ export type Database = {
           id?: string
           organization_id: string
           paid_on?: string | null
+          recurrence?: string
         }
         Update: {
           amount_cents?: number
@@ -1343,6 +1345,7 @@ export type Database = {
           id?: string
           organization_id?: string
           paid_on?: string | null
+          recurrence?: string
         }
         Relationships: [
           {
@@ -2270,6 +2273,7 @@ export type Database = {
           id: string
           organization_id: string
           paid_on: string | null
+          recurrence: string
         }
         SetofOptions: {
           from: "*"

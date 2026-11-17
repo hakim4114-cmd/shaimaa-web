@@ -1,4 +1,4 @@
-import { ArrowRight, CircleCheck, CircleDashed, Database, PackageCheck, PhoneCall, TriangleAlert, Truck, Undo2 } from "lucide-react";
+import { ArrowRight, CalendarClock, CircleCheck, CircleDashed, Database, PackageCheck, PhoneCall, TriangleAlert, Truck, Undo2 } from "lucide-react";
 import { RangeTabs } from "@/components/money/range-tabs";
 import { Metric } from "@/components/ui/metric";
 import { requireOrganization } from "@/lib/data/context";
@@ -50,7 +50,8 @@ export default async function CommandCenterPage({ searchParams }: { searchParams
       { icon: PackageCheck, label: td.prepare, count: today.toPrepare, href: "/orders?view=confirmed" },
       { icon: Truck, label: td.pickup, count: today.toPickUp, href: "/shipping?view=to_pickup" },
       { icon: TriangleAlert, label: td.problems, count: today.deliveryProblems, href: "/shipping?view=problems" },
-      { icon: Undo2, label: td.returns, count: today.returnsWaiting, href: "/returns" }
+      { icon: Undo2, label: td.returns, count: today.returnsWaiting, href: "/returns" },
+      ...(ctx.can.seeMoney ? [{ icon: CalendarClock, label: td.obligations, count: today.obligationsDue, href: "/pay" }] : [])
     ];
     const rate = (v: number | null) => (v === null ? null : `${Math.round(v * 100)}%`);
     return (
@@ -59,7 +60,7 @@ export default async function CommandCenterPage({ searchParams }: { searchParams
 
         <Card>
           <CardHeader title={td.title} description={td.description} />
-          <ul className="grid divide-y divide-border sm:grid-cols-5 sm:divide-x sm:divide-y-0 rtl:sm:divide-x-reverse">
+          <ul className="grid divide-y divide-border sm:grid-cols-3 lg:grid-cols-6 sm:divide-x sm:divide-y-0 rtl:sm:divide-x-reverse">
             {tasks.map((task) => (
               <li key={task.href}>
                 <Link href={task.href} className="flex items-center gap-3 px-5 py-3.5 hover:bg-surface-hover sm:flex-col sm:items-start sm:gap-1.5">

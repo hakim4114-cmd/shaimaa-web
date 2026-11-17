@@ -155,7 +155,7 @@ export function PayableForm({ categories, today }: { categories: readonly Expens
   const { t } = useI18n();
   const tp = t.pay;
   const id = useId();
-  const [v, setV] = useState({ counterparty: "", description: "", category: "inventory_purchase" as string, amount: "", dueOn: today });
+  const [v, setV] = useState({ counterparty: "", description: "", category: "inventory_purchase" as string, amount: "", dueOn: today, recurrence: "none" });
   const { pending, error, run } = useRun();
   return (
     <div className="flex flex-col gap-3">
@@ -180,9 +180,20 @@ export function PayableForm({ categories, today }: { categories: readonly Expens
           <Input id={`${id}-d`} type="date" dir="ltr" value={v.dueOn} onChange={(e) => setV({ ...v, dueOn: e.target.value })} />
         </Field>
       </div>
-      <Field label={tp.note} htmlFor={`${id}-n`}>
-        <Textarea id={`${id}-n`} rows={2} className="min-h-14" value={v.description} onChange={(e) => setV({ ...v, description: e.target.value })} />
-      </Field>
+      <div className="grid gap-3 sm:grid-cols-[12rem_1fr]">
+        <Field label={tp.recurrence} htmlFor={`${id}-rec`} hint={v.recurrence !== "none" ? tp.recurrenceHint : undefined}>
+          <NativeSelect id={`${id}-rec`} value={v.recurrence} onChange={(e) => setV({ ...v, recurrence: e.target.value })}>
+            {(["none", "monthly", "weekly", "yearly"] as const).map((r) => (
+              <option key={r} value={r}>
+                {tp.recurrences[r]}
+              </option>
+            ))}
+          </NativeSelect>
+        </Field>
+        <Field label={tp.note} htmlFor={`${id}-n`}>
+          <Textarea id={`${id}-n`} rows={2} className="min-h-14" value={v.description} onChange={(e) => setV({ ...v, description: e.target.value })} />
+        </Field>
+      </div>
       <Button className="self-start" variant="secondary" disabled={pending || !v.counterparty || !v.amount} onClick={() => run(() => addPayable(v), () => setV({ ...v, counterparty: "", description: "", amount: "" }))}>
         {tp.addPayable}
       </Button>

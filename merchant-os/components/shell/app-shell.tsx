@@ -12,6 +12,7 @@ import { cn } from "@/lib/utils";
 import { BrandMark } from "./brand-mark";
 import { CommandMenu } from "./command-menu";
 import { NotificationsMenu } from "./notifications-menu";
+import type { Alert } from "@/lib/data/alerts";
 import { PreferencesMenu } from "./preferences-menu";
 import { SidebarNav } from "./sidebar-nav";
 import { UserMenu, type ShellAccount } from "./user-menu";
@@ -20,11 +21,13 @@ export function AppShell({
   showDevTools,
   initialCollapsed,
   account,
+  alerts = [],
   children
 }: {
   showDevTools: boolean;
   account: ShellAccount | null;
   initialCollapsed: boolean;
+  alerts?: Alert[];
   children: ReactNode;
 }) {
   const { t } = useI18n();
@@ -110,7 +113,7 @@ export function AppShell({
             <Kbd className="ms-auto hidden sm:inline-flex">{t.topbar.searchShortcut}</Kbd>
           </button>
           <div className="ms-auto flex items-center gap-1">
-            <NotificationsMenu />
+            <NotificationsMenu alerts={alerts} />
             <PreferencesMenu />
             {account ? <UserMenu account={account} /> : null}
           </div>

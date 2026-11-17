@@ -39,7 +39,7 @@ export default async function PayPage() {
     supabase.rpc("safe_withdrawal", { p_organization_id: organizationId }),
     getFundPlan(supabase, organizationId),
     supabase.from("cash_entries").select("id, kind, amount_cents, entry_date, note, over_limit").eq("organization_id", organizationId).order("entry_date", { ascending: false }).limit(50),
-    supabase.from("payables").select("id, counterparty, description, category, amount_cents, due_on, paid_on").eq("organization_id", organizationId).order("due_on").limit(100)
+    supabase.from("payables").select("id, counterparty, description, category, amount_cents, due_on, paid_on, recurrence").eq("organization_id", organizationId).order("due_on").limit(100)
   ]);
   const s = (safeRaw ?? { configured: false }) as Safe;
   const today = businessDay(new Date());
@@ -99,6 +99,7 @@ export default async function PayPage() {
                 <li key={p.id} className="flex items-center justify-between gap-3 py-2.5 text-sm">
                   <span className="min-w-0">
                     <span className="font-medium">{p.counterparty}</span>
+                    {p.recurrence !== "none" ? <span className="ms-2 rounded bg-accent-soft px-1.5 text-xs text-accent-soft-foreground">{tp.recurrences[p.recurrence as keyof typeof tp.recurrences]}</span> : null}
                     <span className={cn("tabular block text-xs", p.due_on < today ? "font-medium text-danger" : "text-muted-foreground")}>
                       {p.due_on} · {t.money.categories[p.category as keyof typeof t.money.categories]}
                       {p.description ? ` · ${p.description}` : ""}
