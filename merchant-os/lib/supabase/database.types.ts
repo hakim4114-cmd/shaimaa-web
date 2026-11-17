@@ -158,6 +158,82 @@ export type Database = {
           },
         ]
       }
+      cash_entries: {
+        Row: {
+          amount_cents: number
+          created_at: string
+          created_by: string | null
+          entry_date: string
+          id: string
+          kind: Database["public"]["Enums"]["cash_entry_kind"]
+          note: string
+          organization_id: string
+          over_limit: boolean
+        }
+        Insert: {
+          amount_cents: number
+          created_at?: string
+          created_by?: string | null
+          entry_date: string
+          id?: string
+          kind: Database["public"]["Enums"]["cash_entry_kind"]
+          note?: string
+          organization_id: string
+          over_limit?: boolean
+        }
+        Update: {
+          amount_cents?: number
+          created_at?: string
+          created_by?: string | null
+          entry_date?: string
+          id?: string
+          kind?: Database["public"]["Enums"]["cash_entry_kind"]
+          note?: string
+          organization_id?: string
+          over_limit?: boolean
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cash_entries_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      cash_settings: {
+        Row: {
+          opening_date: string
+          organization_id: string
+          owner_fund_name: string
+          reserve_floor_cents: number
+          updated_at: string
+        }
+        Insert: {
+          opening_date?: string
+          organization_id: string
+          owner_fund_name?: string
+          reserve_floor_cents?: number
+          updated_at?: string
+        }
+        Update: {
+          opening_date?: string
+          organization_id?: string
+          owner_fund_name?: string
+          reserve_floor_cents?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cash_settings_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: true
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       cities: {
         Row: {
           aliases: string[]
@@ -1228,6 +1304,63 @@ export type Database = {
           },
         ]
       }
+      payables: {
+        Row: {
+          amount_cents: number
+          category: Database["public"]["Enums"]["expense_category"]
+          counterparty: string
+          created_at: string
+          created_by: string | null
+          description: string
+          due_on: string
+          expense_id: string | null
+          id: string
+          organization_id: string
+          paid_on: string | null
+        }
+        Insert: {
+          amount_cents: number
+          category?: Database["public"]["Enums"]["expense_category"]
+          counterparty: string
+          created_at?: string
+          created_by?: string | null
+          description?: string
+          due_on: string
+          expense_id?: string | null
+          id?: string
+          organization_id: string
+          paid_on?: string | null
+        }
+        Update: {
+          amount_cents?: number
+          category?: Database["public"]["Enums"]["expense_category"]
+          counterparty?: string
+          created_at?: string
+          created_by?: string | null
+          description?: string
+          due_on?: string
+          expense_id?: string | null
+          id?: string
+          organization_id?: string
+          paid_on?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payables_expense_id_fkey"
+            columns: ["expense_id"]
+            isOneToOne: false
+            referencedRelation: "expenses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payables_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       product_categories: {
         Row: {
           created_at: string
@@ -2123,6 +2256,28 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      pay_payable: {
+        Args: { p_paid_on: string; p_payable_id: string }
+        Returns: {
+          amount_cents: number
+          category: Database["public"]["Enums"]["expense_category"]
+          counterparty: string
+          created_at: string
+          created_by: string | null
+          description: string
+          due_on: string
+          expense_id: string | null
+          id: string
+          organization_id: string
+          paid_on: string | null
+        }
+        SetofOptions: {
+          from: "*"
+          to: "payables"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       receive_return: {
         Args: { p_return_id: string; p_return_shipping_fee_cents?: number }
         Returns: {
@@ -2209,6 +2364,31 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      record_owner_withdrawal: {
+        Args: {
+          p_amount_cents: number
+          p_date: string
+          p_note: string
+          p_organization_id: string
+        }
+        Returns: {
+          amount_cents: number
+          created_at: string
+          created_by: string | null
+          entry_date: string
+          id: string
+          kind: Database["public"]["Enums"]["cash_entry_kind"]
+          note: string
+          organization_id: string
+          over_limit: boolean
+        }
+        SetofOptions: {
+          from: "*"
+          to: "cash_entries"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       record_refund: {
         Args: { p_amount_cents: number; p_return_id: string }
         Returns: {
@@ -2278,6 +2458,7 @@ export type Database = {
         Args: { p_from: string; p_organization_id: string; p_to: string }
         Returns: Json
       }
+      safe_withdrawal: { Args: { p_organization_id: string }; Returns: Json }
       save_product: {
         Args: { p_organization_id: string; p_payload: Json }
         Returns: string
@@ -2434,6 +2615,11 @@ export type Database = {
         | "wrong_number"
         | "call_back_requested"
         | "other"
+      cash_entry_kind:
+        | "opening"
+        | "capital_in"
+        | "adjustment"
+        | "owner_withdrawal"
       data_source: "manual" | "import" | "api"
       expense_category:
         | "inventory_purchase"
@@ -2643,6 +2829,12 @@ export const Constants = {
         "wrong_number",
         "call_back_requested",
         "other",
+      ],
+      cash_entry_kind: [
+        "opening",
+        "capital_in",
+        "adjustment",
+        "owner_withdrawal",
       ],
       data_source: ["manual", "import", "api"],
       expense_category: [

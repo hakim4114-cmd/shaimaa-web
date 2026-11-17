@@ -209,6 +209,15 @@ The nine indicators, this week vs last week, each answering one question:
 
 Then: an ads review block (spend, delivered orders and cost per delivered order per campaign) and the **decision of the week** field.
 
+### Safe owner pay (1.3.0)
+
+`safe = max(0, min(pay earned − withdrawn, cash balance − obligations due ≤ 30 days − reserve floor))`.
+
+- **Pay earned** is the owner-pay fund's share of closed months only.
+- **Cash balance** = opening + capital in ± corrections + carrier payouts − expenses − withdrawals, counted from the opening date.
+- **Withdrawals** above `safe` need a written reason and are flagged.
+- **Obligations** become expenses when paid.
+
 ### Monthly close
 
 1. Net profit for the month (formulas above), with the unknown-cost indicator.
