@@ -5,6 +5,8 @@ import { Card, CardBody, CardHeader } from "@/components/ui/card";
 import { PageHeader } from "@/components/ui/page-header";
 import { requireOrganization } from "@/lib/data/context";
 import { getSenditProvider } from "@/lib/data/shipping";
+import { defaultShippingFees, listCities } from "@/lib/data/orders";
+import { ShippingRatesForm } from "@/components/shipping/shipping-rates-form";
 import { getI18n } from "@/lib/i18n/server";
 import { formatMoroccanPhone } from "@/lib/phone";
 import { senditKeys } from "@/lib/shipping/sendit";
@@ -19,7 +21,7 @@ export default async function SettingsPage() {
   const ts = t.shipping;
   const { supabase, organizationId, can } = await requireOrganization();
   if (!can.overrideBlocklist) redirect("/");
-  const provider = await getSenditProvider(supabase, organizationId);
+  const [provider, cities, fees] = await Promise.all([getSenditProvider(supabase, organizationId), listCities(supabase), defaultShippingFees(supabase, organizationId)]);
 
   const h = await headers();
   const host = h.get("x-forwarded-host") ?? h.get("host");
@@ -47,6 +49,12 @@ export default async function SettingsPage() {
               allowTry: s?.allowTry ?? true
             }}
           />
+        </CardBody>
+      </Card>
+      <Card>
+        <CardHeader title={ts.ratesTitle} description={ts.ratesDescription} />
+        <CardBody>
+          <ShippingRatesForm cities={cities.map((c) => ({ id: c.id, nameFr: c.nameFr, nameAr: c.nameAr }))} fees={fees} />
         </CardBody>
       </Card>
     </div>

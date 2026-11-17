@@ -559,6 +559,11 @@ const en = {
     saved: "Settings saved",
     webhookTitle: "Delivery updates (webhook)",
     webhookHelp: "In Sendit → Intégration API → Créer un webhook, paste this address, keep “Mise à jour du statut du colis” and choose the same API key as in Vercel.",
+    ratesTitle: "Shipping fee per city",
+    ratesDescription: "What the customer pays, filled automatically in manual orders. Empty = typed on each order. Sendit parcels use Sendit's own fee as cost.",
+    rateAll: "Same fee for the empty ones",
+    rateFillEmpty: "Fill the empty cities",
+    ratesSaved: "Fees saved",
     copy: "Copy"
   },
   money: {
@@ -728,6 +733,39 @@ const en = {
       history: "Payouts",
       fees: "fees"
     }
+  },
+  exports: {
+    export: "Export",
+    excel: "Excel (.xlsx)",
+    csv: "CSV",
+    print: "Print / save as PDF",
+    packingList: "Packing list",
+    toPick: "Units to pick",
+    nothingToPack: "Nothing to prepare."
+  },
+  imports: {
+    button: "Import",
+    title: "Import orders (CSV)",
+    description: "From Excel, Google Sheets or another tool: one line per product, lines with the same order_ref form one order.",
+    step1: "1. Download the template",
+    step1Hint: "Columns: order_ref, phone, full_name, city, address, sku, quantity, shipping_fee, notes. French or Arabic headers are also recognised. The SKU must exist in Products.",
+    step2: "2. Choose your file",
+    step2Hint: "Save as CSV (comma or semicolon). Nothing is created before you confirm.",
+    template: "Template (CSV)",
+    choose: "Choose a CSV file",
+    issues: "{count} problem(s) to fix in the file:",
+    line: "Line",
+    issueCodes: {
+      PHONE_INVALID: "invalid phone",
+      SKU_MISSING: "SKU missing",
+      QUANTITY_INVALID: "invalid quantity",
+      NAME_MISSING: "name missing",
+      FEE_INVALID: "invalid shipping fee",
+      COLUMNS_MISSING: "the file needs at least the phone and sku columns"
+    },
+    ready: "{orders} order(s) from {lines} line(s), ready to import.",
+    import: "Import {count} order(s)",
+    done: "{created} of {total} order(s) created. They are in the call list."
   },
   common: {
     cancel: "Cancel",

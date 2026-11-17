@@ -45,7 +45,7 @@ export function AppShell({
       {/* Desktop sidebar */}
       <aside
         className={cn(
-          "sticky top-0 hidden h-dvh shrink-0 flex-col bg-sidebar text-sidebar-foreground dark:border-e dark:border-sidebar-border transition-[width] duration-200 lg:flex",
+          "sticky top-0 hidden h-dvh shrink-0 flex-col print:!hidden bg-sidebar text-sidebar-foreground dark:border-e dark:border-sidebar-border transition-[width] duration-200 lg:flex",
           collapsed ? "w-16" : "w-60"
         )}
       >
@@ -96,7 +96,7 @@ export function AppShell({
       </Dialog>
 
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="sticky top-0 z-30 flex h-14 items-center gap-2 border-b border-border bg-background/85 px-4 backdrop-blur sm:px-6">
+        <header className="sticky top-0 z-30 flex h-14 print:hidden items-center gap-2 border-b border-border bg-background/85 px-4 backdrop-blur sm:px-6">
           <Button variant="ghost" size="icon" className="lg:hidden" onClick={() => setMobileOpen(true)} aria-label={t.nav.openMenu}>
             <Menu />
           </Button>

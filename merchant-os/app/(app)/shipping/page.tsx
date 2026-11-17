@@ -1,4 +1,6 @@
-import { Truck } from "lucide-react";
+import { ClipboardList, Truck } from "lucide-react";
+import { ExportMenu } from "@/components/export/export-menu";
+import { buttonVariants } from "@/components/ui/button";
 import Link from "next/link";
 import { PickupActions } from "@/components/shipping/pickup-actions";
 import { shipmentTone } from "@/components/shipping/shipment-panel";
@@ -30,7 +32,18 @@ export default async function ShippingPage({ searchParams }: { searchParams: Pro
 
   return (
     <div className="flex flex-col gap-6">
-      <PageHeader title={ts.title} description={ts.description} />
+      <PageHeader
+        title={ts.title}
+        description={ts.description}
+        actions={
+          <>
+            <Link href="/print/packing" target="_blank" className={buttonVariants({ variant: "secondary" })}>
+              <ClipboardList /> {t.exports.packingList}
+            </Link>
+            <ExportMenu dataset="shipments" print={false} />
+          </>
+        }
+      />
 
       <nav className="-mx-4 flex gap-1 overflow-x-auto px-4 pb-1 sm:mx-0 sm:flex-wrap sm:px-0" aria-label={ts.title}>
         {shipmentViews.map((tab) => {

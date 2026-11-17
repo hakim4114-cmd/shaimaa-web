@@ -561,6 +561,11 @@ const ar: Dictionary = {
     saved: "تم حفظ الإعدادات",
     webhookTitle: "تحديثات التسليم (webhook)",
     webhookHelp: "في Sendit ← Intégration API ← Créer un webhook، الصق هذا العنوان، واترك «Mise à jour du statut du colis»، واختر نفس مفتاح الـ API الموجود في Vercel.",
+    ratesTitle: "ثمن التوصيل حسب المدينة",
+    ratesDescription: "اللي كيخلّص الزبون، كيتعمّر بوحدو فالطلبات اليدوية. خاوي = كتكتبو فكل طلب. طرود Sendit كتبقى بالثمن ديال Sendit كتكلفة.",
+    rateAll: "نفس الثمن للخاويين",
+    rateFillEmpty: "عمّر المدن الخاوية",
+    ratesSaved: "تم حفظ الأثمنة",
     copy: "نسخ"
   },
   money: {
@@ -730,6 +735,39 @@ const ar: Dictionary = {
       history: "التحويلات",
       fees: "مصاريف"
     }
+  },
+  exports: {
+    export: "تصدير",
+    excel: "Excel (.xlsx)",
+    csv: "CSV",
+    print: "طباعة / حفظ PDF",
+    packingList: "لائحة التحضير",
+    toPick: "القطع اللي خاصك تجبد",
+    nothingToPack: "والو للتحضير."
+  },
+  imports: {
+    button: "استيراد",
+    title: "استيراد الطلبات (CSV)",
+    description: "من Excel ولا Google Sheets ولا شي أداة أخرى: سطر لكل منتج، والسطور اللي عندها نفس order_ref كتكوّن طلب واحد.",
+    step1: "1. حمّل النموذج",
+    step1Hint: "الأعمدة: order_ref, phone, full_name, city, address, sku, quantity, shipping_fee, notes. العناوين بالفرنسية ولا العربية كتتعرف حتى هي. الـ SKU خاصو يكون موجود فالمنتجات.",
+    step2: "2. اختار الملف",
+    step2Hint: "سجّلو كـ CSV (فاصلة ولا فاصلة منقوطة). ما كيتخلق والو حتى تأكد.",
+    template: "النموذج (CSV)",
+    choose: "اختار ملف CSV",
+    issues: "{count} مشكل خاصو يتصلح فالملف:",
+    line: "السطر",
+    issueCodes: {
+      PHONE_INVALID: "هاتف غير صحيح",
+      SKU_MISSING: "الـ SKU ناقص",
+      QUANTITY_INVALID: "كمية غير صحيحة",
+      NAME_MISSING: "الاسم ناقص",
+      FEE_INVALID: "ثمن التوصيل غير صحيح",
+      COLUMNS_MISSING: "الملف خاصو على الأقل العمودين phone و sku"
+    },
+    ready: "{orders} طلب من {lines} سطر، جاهزين للاستيراد.",
+    import: "استيراد {count} طلب",
+    done: "تخلقو {created} من {total} طلب. راهم فلائحة الاتصال."
   },
   common: {
     cancel: "إلغاء",

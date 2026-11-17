@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { SenditInvoices } from "@/components/money/sendit-invoices";
+import { ExportMenu } from "@/components/export/export-menu";
 import { Card, CardBody, CardHeader } from "@/components/ui/card";
 import { Metric } from "@/components/ui/metric";
 import { PageHeader } from "@/components/ui/page-header";
@@ -38,7 +39,7 @@ export default async function CashPage() {
 
   return (
     <div className="flex flex-col gap-6">
-      <PageHeader title={tc.title} description={tc.description} />
+      <PageHeader title={tc.title} description={tc.description} actions={<ExportMenu dataset="receivable" />} />
       <div className="grid gap-4 sm:grid-cols-3">
         <Metric tone="hero" label={tc.receivable} value={formatMoney(total, locale)} hint={interpolate(tc.parcels, { count: receivable.length })} />
         <Metric label={tc.overdue} value={formatMoney(old.reduce((s, r) => s + r.codAmountCents, 0), locale)} hint={interpolate(tc.overdueHint, { count: old.length })} />

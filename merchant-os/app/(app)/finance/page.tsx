@@ -2,6 +2,7 @@ import { Receipt } from "lucide-react";
 import { redirect } from "next/navigation";
 import { DeleteExpenseButton, ExpenseForm } from "@/components/money/expense-form";
 import { ProfitAndLoss } from "@/components/money/pnl";
+import { ExportMenu } from "@/components/export/export-menu";
 import { RangeTabs } from "@/components/money/range-tabs";
 import { Card, CardBody, CardHeader } from "@/components/ui/card";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -34,7 +35,7 @@ export default async function FinancePage({ searchParams }: { searchParams: Prom
 
   return (
     <div className="flex flex-col gap-6">
-      <PageHeader title={tm.financeTitle} description={tm.financeDescription} />
+      <PageHeader title={tm.financeTitle} description={tm.financeDescription} actions={<ExportMenu dataset="expenses" range={preset} />} />
       <RangeTabs basePath="/finance" current={preset} labels={tm.ranges} />
 
       {report ? (

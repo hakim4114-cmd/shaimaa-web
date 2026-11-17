@@ -246,3 +246,49 @@ export async function requestSenditPickup(): Promise<ShippingResult<{ count: num
     return fromError(error);
   }
 }
+
+// ---------------------------------------------------------------------------
+// Default shipping fee per city (charged to the customer on manual orders)
+// ---------------------------------------------------------------------------
+
+const ratesInput = z.array(z.object({ cityId: z.number().int().positive(), fee: z.string().max(20) })).max(500);
+
+export async function saveShippingRates(input: z.infer<typeof ratesInput>): Promise<ShippingResult<{ saved: number }>> {
+  const parsed = ratesInput.safeParse(input);
+  if (!parsed.success) return { error: "INVALID_INPUT" };
+  const { parseMoneyToCents } = await import("@/lib/money");
+  const upserts: { cityId: number; cents: number }[] = [];
+  const removals: number[] = [];
+  for (const row of parsed.data) {
+    if (row.fee.trim() === "") {
+      removals.push(row.cityId);
+      continue;
+    }
+    const cents = parseMoneyToCents(row.fee);
+    if (cents === null) return { error: "INVALID_SHIPPING_FEE" };
+    upserts.push({ cityId: row.cityId, cents });
+  }
+  const { supabase, organizationId, can } = await requireOrganization();
+  if (!can.overrideBlocklist) return { error: "FORBIDDEN" };
+
+  if (removals.length) {
+    const { error } = await supabase.from("shipping_rates").delete().eq("organization_id", organizationId).is("provider_id", null).in("city_id", removals);
+    if (error) return { error: mapDatabaseError(error) };
+  }
+  for (const row of upserts) {
+    const { data: existing } = await supabase
+      .from("shipping_rates")
+      .select("id")
+      .eq("organization_id", organizationId)
+      .is("provider_id", null)
+      .eq("city_id", row.cityId)
+      .maybeSingle();
+    const { error } = existing
+      ? await supabase.from("shipping_rates").update({ customer_fee_cents: row.cents }).eq("id", existing.id)
+      : await supabase.from("shipping_rates").insert({ organization_id: organizationId, city_id: row.cityId, customer_fee_cents: row.cents });
+    if (error) return { error: mapDatabaseError(error) };
+  }
+  revalidatePath("/settings");
+  revalidatePath("/orders/new");
+  return { ok: true, data: { saved: upserts.length } };
+}
