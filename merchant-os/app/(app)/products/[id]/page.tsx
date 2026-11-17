@@ -3,7 +3,9 @@ import { notFound } from "next/navigation";
 import { FormAlert } from "@/components/auth/form-alert";
 import { ProductForm } from "@/components/products/product-form";
 import { PageHeader } from "@/components/ui/page-header";
-import { getProduct, listCategories } from "@/lib/data/catalog";
+import { getProduct, listCategories, signProductImages } from "@/lib/data/catalog";
+import { ProductImage } from "@/components/products/product-image";
+import { Card, CardBody, CardHeader } from "@/components/ui/card";
 import { requireOrganization } from "@/lib/data/context";
 import { getI18n } from "@/lib/i18n/server";
 
@@ -32,6 +34,7 @@ export default async function EditProductPage({
     notFound();
   }
   const saved = (await searchParams).saved === "1";
+  const images = await signProductImages(supabase, [product.imagePath]);
 
   return (
     <div className="flex flex-col gap-6">
@@ -44,6 +47,12 @@ export default async function EditProductPage({
         </div>
       </div>
       {saved ? <FormAlert tone="success">{t.products.saved}</FormAlert> : null}
+      <Card>
+        <CardHeader title={t.products.image} description={t.products.imageHint} />
+        <CardBody>
+          <ProductImage productId={product.id} url={product.imagePath ? (images[product.imagePath] ?? null) : null} canEdit={can.editCatalog} />
+        </CardBody>
+      </Card>
       {can.editCatalog ? (
         <ProductForm
           categories={categories}

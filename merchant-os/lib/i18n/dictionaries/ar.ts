@@ -201,6 +201,11 @@ const ar: Dictionary = {
     priceRange: "{min} – {max}",
     variantsCount: "{count} متغيرات",
     archivedVariants: "المتغيرات المؤرشفة تبقى محفوظة لسجل الطلبات ولا تظهر في الطلبات الجديدة.",
+    image: "الصورة",
+    imageHint: "صورة رئيسية وحدة، كتصغّر بوحدها. محفوظة بشكل خاص.",
+    addImage: "إضافة صورة",
+    replaceImage: "تبديل",
+    removeImage: "حذف"
   },
   productStatus: {
     draft: "مسودة",
@@ -307,6 +312,9 @@ const ar: Dictionary = {
     INVOICE_ALREADY_RECORDED: "هاد الفاتورة مسجّلة مسبقًا.",
     COD_AMOUNT_MISMATCH: "المبلغ المحصّل مختلف على مبلغ التحصيل ديال الطلب.",
     ORDER_NOT_AWAITING_REMITTANCE: "هاد الطلب ما كيتسناش تحويل.",
+    IMAGE_INVALID: "استعمل صورة JPEG ولا PNG ولا WebP أقل من 2 ميغا.",
+    IMAGE_UPLOAD_FAILED: "ما تطلعاتش الصورة. عاود جرّب.",
+    ORDER_NOT_EXCHANGEABLE: "غير الطلب المسلَّم اللي يقدر يتبدّل.",
     UNKNOWN: "حدث خطأ. أعد المحاولة.",
   },
   orders: {
@@ -437,7 +445,19 @@ const ar: Dictionary = {
     openWhatsapp: "فتح في واتساب",
     blockNumber: "حظر هذا الرقم",
     blockDescription: "ستُوقَف الطلبات الجديدة من هذا الرقم عند الإدخال (يستطيع المالك أو المسؤول التجاوز).",
-    blocked: "تم حظر الرقم"
+    blocked: "تم حظر الرقم",
+    exchange: {
+      button: "استبدال",
+      title: "استبدال هذا الطلب",
+      description: "الزبون كيتوصل بالقطع الجديدة؛ ومع Sendit، الموزّع كيرجّع الطرد القديم. القطع القديمة كترجع عبر المرتجعات.",
+      difference: "فرق الثمن (درهم)",
+      differenceHint: "0 إلا كان نفس الثمن",
+      reason: "السبب",
+      toCollect: "للتحصيل من الزبون:",
+      create: "إنشاء الاستبدال",
+      replacement: "طلب الاستبدال",
+      original: "استبدال لـ"
+    }
   },
   callOutcome: {
     confirmed: "تأكّد",

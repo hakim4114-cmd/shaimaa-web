@@ -1166,6 +1166,7 @@ export type Database = {
           created_by: string | null
           description: string
           id: string
+          image_path: string | null
           image_paths: string[]
           name: string
           options: Json
@@ -1179,6 +1180,7 @@ export type Database = {
           created_by?: string | null
           description?: string
           id?: string
+          image_path?: string | null
           image_paths?: string[]
           name: string
           options?: Json
@@ -1192,6 +1194,7 @@ export type Database = {
           created_by?: string | null
           description?: string
           id?: string
+          image_path?: string | null
           image_paths?: string[]
           name?: string
           options?: Json
@@ -1718,6 +1721,48 @@ export type Database = {
         SetofOptions: {
           from: "*"
           to: "returns"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      create_exchange_order: {
+        Args: { p_order_id: string; p_payload: Json }
+        Returns: {
+          call_attempts: number
+          campaign_id: string | null
+          cancelled_at: string | null
+          city: string
+          city_id: number | null
+          cod_amount_cents: number
+          confirmed_at: string | null
+          created_at: string
+          created_by: string | null
+          customer_id: string
+          delivered_at: string | null
+          discount_cents: number
+          exchange_of_order_id: string | null
+          id: string
+          internal_notes: string
+          last_call_outcome: Database["public"]["Enums"]["call_outcome"] | null
+          location_id: string
+          next_call_at: string | null
+          notes: string
+          order_number: string
+          organization_id: string
+          payment_status: Database["public"]["Enums"]["payment_status"]
+          shipped_at: string | null
+          shipping_fee_cents: number
+          source: Database["public"]["Enums"]["order_source"]
+          status: Database["public"]["Enums"]["order_status"]
+          stock_state: Database["public"]["Enums"]["stock_state"]
+          store_id: string | null
+          subtotal_cents: number
+          total_cents: number
+          updated_at: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "orders"
           isOneToOne: true
           isSetofReturn: false
         }

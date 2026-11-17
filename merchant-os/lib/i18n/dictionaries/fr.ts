@@ -202,6 +202,11 @@ const fr: Dictionary = {
     priceRange: "{min} – {max}",
     variantsCount: "{count} variantes",
     archivedVariants: "Les variantes archivées sont conservées pour l'historique des commandes et masquées des nouvelles commandes.",
+    image: "Photo",
+    imageHint: "Une photo principale, redimensionnée automatiquement. Stockée en privé.",
+    addImage: "Ajouter une photo",
+    replaceImage: "Remplacer",
+    removeImage: "Retirer"
   },
   productStatus: {
     draft: "Brouillon",
@@ -308,6 +313,9 @@ const fr: Dictionary = {
     INVOICE_ALREADY_RECORDED: "Cette facture est déjà enregistrée.",
     COD_AMOUNT_MISMATCH: "Le montant encaissé diffère du montant à encaisser de la commande.",
     ORDER_NOT_AWAITING_REMITTANCE: "Cette commande n'attend pas de versement.",
+    IMAGE_INVALID: "Utilisez une photo JPEG, PNG ou WebP de moins de 2 Mo.",
+    IMAGE_UPLOAD_FAILED: "La photo n'a pas pu être envoyée. Réessayez.",
+    ORDER_NOT_EXCHANGEABLE: "Seule une commande livrée peut être échangée.",
     UNKNOWN: "Une erreur est survenue. Réessayez.",
   },
   orders: {
@@ -438,7 +446,19 @@ const fr: Dictionary = {
     openWhatsapp: "Ouvrir dans WhatsApp",
     blockNumber: "Bloquer ce numéro",
     blockDescription: "Les nouvelles commandes de ce numéro seront arrêtées à la saisie (un propriétaire ou admin peut passer outre).",
-    blocked: "Numéro bloqué"
+    blocked: "Numéro bloqué",
+    exchange: {
+      button: "Échange",
+      title: "Échanger cette commande",
+      description: "Le client reçoit les nouveaux articles ; avec Sendit, le livreur récupère l'ancien colis. Les anciens articles reviennent par Retours.",
+      difference: "Différence de prix (MAD)",
+      differenceHint: "0 pour le même prix",
+      reason: "Raison",
+      toCollect: "À encaisser auprès du client :",
+      create: "Créer l'échange",
+      replacement: "Commande d'échange",
+      original: "Échange de"
+    }
   },
   callOutcome: {
     confirmed: "Confirmée",

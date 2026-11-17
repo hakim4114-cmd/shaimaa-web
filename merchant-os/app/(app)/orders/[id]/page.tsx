@@ -10,7 +10,8 @@ import { buttonVariants } from "@/components/ui/button";
 import { Card, CardBody, CardHeader } from "@/components/ui/card";
 import { OrderStatusBadge } from "@/components/ui/order-status-badge";
 import { requireOrganization } from "@/lib/data/context";
-import { getCustomerHistory, getOrder } from "@/lib/data/orders";
+import { getCustomerHistory, getOrder, listSellableVariants } from "@/lib/data/orders";
+import { ExchangeDialog } from "@/components/orders/exchange-dialog";
 import { getActiveShipment, getSenditProvider } from "@/lib/data/shipping";
 import { formatDateTime } from "@/lib/datetime";
 import { interpolate } from "@/lib/i18n/dictionaries";
@@ -43,7 +44,16 @@ export default async function OrderPage({ params }: { params: Promise<{ id: stri
     getActiveShipment(supabase, organizationId, order.id),
     shippable ? getSenditProvider(supabase, organizationId) : Promise.resolve(null),
     can.manageOrders ? listCampaigns(supabase, organizationId) : Promise.resolve([]),
-    supabase.from("orders").select("campaign_id").eq("id", order.id).maybeSingle()
+    supabase.from("orders").select("campaign_id, exchange_of_order_id").eq("id", order.id).maybeSingle()
+  ]);
+  const exchangeable = order.status === "delivered" && can.manageOrders;
+  const [sellable, related] = await Promise.all([
+    exchangeable ? listSellableVariants(supabase, organizationId) : Promise.resolve([]),
+    supabase
+      .from("orders")
+      .select("id, order_number, exchange_of_order_id")
+      .eq("organization_id", organizationId)
+      .or(`exchange_of_order_id.eq.${order.id}${campaignRow.data?.exchange_of_order_id ? `,id.eq.${campaignRow.data.exchange_of_order_id}` : ""}`)
   ]);
   const history = can.manageOrders && order.contact ? await getCustomerHistory(supabase, organizationId, order.contact.phone) : null;
   const itemsText = order.items.map((item) => `• ${item.productName}${item.variantTitle ? ` (${item.variantTitle})` : ""} × ${item.quantity}`).join("\n");
@@ -70,6 +80,16 @@ export default async function OrderPage({ params }: { params: Promise<{ id: stri
         <p className="text-sm text-muted-foreground">
           {interpolate(to.createdAt, { date: formatDateTime(order.createdAt, locale) })} · {t.orderSource[order.source]}
         </p>
+        {(related.data ?? []).map((r) => (
+          <Link key={r.id} href={`/orders/${r.id}`} className="w-fit text-sm font-medium text-accent hover:underline">
+            {r.exchange_of_order_id === order.id ? to.exchange.replacement : to.exchange.original}: {r.order_number}
+          </Link>
+        ))}
+        {exchangeable ? (
+          <div>
+            <ExchangeDialog orderId={order.id} variants={sellable} />
+          </div>
+        ) : null}
       </div>
 
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_22rem]">

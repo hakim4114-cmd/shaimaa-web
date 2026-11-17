@@ -128,6 +128,20 @@ export async function shipWithSendit(input: z.infer<typeof shipInput>): Promise<
   if (!order || !order.contact) return { error: "NOT_FOUND" };
   if (!["confirmed", "preparing", "ready_to_ship"].includes(order.status)) return { error: "ORDER_NOT_SHIPPABLE" };
 
+  // Exchange replacement: tell Sendit which parcel to bring back.
+  const { data: link } = await supabase.from("orders").select("exchange_of_order_id").eq("id", order.id).maybeSingle();
+  let exchangeOfCode: string | null = null;
+  if (link?.exchange_of_order_id) {
+    const { data: original } = await supabase
+      .from("shipments")
+      .select("tracking_number")
+      .eq("order_id", link.exchange_of_order_id)
+      .eq("provider_id", provider.id)
+      .neq("status", "cancelled")
+      .maybeSingle();
+    exchangeOfCode = original?.tracking_number ?? null;
+  }
+
   const payload = buildDeliveryPayload(
     {
       orderNumber: order.orderNumber,
@@ -139,7 +153,8 @@ export async function shipWithSendit(input: z.infer<typeof shipInput>): Promise<
       items: order.items
     },
     Number(district.id),
-    provider.settings
+    provider.settings,
+    exchangeOfCode
   );
 
   let parcel: Awaited<ReturnType<typeof createDelivery>>;

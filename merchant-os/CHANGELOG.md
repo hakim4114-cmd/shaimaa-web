@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.9.0 — Product photos and exchanges (2026-11-17)
+
+### Added
+- **Product photo**:
+  - One main photo per product, resized in the browser (max 1200 px, WebP) so uploads stay small on mobile data.
+  - Stored in a private Supabase bucket under the organization's folder, with storage policies checked by role.
+  - Thumbnails appear in the product list.
+- **Exchanges**:
+  - Available from a delivered order: choose the new items, the price difference and the shipping fee.
+  - The original order becomes «exchange requested», and an exchange return waits for the old items.
+  - A replacement order is created, confirmed and linked to the original, and stock is reserved.
+  - The replacement's revenue is only what the customer pays now (price difference + fee), so the same sale is never counted twice.
+  - Shipped with Sendit's exchange option: the courier delivers the new parcel and brings back the old one.
+- Database: `products.image_path`, the `product-images` bucket and its policies, and `create_exchange_order`. New database tests in `60_exchange.test.sql`.
+
 ## 0.8.0 — Exports, import, shipping fees per city (2026-11-17)
 
 ### Added

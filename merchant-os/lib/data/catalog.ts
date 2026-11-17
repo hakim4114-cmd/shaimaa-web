@@ -28,6 +28,7 @@ export type ProductRow = {
   status: ProductStatus;
   category: string;
   options: ProductOption[];
+  imagePath: string | null;
   variants: VariantRow[];
 };
 
@@ -61,7 +62,7 @@ function asOptionValues(value: unknown): Record<string, string> {
 }
 
 const productSelect =
-  "id, name, description, status, options, category:product_categories(name), variants:product_variants(id, sku, barcode, title, option_values, price_cents, cost_cents, min_stock_level, status, levels:inventory_levels(on_hand, reserved, available, damaged, inspection))";
+  "id, name, description, status, options, image_path, category:product_categories(name), variants:product_variants(id, sku, barcode, title, option_values, price_cents, cost_cents, min_stock_level, status, levels:inventory_levels(on_hand, reserved, available, damaged, inspection))";
 
 type RawProduct = {
   id: string;
@@ -69,6 +70,7 @@ type RawProduct = {
   description: string;
   status: ProductStatus;
   options: unknown;
+  image_path: string | null;
   category: { name: string } | null;
   variants: {
     id: string;
@@ -92,6 +94,7 @@ function toProduct(raw: RawProduct): ProductRow {
     status: raw.status,
     category: raw.category?.name ?? "",
     options: asOptions(raw.options),
+    imagePath: raw.image_path,
     variants: raw.variants
       .map((variant) => ({
         id: variant.id,
@@ -156,4 +159,12 @@ export async function listMovements(supabase: Client, organizationId: string, va
 export async function getDefaultLocationId(supabase: Client, organizationId: string) {
   const { data } = await supabase.from("inventory_locations").select("id").eq("organization_id", organizationId).eq("is_default", true).maybeSingle();
   return data?.id ?? null;
+}
+
+/** Short-lived signed URLs for private product images (path → URL). */
+export async function signProductImages(supabase: Client, paths: (string | null)[]): Promise<Record<string, string>> {
+  const unique = [...new Set(paths.filter((p): p is string => Boolean(p)))];
+  if (unique.length === 0) return {};
+  const { data } = await supabase.storage.from("product-images").createSignedUrls(unique, 3600);
+  return Object.fromEntries((data ?? []).flatMap((d) => (d.signedUrl && d.path ? [[d.path, d.signedUrl] as const] : [])));
 }
