@@ -76,3 +76,17 @@ describe("call queue", () => {
     expect([...rows].sort((a, b) => compareCallQueue(a, b, now)).map((r) => r.id)).toEqual(["due", "new-old", "new-recent", "tried", "later"]);
   });
 });
+
+describe("fund allocation", () => {
+  it("splits exactly when the plan sums to 100%", async () => {
+    const { allocate } = await import("@/lib/data/routines-math");
+    const lines = allocate(100001, [{ id: "a", name: "Restock", percent: 50 }, { id: "b", name: "Reserve", percent: 20 }, { id: "c", name: "Pay", percent: 30 }]);
+    expect(lines.reduce((s, l) => s + l.cents, 0)).toBe(100001);
+    expect(lines.map((l) => l.cents)).toEqual([50001, 20000, 30000]);
+  });
+  it("allocates nothing on a loss, and leaves the rest unallocated under 100%", async () => {
+    const { allocate } = await import("@/lib/data/routines-math");
+    expect(allocate(-500, [{ id: "a", name: "Restock", percent: 50 }])).toEqual([]);
+    expect(allocate(1000, [{ id: "a", name: "Restock", percent: 50 }])).toEqual([{ name: "Restock", cents: 500 }]);
+  });
+});

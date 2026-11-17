@@ -46,7 +46,7 @@ Order intake from outside (item 6) waits until the owner chooses where they will
 
 Manual + CSV shipping with any carrier, printable delivery slips and daily packing list, returns with partial quantities and exchanges, COD remittances, expenses, reporting functions (BUSINESS_RULES.md formulas) with fixture tests, the metric dashboard.
 
-## Step 6 — Owner routines
+## Step 6 — Owner routines (1.0.0: weekly review, decision log, monthly close with funds, dormant stock ✅; cash accounts, payables, complaints to do)
 
 Weekly review with the decision log, monthly close (net profit, fund allocation, owner pay, dormant stock), payables and cash accounts, complaints log. Details: BUSINESS_RULES.md → *Owner routines*.
 

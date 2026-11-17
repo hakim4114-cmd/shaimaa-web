@@ -1,5 +1,28 @@
 # Changelog
 
+## 1.0.0 — Weekly review and monthly close (2026-11-17)
+
+### Added
+- **Weekly review** (`/review`): eight indicators, this week against last week, each with the question it answers:
+  - cash received;
+  - money still with the carrier, by age since delivery (0–7, 8–14, 15+ days);
+  - money in stock and the dormant part (no sale for 30+ days);
+  - delivered orders and delivery rate;
+  - cost per delivered order;
+  - contribution margin;
+  - refusals and returns.
+
+  It also has an ads block per campaign and the **decision of the week**: what, why, and the number to watch, judged later as worked / did not work / too early.
+- **Monthly close** (`/close`):
+  1. Profit and loss for the month.
+  2. Funds («الصناديق»): set percentages once and get a proposed split of the net profit. The rounding remainder goes to the first fund, so the total is exact. Closing the month records the split and cannot be changed afterwards.
+  3. Dormant stock at 30 / 60 / 90 days, valued at cost.
+- Database: `owner_decisions`, `fund_plan`, `monthly_closes` (immutable, one per month) and `stock_health`. New database tests in `70_routines.test.sql`.
+
+### Not yet (from the routines spec)
+- Cash accounts and payables: «cash available» shows the cash received for now.
+- Complaints log.
+
 ## 0.9.0 — Product photos and exchanges (2026-11-17)
 
 ### Added

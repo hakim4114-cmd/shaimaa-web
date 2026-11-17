@@ -33,3 +33,25 @@ export function resolveRange(preset: RangePreset, now: Date = new Date()): { fro
 export function parsePreset(value: unknown, fallback: RangePreset = "30d"): RangePreset {
   return rangePresets.find((p) => p === value) ?? fallback;
 }
+
+/** Monday of the ISO week containing `day` (YYYY-MM-DD). */
+export function weekStart(day: string): string {
+  const d = new Date(`${day}T12:00:00Z`);
+  const dow = (d.getUTCDay() + 6) % 7;
+  return shift(day, -dow);
+}
+
+export function weekRange(offsetWeeks: number, now: Date = new Date()): { from: string; to: string } {
+  const monday = shift(weekStart(businessDay(now)), -7 * offsetWeeks);
+  return { from: monday, to: shift(monday, 6) };
+}
+
+export function monthRange(offsetMonths: number, now: Date = new Date()): { from: string; to: string } {
+  const today = businessDay(now);
+  const d = new Date(`${today.slice(0, 7)}-01T12:00:00Z`);
+  d.setUTCMonth(d.getUTCMonth() - offsetMonths);
+  const from = d.toISOString().slice(0, 10);
+  const next = new Date(d);
+  next.setUTCMonth(next.getUTCMonth() + 1);
+  return { from, to: shift(next.toISOString().slice(0, 10), -1) };
+}

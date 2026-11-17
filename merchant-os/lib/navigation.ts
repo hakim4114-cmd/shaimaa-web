@@ -1,6 +1,8 @@
 import {
   Banknote,
   Boxes,
+  CalendarCheck,
+  CalendarRange,
   ChartColumn,
   LayoutDashboard,
   Megaphone,
@@ -54,7 +56,9 @@ export const navigation: NavGroup[] = [
     key: "money",
     items: [
       { key: "cod", icon: Banknote, href: "/cash" },
-      { key: "finance", icon: Wallet, href: "/finance" }
+      { key: "finance", icon: Wallet, href: "/finance" },
+      { key: "review", icon: CalendarCheck, href: "/review" },
+      { key: "close", icon: CalendarRange, href: "/close" }
     ]
   },
   {
