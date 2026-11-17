@@ -1,5 +1,23 @@
 # Changelog
 
+## 1.2.0 — Pricing center, phase 1 (2026-11-17)
+
+### Added
+- **Pricing center** (`/pricing`): a price simulator built on the cash-on-delivery reality. Ads are paid for every order received, refused parcels still cost shipping, and only delivered orders bring money.
+  - **Inputs**: price, unit cost, discount (% or MAD), shipping paid by the customer, carrier fee, extra refusal fee, packaging, ad cost per order, confirmation rate, delivery rate and target margin.
+  - **Where defaults come from**: your last 90 days when the sample is large enough, marked «your data (n)». Otherwise market estimates are used, marked «estimate».
+  - **Results**:
+    - profit per delivered order and per order received, and margin;
+    - break-even price;
+    - highest ad cost per order before a loss;
+    - lowest delivery rate before a loss;
+    - price for a target margin, plus the list price to show before a discount.
+  - **Grid**: profit or loss across 5 prices × 5 delivery rates, coloured green, orange or red.
+- The model lives in `lib/pricing/simulate.ts`, with tests: break-even points return zero profit, the target margin is reached, and discounts behave as expected.
+
+### Next (phase 2)
+- Real discounts and promotions applied to orders, with their cost in the reports.
+
 ## 1.1.0 — Claude connection (2026-11-17)
 
 ### Added

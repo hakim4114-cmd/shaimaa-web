@@ -1,6 +1,7 @@
 import {
   Banknote,
   Boxes,
+  Calculator,
   CalendarCheck,
   CalendarRange,
   ChartColumn,
@@ -65,6 +66,7 @@ export const navigation: NavGroup[] = [
     key: "growth",
     items: [
       { key: "marketing", icon: Megaphone, href: "/marketing" },
+      { key: "pricing", icon: Calculator, href: "/pricing" },
       { key: "assistant", icon: Sparkles, phase: 7 }
     ]
   },
