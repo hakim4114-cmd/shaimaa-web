@@ -409,6 +409,41 @@ export type Database = {
           },
         ]
       }
+      fund_plan: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          organization_id: string
+          percent: number
+          position: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          organization_id: string
+          percent: number
+          position?: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          organization_id?: string
+          percent?: number
+          position?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fund_plan_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       inventory_levels: {
         Row: {
           available: number | null
@@ -612,6 +647,47 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "marketing_campaigns_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      monthly_closes: {
+        Row: {
+          allocations: Json
+          closed_at: string
+          closed_by: string | null
+          id: string
+          month: string
+          net_profit_cents: number
+          note: string
+          organization_id: string
+        }
+        Insert: {
+          allocations?: Json
+          closed_at?: string
+          closed_by?: string | null
+          id?: string
+          month: string
+          net_profit_cents: number
+          note?: string
+          organization_id: string
+        }
+        Update: {
+          allocations?: Json
+          closed_at?: string
+          closed_by?: string | null
+          id?: string
+          month?: string
+          net_profit_cents?: number
+          note?: string
+          organization_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "monthly_closes_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
             referencedRelation: "organizations"
@@ -1066,6 +1142,53 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      owner_decisions: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          decision: string
+          id: string
+          metric: string
+          organization_id: string
+          outcome: string | null
+          reason: string
+          updated_at: string
+          week_start: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          decision: string
+          id?: string
+          metric?: string
+          organization_id: string
+          outcome?: string | null
+          reason?: string
+          updated_at?: string
+          week_start: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          decision?: string
+          id?: string
+          metric?: string
+          organization_id?: string
+          outcome?: string | null
+          reason?: string
+          updated_at?: string
+          week_start?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "owner_decisions_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       product_categories: {
         Row: {
@@ -2108,6 +2231,20 @@ export type Database = {
       save_product: {
         Args: { p_organization_id: string; p_payload: Json }
         Returns: string
+      }
+      stock_health: {
+        Args: { p_organization_id: string }
+        Returns: {
+          cost_cents: number
+          first_receipt_at: string
+          last_outbound_at: string
+          on_hand: number
+          product_name: string
+          sku: string
+          value_cents: number
+          variant_id: string
+          variant_title: string
+        }[]
       }
       transition_order: {
         Args: {

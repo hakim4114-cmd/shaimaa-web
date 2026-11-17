@@ -54,6 +54,8 @@ export const appErrorCodes = [
   "IMAGE_INVALID",
   "IMAGE_UPLOAD_FAILED",
   "ORDER_NOT_EXCHANGEABLE",
+  "FUNDS_OVER_100",
+  "MONTH_ALREADY_CLOSED",
   "UNKNOWN"
 ] as const;
 

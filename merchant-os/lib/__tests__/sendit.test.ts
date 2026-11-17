@@ -127,3 +127,21 @@ describe("date ranges", () => {
     expect(resolveRange("last_month", new Date("2026-03-05T10:00:00Z"))).toEqual({ from: "2026-02-01", to: "2026-02-28" });
   });
 });
+
+import { monthRange, weekRange, weekStart } from "@/lib/ranges";
+
+describe("weeks and months", () => {
+  const now = new Date("2026-11-19T10:00:00Z"); // a Thursday
+  it("uses ISO weeks starting on Monday", () => {
+    expect(weekStart("2026-11-19")).toBe("2026-11-16");
+    expect(weekStart("2026-11-16")).toBe("2026-11-16");
+    expect(weekStart("2026-11-22")).toBe("2026-11-16");
+    expect(weekRange(0, now)).toEqual({ from: "2026-11-16", to: "2026-11-22" });
+    expect(weekRange(1, now)).toEqual({ from: "2026-11-09", to: "2026-11-15" });
+  });
+  it("resolves calendar months", () => {
+    expect(monthRange(0, now)).toEqual({ from: "2026-11-01", to: "2026-11-30" });
+    expect(monthRange(1, now)).toEqual({ from: "2026-10-01", to: "2026-10-31" });
+    expect(monthRange(10, now)).toEqual({ from: "2026-01-01", to: "2026-01-31" });
+  });
+});
