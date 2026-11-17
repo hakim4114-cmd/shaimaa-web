@@ -1,5 +1,31 @@
 # Changelog
 
+## 0.5.0 — Orders: entry and confirmation (2026-11-17)
+
+### Added
+- **Order entry built for a phone**: the number comes first, in any format. The customer's history then appears right away (delivered / refused / cancelled, with a warning for past refusals), and the name, city and address are filled from the last order. The city comes from the list, and its shipping fee is filled when a rate exists. A sticky total stays visible at the bottom. Orders are entered by hand only (no store connection yet), as decided with the owner.
+- **Orders list**: tabs To call / Confirmed / Preparing / Ready to ship / All open / All, with counts. Search by phone, name or order number. Cards on phones, a table from tablet up.
+- **Call queue**: due call-backs first, then orders never called (oldest first). A banner shows how many calls are due now.
+- **Order page**:
+  - Call panel: one tap per outcome; call-back presets (in 1 hour, this evening, tomorrow); a note is required to cancel.
+  - Next step: confirm without a call, preparing, ready to ship, or cancel with a reason.
+  - Totals, history with notes, and the list of calls.
+  - Customer card with tap-to-call and the customer's history.
+- **WhatsApp in one tap**: four messages (ask to confirm, couldn't reach you, confirmed, cancelled) in Darija, Arabic or French. A preview is shown and WhatsApp opens with the text prefilled; nothing is sent automatically.
+- **Edit before confirmation**: products, quantities, city, fee, discount, name, address and notes.
+- **Customers page** and **blocked numbers**:
+  - Owner, admin and operator can block a number.
+  - Only owner and admin can unblock, or create an order for a blocked number.
+- Dates are shown in Moroccan time (`Africa/Casablanca`, taken from the time-zone database).
+
+### Fixed
+- Product form on phones: the variants table was cut off. Each variant is now a card with all fields visible (reported by the owner).
+- Form rows used keys that differed between server and browser rendering.
+
+### Not yet
+- Shipped / delivered / refused are set by the shipping module (step 5), so stock and cash stay consistent.
+- Shipping rates per city have no settings screen yet: type the fee in the order.
+
 ## 0.4.2 — Identity "Ink" (2026-11-16)
 
 ### Changed
