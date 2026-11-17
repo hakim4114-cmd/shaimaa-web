@@ -15,7 +15,7 @@ import { getActiveShipment, getSenditProvider } from "@/lib/data/shipping";
 import { formatDateTime } from "@/lib/datetime";
 import { interpolate } from "@/lib/i18n/dictionaries";
 import { getI18n } from "@/lib/i18n/server";
-import { formatMoney } from "@/lib/money";
+import { formatMoney, formatMoneyPlain } from "@/lib/money";
 import type { WhatsappTemplate } from "@/lib/orders/whatsapp";
 import { formatMoroccanPhone } from "@/lib/phone";
 import { cn } from "@/lib/utils";
@@ -212,7 +212,7 @@ export default async function OrderPage({ params }: { params: Promise<{ id: stri
                 storeName: organizationName,
                 orderNumber: order.orderNumber,
                 items: itemsText,
-                total: formatMoney(order.codAmountCents, locale),
+                total: formatMoneyPlain(order.codAmountCents, locale),
                 city: order.city
               }}
             />

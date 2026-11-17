@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { formatMoney, parseMoneyToCents } from "@/lib/money";
+import { formatMoney, formatMoneyPlain, parseMoneyToCents } from "@/lib/money";
 
 describe("parseMoneyToCents", () => {
   it.each([
@@ -29,5 +29,12 @@ describe("formatMoney", () => {
       expect(formatted).toMatch(/890[.,]50/);
       expect(formatted).not.toMatch(/[٠-٩]/);
     }
+  });
+
+  it("isolates the amount so right-to-left text cannot reorder it", () => {
+    const formatted = formatMoney(45000, "ar");
+    expect(formatted.startsWith("\u2066")).toBe(true);
+    expect(formatted.endsWith("\u2069")).toBe(true);
+    expect(formatted.slice(1, -1)).toBe(formatMoneyPlain(45000, "ar"));
   });
 });
