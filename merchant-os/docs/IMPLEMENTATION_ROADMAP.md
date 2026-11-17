@@ -42,7 +42,7 @@ Order intake from outside (item 6) waits until the owner chooses where they will
 
 "What do I do today?": calls to make (and call-backs due), packages to prepare, shipments without news for 48 h, remittances overdue, low stock. The metric dashboard moves to its own page.
 
-## Step 5 — Shipping, returns, cash
+## Step 5 — Shipping, returns, cash (0.6.0: Sendit parcels, labels, pickup, webhook tracking ✅)
 
 Manual + CSV shipping with any carrier, printable delivery slips and daily packing list, returns with partial quantities and exchanges, COD remittances, expenses, reporting functions (BUSINESS_RULES.md formulas) with fixture tests, the metric dashboard.
 

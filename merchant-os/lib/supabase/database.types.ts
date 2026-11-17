@@ -59,6 +59,67 @@ export type Database = {
           },
         ]
       }
+      carrier_events: {
+        Row: {
+          carrier_status: string
+          dedupe_key: string
+          id: number
+          organization_id: string
+          outcome: string
+          payload: Json
+          provider_id: string
+          received_at: string
+          shipment_id: string | null
+          tracking_number: string
+        }
+        Insert: {
+          carrier_status: string
+          dedupe_key: string
+          id?: never
+          organization_id: string
+          outcome: string
+          payload: Json
+          provider_id: string
+          received_at?: string
+          shipment_id?: string | null
+          tracking_number: string
+        }
+        Update: {
+          carrier_status?: string
+          dedupe_key?: string
+          id?: never
+          organization_id?: string
+          outcome?: string
+          payload?: Json
+          provider_id?: string
+          received_at?: string
+          shipment_id?: string | null
+          tracking_number?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "carrier_events_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "carrier_events_provider_id_organization_id_fkey"
+            columns: ["provider_id", "organization_id"]
+            isOneToOne: false
+            referencedRelation: "shipping_providers"
+            referencedColumns: ["id", "organization_id"]
+          },
+          {
+            foreignKeyName: "carrier_events_shipment_id_organization_id_fkey"
+            columns: ["shipment_id", "organization_id"]
+            isOneToOne: false
+            referencedRelation: "shipments"
+            referencedColumns: ["id", "organization_id"]
+          },
+        ]
+      }
       cities: {
         Row: {
           aliases: string[]
@@ -1333,54 +1394,78 @@ export type Database = {
       }
       shipments: {
         Row: {
+          carrier_district_id: string | null
+          carrier_district_name: string | null
+          carrier_message: string | null
+          carrier_status: string | null
+          carrier_updated_at: string | null
           cod_amount_cents: number
           created_at: string
           created_by: string | null
+          deliver_by: string | null
           delivered_at: string | null
           delivery_attempts: number
           id: string
           order_id: string
           organization_id: string
+          proof_url: string | null
           provider_id: string
           returned_at: string | null
           shipped_at: string | null
           shipping_cost_cents: number
           status: Database["public"]["Enums"]["shipment_status"]
           tracking_number: string | null
+          unreachable_count: number
           updated_at: string
         }
         Insert: {
+          carrier_district_id?: string | null
+          carrier_district_name?: string | null
+          carrier_message?: string | null
+          carrier_status?: string | null
+          carrier_updated_at?: string | null
           cod_amount_cents?: number
           created_at?: string
           created_by?: string | null
+          deliver_by?: string | null
           delivered_at?: string | null
           delivery_attempts?: number
           id?: string
           order_id: string
           organization_id: string
+          proof_url?: string | null
           provider_id: string
           returned_at?: string | null
           shipped_at?: string | null
           shipping_cost_cents?: number
           status?: Database["public"]["Enums"]["shipment_status"]
           tracking_number?: string | null
+          unreachable_count?: number
           updated_at?: string
         }
         Update: {
+          carrier_district_id?: string | null
+          carrier_district_name?: string | null
+          carrier_message?: string | null
+          carrier_status?: string | null
+          carrier_updated_at?: string | null
           cod_amount_cents?: number
           created_at?: string
           created_by?: string | null
+          deliver_by?: string | null
           delivered_at?: string | null
           delivery_attempts?: number
           id?: string
           order_id?: string
           organization_id?: string
+          proof_url?: string | null
           provider_id?: string
           returned_at?: string | null
           shipped_at?: string | null
           shipping_cost_cents?: number
           status?: Database["public"]["Enums"]["shipment_status"]
           tracking_number?: string | null
+          unreachable_count?: number
           updated_at?: string
         }
         Relationships: [
@@ -1417,6 +1502,7 @@ export type Database = {
           name: string
           notes: string
           organization_id: string
+          settings: Json
           updated_at: string
         }
         Insert: {
@@ -1428,6 +1514,7 @@ export type Database = {
           name: string
           notes?: string
           organization_id: string
+          settings?: Json
           updated_at?: string
         }
         Update: {
@@ -1439,6 +1526,7 @@ export type Database = {
           name?: string
           notes?: string
           organization_id?: string
+          settings?: Json
           updated_at?: string
         }
         Relationships: [
@@ -1582,6 +1670,16 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      apply_carrier_event: {
+        Args: {
+          p_carrier_status: string
+          p_payload: Json
+          p_provider_id: string
+          p_status: Database["public"]["Enums"]["shipment_status"]
+          p_tracking_number: string
+        }
+        Returns: string
+      }
       close_return: {
         Args: { p_return_id: string }
         Returns: {
@@ -1677,20 +1775,28 @@ export type Database = {
           p_tracking_number: string
         }
         Returns: {
+          carrier_district_id: string | null
+          carrier_district_name: string | null
+          carrier_message: string | null
+          carrier_status: string | null
+          carrier_updated_at: string | null
           cod_amount_cents: number
           created_at: string
           created_by: string | null
+          deliver_by: string | null
           delivered_at: string | null
           delivery_attempts: number
           id: string
           order_id: string
           organization_id: string
+          proof_url: string | null
           provider_id: string
           returned_at: string | null
           shipped_at: string | null
           shipping_cost_cents: number
           status: Database["public"]["Enums"]["shipment_status"]
           tracking_number: string | null
+          unreachable_count: number
           updated_at: string
         }
         SetofOptions: {
@@ -1861,6 +1967,46 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      register_carrier_shipment: {
+        Args: {
+          p_carrier?: Json
+          p_order_id: string
+          p_provider_id: string
+          p_shipping_cost_cents: number
+          p_tracking_number: string
+        }
+        Returns: {
+          carrier_district_id: string | null
+          carrier_district_name: string | null
+          carrier_message: string | null
+          carrier_status: string | null
+          carrier_updated_at: string | null
+          cod_amount_cents: number
+          created_at: string
+          created_by: string | null
+          deliver_by: string | null
+          delivered_at: string | null
+          delivery_attempts: number
+          id: string
+          order_id: string
+          organization_id: string
+          proof_url: string | null
+          provider_id: string
+          returned_at: string | null
+          shipped_at: string | null
+          shipping_cost_cents: number
+          status: Database["public"]["Enums"]["shipment_status"]
+          tracking_number: string | null
+          unreachable_count: number
+          updated_at: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "shipments"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       save_product: {
         Args: { p_organization_id: string; p_payload: Json }
         Returns: string
@@ -1961,20 +2107,28 @@ export type Database = {
           p_status: Database["public"]["Enums"]["shipment_status"]
         }
         Returns: {
+          carrier_district_id: string | null
+          carrier_district_name: string | null
+          carrier_message: string | null
+          carrier_status: string | null
+          carrier_updated_at: string | null
           cod_amount_cents: number
           created_at: string
           created_by: string | null
+          deliver_by: string | null
           delivered_at: string | null
           delivery_attempts: number
           id: string
           order_id: string
           organization_id: string
+          proof_url: string | null
           provider_id: string
           returned_at: string | null
           shipped_at: string | null
           shipping_cost_cents: number
           status: Database["public"]["Enums"]["shipment_status"]
           tracking_number: string | null
+          unreachable_count: number
           updated_at: string
         }
         SetofOptions: {
