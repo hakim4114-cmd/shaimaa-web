@@ -78,3 +78,42 @@ describe("Sendit payload", () => {
     expect(madToCents("abc")).toBe(0);
   });
 });
+
+import { previewInvoice, readInvoiceLines } from "@/lib/shipping/sendit-core";
+import { resolveRange } from "@/lib/ranges";
+
+describe("Sendit invoice preview", () => {
+  const lines = readInvoiceLines([
+    { type: "delivery", code: "DH1", status: "DELIVERED", amount: "435.00", fee: "30.00" },
+    { type: "delivery", code: "DH2", status: "REJECTED", amount: "0.00", fee: "30.00" },
+    { type: "pickup", code: "PH1", date: "2026-11-17", fee: 0 },
+    { type: "extra", code: "AH1", label: "avoir", paid_by_sendit: "Oui", amount: "10.00" }
+  ]);
+  const parcels = new Map([["DH1", { orderId: "o1", orderNumber: "MOS-1", codAmountCents: 43500, paymentStatus: "awaiting_remittance" }]]);
+
+  it("settles matching deliveries and explains the other lines", () => {
+    const p = previewInvoice(38500, lines, parcels);
+    expect(p.settle).toEqual([{ trackingNumber: "DH1", orderNumber: "MOS-1", collectedCents: 43500, feeCents: 3000 }]);
+    expect(p.impliedOtherCents).toBe(2000);
+    expect(p.explainedOtherCents).toBe(2000);
+    expect(p.mismatches).toHaveLength(0);
+  });
+
+  it("flags amount mismatches and unknown parcels", () => {
+    const wrong = new Map([["DH1", { orderId: "o1", orderNumber: "MOS-1", codAmountCents: 40000, paymentStatus: "awaiting_remittance" }]]);
+    const p = previewInvoice(38500, lines, wrong);
+    expect(p.mismatches[0]).toMatchObject({ trackingNumber: "DH1", expectedCents: 40000, invoicedCents: 43500 });
+    expect(previewInvoice(0, lines, new Map()).unknown).toEqual(["DH1"]);
+  });
+});
+
+describe("date ranges", () => {
+  const now = new Date("2026-11-17T10:00:00Z");
+  it("resolves presets in Moroccan days", () => {
+    expect(resolveRange("today", now)).toEqual({ from: "2026-11-17", to: "2026-11-17" });
+    expect(resolveRange("7d", now)).toEqual({ from: "2026-11-11", to: "2026-11-17" });
+    expect(resolveRange("month", now)).toEqual({ from: "2026-11-01", to: "2026-11-17" });
+    expect(resolveRange("last_month", now)).toEqual({ from: "2026-10-01", to: "2026-10-31" });
+    expect(resolveRange("last_month", new Date("2026-03-05T10:00:00Z"))).toEqual({ from: "2026-02-01", to: "2026-02-28" });
+  });
+});

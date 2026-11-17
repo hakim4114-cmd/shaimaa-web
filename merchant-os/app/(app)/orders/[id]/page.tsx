@@ -4,6 +4,8 @@ import { notFound } from "next/navigation";
 import { BlockNumberButton, CallPanel, NoteForm, StatusActions, WhatsappPanel } from "@/components/orders/order-actions";
 import { CustomerHistoryNote } from "@/components/orders/order-form";
 import { ShipmentPanel } from "@/components/shipping/shipment-panel";
+import { OrderCampaignSelect } from "@/components/money/campaign-form";
+import { listCampaigns } from "@/lib/data/money";
 import { buttonVariants } from "@/components/ui/button";
 import { Card, CardBody, CardHeader } from "@/components/ui/card";
 import { OrderStatusBadge } from "@/components/ui/order-status-badge";
@@ -37,9 +39,11 @@ export default async function OrderPage({ params }: { params: Promise<{ id: stri
 
   const awaitingConfirmation = order.status === "new" || order.status === "confirmation_pending";
   const shippable = ["confirmed", "preparing", "ready_to_ship"].includes(order.status);
-  const [shipment, sendit] = await Promise.all([
+  const [shipment, sendit, campaigns, campaignRow] = await Promise.all([
     getActiveShipment(supabase, organizationId, order.id),
-    shippable ? getSenditProvider(supabase, organizationId) : Promise.resolve(null)
+    shippable ? getSenditProvider(supabase, organizationId) : Promise.resolve(null),
+    can.manageOrders ? listCampaigns(supabase, organizationId) : Promise.resolve([]),
+    supabase.from("orders").select("campaign_id").eq("id", order.id).maybeSingle()
   ]);
   const history = can.manageOrders && order.contact ? await getCustomerHistory(supabase, organizationId, order.contact.phone) : null;
   const itemsText = order.items.map((item) => `• ${item.productName}${item.variantTitle ? ` (${item.variantTitle})` : ""} × ${item.quantity}`).join("\n");
@@ -181,6 +185,9 @@ export default async function OrderPage({ params }: { params: Promise<{ id: stri
               ) : (
                 <p className="text-muted-foreground">{to.noContactAccess}</p>
               )}
+              {can.manageOrders && campaigns.length > 0 ? (
+                <OrderCampaignSelect orderId={order.id} value={campaignRow.data?.campaign_id ?? null} campaigns={campaigns.map((c) => ({ id: c.id, name: c.name }))} />
+              ) : null}
               {order.notes ? (
                 <div className="rounded-md bg-surface-muted p-3">
                   <p className="text-xs font-medium text-muted-foreground">{to.notes}</p>

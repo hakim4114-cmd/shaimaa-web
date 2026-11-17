@@ -38,7 +38,8 @@ const orderInput = z.object({
   source: z.enum(orderSources as [string, ...string[]]),
   notes: z.string().max(2000),
   internalNotes: z.string().max(4000),
-  allowBlocked: z.boolean()
+  allowBlocked: z.boolean(),
+  campaignId: z.string().uuid().nullable().optional()
 });
 
 export type OrderInput = z.infer<typeof orderInput>;
@@ -82,7 +83,8 @@ export async function createOrder(input: OrderInput): Promise<OrderResult> {
     source: value.source,
     notes: value.notes,
     internal_notes: value.internalNotes,
-    allow_blocked: value.allowBlocked && can.overrideBlocklist
+    allow_blocked: value.allowBlocked && can.overrideBlocklist,
+    ...(value.campaignId ? { campaign_id: value.campaignId } : {})
   } as unknown as Json;
 
   const { data, error } = await supabase.rpc("create_order", { p_organization_id: organizationId, p_payload: payload });

@@ -3,6 +3,7 @@ import {
   Boxes,
   ChartColumn,
   LayoutDashboard,
+  Megaphone,
   Package,
   Palette,
   Settings,
@@ -39,7 +40,7 @@ export const navigation: NavGroup[] = [
       { key: "orders", icon: Package, href: "/orders" },
       { key: "customers", icon: Users, href: "/customers" },
       { key: "shipping", icon: Truck, href: "/shipping" },
-      { key: "returns", icon: Undo2, phase: 5 }
+      { key: "returns", icon: Undo2, href: "/returns" }
     ]
   },
   {
@@ -52,13 +53,16 @@ export const navigation: NavGroup[] = [
   {
     key: "money",
     items: [
-      { key: "cod", icon: Banknote, phase: 5 },
-      { key: "finance", icon: Wallet, phase: 5 }
+      { key: "cod", icon: Banknote, href: "/cash" },
+      { key: "finance", icon: Wallet, href: "/finance" }
     ]
   },
   {
     key: "growth",
-    items: [{ key: "assistant", icon: Sparkles, phase: 7 }]
+    items: [
+      { key: "marketing", icon: Megaphone, href: "/marketing" },
+      { key: "assistant", icon: Sparkles, phase: 7 }
+    ]
   },
   {
     key: "system",

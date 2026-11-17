@@ -122,6 +122,19 @@ All figures are computed from records — never entered as totals. For a date ra
 
 These formulas will be implemented as SQL functions (one source for dashboards, exports and the AI assistant) in Phase 2 and tested with fixed fixtures.
 
+### Carrier invoices (0.7.0)
+
+- A carrier invoice is recorded once (unique reference per carrier).
+- Every delivered parcel on it must match its order's COD amount exactly, or the invoice is blocked.
+- Refusal fees, pickup fees and credits are stored as `other_charges_cents`, so that `net_received_cents` always equals the money actually paid.
+- When those lines do not fully explain the gap, the owner must confirm the gap explicitly before recording.
+
+### Marketing attribution (0.7.0)
+
+- An order counts for a campaign only when it is linked to it, at entry or later.
+- Spend counts when entered as an `advertising` expense with that campaign.
+- Cost per delivered order and return on ad spend use **delivered** orders only. In COD, a confirmed order is not yet money.
+
 ## Assumptions (Phase 1)
 
 - Single currency (MAD) per organization.

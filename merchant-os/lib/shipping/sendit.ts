@@ -154,3 +154,20 @@ export async function requestPickup(input: { districtId: number; name: string; p
   const code = (body.data as { code?: unknown } | undefined)?.code;
   return typeof code === "string" ? code : "";
 }
+
+export type SenditInvoiceSummary = { code: string; status: string; amountCents: number; date: string };
+
+export async function listInvoices(page = 1): Promise<{ invoices: SenditInvoiceSummary[]; lastPage: number }> {
+  const body = await authed(`/invoices?page=${Math.max(1, Math.floor(page))}`);
+  const invoices = (Array.isArray(body.data) ? body.data : [])
+    .map((row) => row as Record<string, unknown>)
+    .map((row) => ({ code: String(row.code ?? ""), status: String(row.status ?? ""), amountCents: madToCents(row.amount), date: String(row.date ?? "").slice(0, 10) }))
+    .filter((row) => row.code);
+  return { invoices, lastPage: Number(body.last_page) || 1 };
+}
+
+export async function getInvoice(code: string): Promise<SenditInvoiceSummary & { items: unknown }> {
+  const body = await authed(`/invoices/${encodeURIComponent(code)}`);
+  const data = (body.data ?? {}) as Record<string, unknown>;
+  return { code: String(data.code ?? code), status: String(data.status ?? ""), amountCents: madToCents(data.amount), date: String(data.date ?? "").slice(0, 10), items: data.items };
+}

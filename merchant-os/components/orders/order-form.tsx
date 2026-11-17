@@ -32,6 +32,7 @@ export type OrderFormValue = {
   source: OrderSource;
   notes: string;
   internalNotes: string;
+  campaignId?: string | null;
 };
 
 type Line = { key: string; variantId: string; quantity: number };
@@ -48,7 +49,8 @@ export function OrderForm({
   cities,
   variants,
   fees,
-  canOverrideBlocklist
+  canOverrideBlocklist,
+  campaigns = []
 }: {
   mode: "create" | "edit";
   orderId?: string;
@@ -57,6 +59,7 @@ export function OrderForm({
   variants: SellableVariant[];
   fees: Record<number, number>;
   canOverrideBlocklist: boolean;
+  campaigns?: { id: string; name: string }[];
 }) {
   const { t, locale } = useI18n();
   const to = t.orders;
@@ -83,6 +86,7 @@ export function OrderForm({
   const [notes, setNotes] = useState(initial.notes);
   const [internalNotes, setInternalNotes] = useState(initial.internalNotes);
   const [allowBlocked, setAllowBlocked] = useState(false);
+  const [campaignId, setCampaignId] = useState(initial.campaignId ?? "");
   const [lookup, setLookup] = useState<LookupResult | null>(null);
   const lookedUp = useRef<string | null>(null);
 
@@ -151,7 +155,8 @@ export function OrderForm({
       source,
       notes,
       internalNotes,
-      allowBlocked
+      allowBlocked,
+      campaignId: mode === "create" && campaignId ? campaignId : null
     };
     startTransition(async () => {
       const result = mode === "create" ? await createOrder(input) : await updateOrder(orderId!, input);
@@ -238,6 +243,18 @@ export function OrderForm({
               ))}
             </NativeSelect>
           </Field>
+          {mode === "create" && campaigns.length > 0 ? (
+            <Field label={t.money.campaign} htmlFor={`${id}-campaign`} hint={t.money.attributionHint}>
+              <NativeSelect id={`${id}-campaign`} value={campaignId} onChange={(e) => setCampaignId(e.target.value)}>
+                <option value="">{t.money.noCampaign}</option>
+                {campaigns.map((c) => (
+                  <option key={c.id} value={c.id}>
+                    {c.name}
+                  </option>
+                ))}
+              </NativeSelect>
+            </Field>
+          ) : null}
           {cityValue === OTHER_CITY ? (
             <div className="sm:col-span-2">
               <Field label={to.cityOtherLabel} htmlFor={`${id}-city-other`}>

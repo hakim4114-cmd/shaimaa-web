@@ -1,4 +1,10 @@
-import { ArrowRight, CircleCheck, CircleDashed, Database } from "lucide-react";
+import { ArrowRight, CircleCheck, CircleDashed, Database, PackageCheck, PhoneCall, TriangleAlert, Truck, Undo2 } from "lucide-react";
+import { RangeTabs } from "@/components/money/range-tabs";
+import { Metric } from "@/components/ui/metric";
+import { requireOrganization } from "@/lib/data/context";
+import { getReport, getTodayCounts } from "@/lib/data/money";
+import { formatMoney } from "@/lib/money";
+import { parsePreset, resolveRange } from "@/lib/ranges";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardBody, CardHeader } from "@/components/ui/card";
 import { PageHeader } from "@/components/ui/page-header";
@@ -9,8 +15,8 @@ import { isSupabaseConfigured } from "@/lib/env";
 import { interpolate } from "@/lib/i18n/dictionaries";
 import { getI18n } from "@/lib/i18n/server";
 
-export default async function CommandCenterPage() {
-  const { t } = await getI18n();
+export default async function CommandCenterPage({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
+  const { t, locale } = await getI18n();
   const configured = isSupabaseConfigured();
   const session = configured ? await getSessionContext() : null;
 
@@ -20,15 +26,71 @@ export default async function CommandCenterPage() {
       .from("products")
       .select("id", { count: "exact", head: true })
       .eq("organization_id", session.active.organization.id);
+    const { count: orderCount } = await supabase
+      .from("orders")
+      .select("id", { count: "exact", head: true })
+      .eq("organization_id", session.active.organization.id);
     const readySteps: { label: string; done: boolean; href?: string }[] = [
       { label: t.workspace.stepDatabase, done: true },
       { label: t.workspace.stepOrganization, done: true },
       { label: t.workspace.stepCatalog, done: (productCount ?? 0) > 0, href: "/products" },
-      { label: t.workspace.stepOrders, done: false }
+      { label: t.workspace.stepOrders, done: (orderCount ?? 0) > 0, href: "/orders/new" }
     ];
+    const setupDone = readySteps.every((step) => step.done);
+    const ctx = await requireOrganization();
+    const preset = parsePreset((await searchParams).range, "7d");
+    const { from, to } = resolveRange(preset);
+    const [today, report] = await Promise.all([
+      getTodayCounts(ctx.supabase, ctx.organizationId),
+      ctx.can.seeMoney ? getReport(ctx.supabase, ctx.organizationId, from, to) : Promise.resolve(null)
+    ]);
+    const td = t.money.today;
+    const tasks = [
+      { icon: PhoneCall, label: td.calls, count: today.callsDue, href: "/orders?view=to_call" },
+      { icon: PackageCheck, label: td.prepare, count: today.toPrepare, href: "/orders?view=confirmed" },
+      { icon: Truck, label: td.pickup, count: today.toPickUp, href: "/shipping?view=to_pickup" },
+      { icon: TriangleAlert, label: td.problems, count: today.deliveryProblems, href: "/shipping?view=problems" },
+      { icon: Undo2, label: td.returns, count: today.returnsWaiting, href: "/returns" }
+    ];
+    const rate = (v: number | null) => (v === null ? null : `${Math.round(v * 100)}%`);
     return (
       <div className="flex flex-col gap-6">
         <PageHeader title={t.commandCenter.title} description={t.commandCenter.description} />
+
+        <Card>
+          <CardHeader title={td.title} description={td.description} />
+          <ul className="grid divide-y divide-border sm:grid-cols-5 sm:divide-x sm:divide-y-0 rtl:sm:divide-x-reverse">
+            {tasks.map((task) => (
+              <li key={task.href}>
+                <Link href={task.href} className="flex items-center gap-3 px-5 py-3.5 hover:bg-surface-hover sm:flex-col sm:items-start sm:gap-1.5">
+                  <task.icon className={task.count ? "size-5 text-accent" : "size-5 text-subtle-foreground"} aria-hidden />
+                  <span className="min-w-0 flex-1 text-sm text-muted-foreground">{task.label}</span>
+                  <span className={task.count ? "tabular text-2xl font-bold" : "tabular text-2xl font-bold text-subtle-foreground"}>{task.count}</span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </Card>
+
+        {report ? (
+          <>
+            <RangeTabs basePath="/" current={preset} labels={t.money.ranges} />
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              <Metric tone="hero" label={t.money.pnl.netProfit} value={formatMoney(report.netProfitCents, locale)} hint={report.costMissingLines ? t.money.pnl.costMissingShort : undefined} />
+              <Metric label={t.money.pnl.revenue} value={formatMoney(report.deliveredRevenueCents, locale)} hint={`${report.ordersDelivered} ${t.money.deliveredCol}`} />
+              <Metric label={t.money.receivable} value={formatMoney(report.codReceivableCents, locale)} hint={t.money.receivableHint} />
+              <Metric label={t.money.costPerDelivered} value={report.costPerDeliveredCents === null ? null : formatMoney(report.costPerDeliveredCents, locale)} unavailableReason={t.money.noDeliveries} />
+            </div>
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              <Metric label={t.money.funnel.orders} value={report.ordersCreated} hint={formatMoney(report.bookedValueCents, locale)} />
+              <Metric label={t.money.funnel.confirmation} value={rate(report.confirmationRate)} unavailableReason="—" hint={`${report.ordersConfirmed} / ${report.ordersCreated}`} />
+              <Metric label={t.money.funnel.shipped} value={report.ordersShipped} />
+              <Metric label={t.money.funnel.returnRate} value={rate(report.returnRate)} unavailableReason="—" hint={`${report.ordersRefused + report.ordersReturned} ${t.money.funnel.refusedReturned}`} />
+            </div>
+          </>
+        ) : null}
+
+        {setupDone ? null : (
         <Card>
           <CardHeader
             title={t.workspace.readyTitle}
@@ -59,6 +121,7 @@ export default async function CommandCenterPage() {
             </ol>
           </CardBody>
         </Card>
+        )}
       </div>
     );
   }
