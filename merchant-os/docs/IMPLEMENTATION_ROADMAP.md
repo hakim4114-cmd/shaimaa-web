@@ -25,7 +25,9 @@ Revised 2026-11-16 after a critical review with the owner: the plan had grown fa
 
 Products and variants (images in a private bucket), receive / adjust / damage, movement history, low-stock list, valuation. Built to the approved design (ARCHITECTURE.md → Approved screen direction).
 
-## Step 3 — Orders as they work in Morocco
+## Step 3 — Orders as they work in Morocco (0.5.0: items 1–5 ✅; 6–7 to do)
+
+Order intake from outside (item 6) waits until the owner chooses where they will sell; manual entry covers WhatsApp, Messenger and comments meanwhile.
 
 1. **Fast order entry on a phone**: phone → known customer's history (delivered / refused), product, size, city (from the reference list), shipping fee filled from the city.
 2. **Confirmation workflow**: call attempts with outcome (answered, no answer, busy, wrong number, asked to call back, cancelled), call-back time, notes; orders to call today.

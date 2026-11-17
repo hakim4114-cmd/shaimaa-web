@@ -3,7 +3,7 @@
 import { Plus, RefreshCw, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useId, useState, useTransition } from "react";
+import { useId, useRef, useState, useTransition } from "react";
 import { saveProduct, type ProductInput } from "@/app/(app)/products/actions";
 import { FormAlert } from "@/components/auth/form-alert";
 import { Button, buttonVariants } from "@/components/ui/button";
@@ -48,8 +48,6 @@ export type ProductFormValue = {
 type OptionRow = { key: string; name: string; values: string };
 type VariantRow = ProductFormValue["variants"][number] & { key: string };
 
-let rowCounter = 0;
-const newKey = () => `row-${++rowCounter}`;
 
 function toOptions(rows: OptionRow[]): ProductOption[] {
   return rows
@@ -63,6 +61,9 @@ export function ProductForm({ initial, categories }: { initial: ProductFormValue
   const router = useRouter();
   const formId = useId();
   const [pending, startTransition] = useTransition();
+  // Initial keys come from the index so server and client render the same ids.
+  const keyCounter = useRef(1000);
+  const newKey = () => `row-new-${keyCounter.current++}`;
   const [error, setError] = useState<AppErrorCode | null>(null);
 
   const [name, setName] = useState(initial.name);
@@ -70,11 +71,11 @@ export function ProductForm({ initial, categories }: { initial: ProductFormValue
   const [category, setCategory] = useState(initial.category);
   const [status, setStatus] = useState<Status>(initial.status);
   const [optionRows, setOptionRows] = useState<OptionRow[]>(() =>
-    initial.options.map((option) => ({ key: newKey(), name: option.name, values: option.values.join(", ") }))
+    initial.options.map((option, index) => ({ key: `option-${index}`, name: option.name, values: option.values.join(", ") }))
   );
   const [variants, setVariants] = useState<VariantRow[]>(() =>
     (initial.variants.length > 0 ? initial.variants : [{ sku: "", barcode: "", optionValues: {}, price: "", cost: "", minStock: 0, active: true }]).map(
-      (variant) => ({ ...variant, key: newKey() })
+      (variant, index) => ({ ...variant, key: `row-${index}` })
     )
   );
 
@@ -239,6 +240,50 @@ export function ProductForm({ initial, categories }: { initial: ProductFormValue
 
       <Card className="overflow-hidden">
         <CardHeader title={tp.sectionVariants} description={tp.variantsHint} />
+        {/* Phones: one card per variant, every field fully visible. */}
+        <ul className="divide-y divide-border sm:hidden">
+          {variants.map((row) => {
+            const title = variantTitle(row.optionValues, options) || Object.values(row.optionValues).join(" / ") || tp.defaultVariant;
+            return (
+              <li key={row.key} className={row.active ? "px-4 py-4" : "px-4 py-4 opacity-60"}>
+                <div className="mb-3 flex items-center justify-between gap-3">
+                  <p className="min-w-0 font-medium break-words">{title}</p>
+                  <label className="flex shrink-0 items-center gap-2 text-sm text-muted-foreground">
+                    <input
+                      type="checkbox"
+                      className="size-5 accent-[var(--accent)]"
+                      checked={row.active}
+                      onChange={(e) => updateVariant(row.key, { active: e.target.checked })}
+                    />
+                    {tp.active}
+                  </label>
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <Field label={tp.price} htmlFor={`${formId}-${row.key}-price`}>
+                    <Input id={`${formId}-${row.key}-price`} dir="ltr" inputMode="decimal" value={row.price} onChange={(e) => updateVariant(row.key, { price: e.target.value })} />
+                  </Field>
+                  <Field label={tp.cost} htmlFor={`${formId}-${row.key}-cost`}>
+                    <Input id={`${formId}-${row.key}-cost`} dir="ltr" inputMode="decimal" value={row.cost} placeholder="—" onChange={(e) => updateVariant(row.key, { cost: e.target.value })} />
+                  </Field>
+                  <Field label={tp.sku} htmlFor={`${formId}-${row.key}-sku`}>
+                    <Input id={`${formId}-${row.key}-sku`} dir="ltr" value={row.sku} maxLength={64} onChange={(e) => updateVariant(row.key, { sku: e.target.value })} />
+                  </Field>
+                  <Field label={tp.minStock} htmlFor={`${formId}-${row.key}-minStock`}>
+                    <Input
+                      id={`${formId}-${row.key}-minStock`}
+                      dir="ltr"
+                      type="number"
+                      min={0}
+                      value={row.minStock}
+                      onChange={(e) => updateVariant(row.key, { minStock: Math.max(0, Math.floor(Number(e.target.value) || 0)) })}
+                    />
+                  </Field>
+                </div>
+              </li>
+            );
+          })}
+        </ul>
+        <div className="hidden sm:block">
         <Table>
           <THead>
             <TR className="hover:bg-transparent">
@@ -290,6 +335,7 @@ export function ProductForm({ initial, categories }: { initial: ProductFormValue
             })}
           </TBody>
         </Table>
+        </div>
         <p className="border-t border-border px-5 py-3 text-xs text-muted-foreground">
           {tp.costHint} {tp.archivedVariants}
         </p>
