@@ -1,4 +1,5 @@
-import { Package, PhoneCall, Plus, Search } from "lucide-react";
+import { Package, PhoneCall, Plus, Search, Upload } from "lucide-react";
+import { ExportMenu } from "@/components/export/export-menu";
 import Link from "next/link";
 import { buttonVariants } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -67,11 +68,19 @@ export default async function OrdersPage({ searchParams }: { searchParams: Promi
         title={to.title}
         description={to.description}
         actions={
-          can.manageOrders ? (
-            <Link href="/orders/new" className={buttonVariants()}>
-              <Plus /> {to.new}
-            </Link>
-          ) : null
+          <>
+            <ExportMenu dataset="orders" print={false} />
+            {can.manageOrders ? (
+              <Link href="/orders/import" className={buttonVariants({ variant: "secondary" })}>
+                <Upload /> {t.imports.button}
+              </Link>
+            ) : null}
+            {can.manageOrders ? (
+              <Link href="/orders/new" className={buttonVariants()}>
+                <Plus /> {to.new}
+              </Link>
+            ) : null}
+          </>
         }
       />
 

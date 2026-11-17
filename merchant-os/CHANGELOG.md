@@ -1,5 +1,23 @@
 # Changelog
 
+## 0.8.0 — Exports, import, shipping fees per city (2026-11-17)
+
+### Added
+- **Excel (.xlsx) and CSV exports**, in Arabic, French or English, chosen per export:
+  - Available for orders, expenses, shipments and money still with the carrier.
+  - Excel files keep numbers and MAD amounts as numbers, freeze the header row and use a right-to-left sheet for Arabic.
+  - CSV files are UTF-8 with BOM, so Excel shows Arabic correctly.
+  - Formulas typed into user fields are neutralised.
+- **Print / PDF** (browser): the finance and cash pages print without the menu.
+- **Packing list** (A4): units to pick per product, then every order to prepare with the customer, items and amount to collect.
+- **CSV order import**:
+  - Download a template; headers in English, French or Arabic are recognised.
+  - Lines sharing an `order_ref` form one order.
+  - Each row is validated and errors show their line number; nothing is created before you confirm.
+  - Orders are created through `create_order`, so blocklist, prices and stock rules still apply.
+  - A report shows what was created and what failed.
+- **Settings → shipping fee per city**: the fee each customer pays, filled automatically in manual orders, with a «fill the empty cities» shortcut.
+
 ## 0.7.0 — Cash, returns, expenses, marketing, real dashboard (2026-11-17)
 
 ### Added

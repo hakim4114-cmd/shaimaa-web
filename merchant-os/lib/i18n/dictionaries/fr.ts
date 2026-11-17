@@ -562,6 +562,11 @@ const fr: Dictionary = {
     saved: "Paramètres enregistrés",
     webhookTitle: "Mises à jour de livraison (webhook)",
     webhookHelp: "Dans Sendit → Intégration API → Créer un webhook, collez cette adresse, gardez « Mise à jour du statut du colis » et choisissez la même clé API que dans Vercel.",
+    ratesTitle: "Frais de livraison par ville",
+    ratesDescription: "Ce que paie le client, rempli automatiquement dans les commandes manuelles. Vide = saisi à chaque commande. Les colis Sendit gardent les frais Sendit comme coût.",
+    rateAll: "Même frais pour les vides",
+    rateFillEmpty: "Remplir les villes vides",
+    ratesSaved: "Frais enregistrés",
     copy: "Copier"
   },
   money: {
@@ -731,6 +736,39 @@ const fr: Dictionary = {
       history: "Versements",
       fees: "frais"
     }
+  },
+  exports: {
+    export: "Exporter",
+    excel: "Excel (.xlsx)",
+    csv: "CSV",
+    print: "Imprimer / PDF",
+    packingList: "Liste de préparation",
+    toPick: "Articles à prendre",
+    nothingToPack: "Rien à préparer."
+  },
+  imports: {
+    button: "Importer",
+    title: "Importer des commandes (CSV)",
+    description: "Depuis Excel, Google Sheets ou un autre outil : une ligne par produit, les lignes avec le même order_ref forment une commande.",
+    step1: "1. Téléchargez le modèle",
+    step1Hint: "Colonnes : order_ref, phone, full_name, city, address, sku, quantity, shipping_fee, notes. Les en-têtes en français ou en arabe sont aussi reconnus. Le SKU doit exister dans Produits.",
+    step2: "2. Choisissez votre fichier",
+    step2Hint: "Enregistrez en CSV (virgule ou point-virgule). Rien n'est créé avant votre confirmation.",
+    template: "Modèle (CSV)",
+    choose: "Choisir un fichier CSV",
+    issues: "{count} problème(s) à corriger dans le fichier :",
+    line: "Ligne",
+    issueCodes: {
+      PHONE_INVALID: "téléphone invalide",
+      SKU_MISSING: "SKU manquant",
+      QUANTITY_INVALID: "quantité invalide",
+      NAME_MISSING: "nom manquant",
+      FEE_INVALID: "frais de livraison invalides",
+      COLUMNS_MISSING: "le fichier doit avoir au moins les colonnes phone et sku"
+    },
+    ready: "{orders} commande(s) depuis {lines} ligne(s), prêtes à importer.",
+    import: "Importer {count} commande(s)",
+    done: "{created} sur {total} commande(s) créées. Elles sont dans la liste d'appels."
   },
   common: {
     cancel: "Annuler",
