@@ -95,6 +95,14 @@ Through the official WhatsApp Business Platform (Cloud API) only, after the merc
 
 Meta (Facebook/Instagram) Ads and TikTok Ads spend imports require the merchant's own app/token and the platforms' reporting APIs. Until connected, spend is entered manually or imported by CSV as `expenses` with `category = advertising` and a `campaign_id`. Attribution uses only what is recorded on the order (`source`, `campaign_id`); no modelled or inferred attribution.
 
+## Claude connector (1.1.0)
+
+The owner creates a link in Settings and adds it to Claude as a custom connector (Settings → Connectors). The link is `/api/mcp/<secret>`.
+- **Storage:** the server keeps only the SHA-256 hash of the link.
+- **Who it acts as:** `public.assistant_call` checks the hash and switches to the creator's identity for the transaction. The creator's owner/admin role is required on every call.
+- **What it returns:** read-only, without customer contact data. Tools: `today`, `business_summary`, `orders`, `order`, `stock`, `campaigns`, `cash`.
+- **Plan:** custom connectors depend on the user's Claude plan.
+
 ## AI assistant (Phase 4)
 
 **Decision (2026-11-16): Claude is the AI provider.** The owner considers the Claude connection essential. Two complementary paths:

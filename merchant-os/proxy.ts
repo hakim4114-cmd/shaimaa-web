@@ -4,7 +4,7 @@ import { getSupabasePublicConfig } from "@/lib/supabase/config";
 
 // Routes reachable without a session.
 // Carrier webhooks authenticate with their own signature, not a session.
-const publicPaths = ["/sign-in", "/sign-up", "/verify", "/forgot-password", "/auth/confirm", "/api/webhooks"];
+const publicPaths = ["/sign-in", "/sign-up", "/verify", "/forgot-password", "/auth/confirm", "/api/webhooks", "/api/mcp"];
 
 function isPublic(pathname: string) {
   return publicPaths.some((path) => pathname === path || pathname.startsWith(`${path}/`));

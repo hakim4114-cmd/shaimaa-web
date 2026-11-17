@@ -56,6 +56,7 @@ export const appErrorCodes = [
   "ORDER_NOT_EXCHANGEABLE",
   "FUNDS_OVER_100",
   "MONTH_ALREADY_CLOSED",
+  "TOO_MANY_TOKENS",
   "UNKNOWN"
 ] as const;
 

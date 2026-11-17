@@ -90,3 +90,12 @@ describe("fund allocation", () => {
     expect(allocate(1000, [{ id: "a", name: "Restock", percent: 50 }])).toEqual([{ name: "Restock", cents: 500 }]);
   });
 });
+
+describe("assistant tools", () => {
+  it("only passes documented, well-formed arguments to the database", async () => {
+    const { cleanArgs, assistantToolNames } = await import("@/lib/assistant/tools");
+    expect(cleanArgs({ from: "2026-11-01", to: "bad", status: "delivered", limit: 500, sql: "drop" })).toEqual({ from: "2026-11-01", status: "delivered", limit: 100 });
+    expect(cleanArgs({ order_number: "MOS-000012; drop" })).toEqual({});
+    expect(assistantToolNames.has("business_summary")).toBe(true);
+  });
+});

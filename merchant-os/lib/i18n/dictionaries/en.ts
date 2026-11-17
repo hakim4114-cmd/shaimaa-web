@@ -317,6 +317,7 @@ const en = {
     ORDER_NOT_EXCHANGEABLE: "Only a delivered order can be exchanged.",
     FUNDS_OVER_100: "The percentages add up to more than 100%.",
     MONTH_ALREADY_CLOSED: "This month is already closed.",
+    TOO_MANY_TOKENS: "At most 5 links. Revoke an old one first.",
     UNKNOWN: "Something went wrong. Try again.",
   },
   orders: {
@@ -852,6 +853,21 @@ const en = {
     dormantTitle: "Dormant stock",
     dormantDescription: "Units with no sale (or since first receipt when never sold), valued at cost.",
     idleOver: "No sale for {days}+ days"
+  },
+  assistant: {
+    title: "Claude (read-only)",
+    description: "Ask Claude about your numbers: profit, orders, stock, campaigns, cash. Claude reads through a private link; it cannot change anything.",
+    step1: "Create a link below and copy it (shown only once).",
+    step2: "In Claude: Settings → Connectors → Add custom connector, paste the link.",
+    step3: "Ask, for example: «What was my net profit this week and which campaign cost the most per delivered order?»",
+    linkName: "Link name",
+    create: "Create a link",
+    copyNow: "Copy this link now: it will not be shown again. Anyone with it can read your figures — keep it private.",
+    lastUsed: "last used",
+    neverUsed: "never used",
+    revoke: "Revoke the link",
+    revokeHint: "Claude will lose access immediately.",
+    privacy: "Customer phone numbers and addresses are never sent. Access stops if the link is revoked or its creator is no longer owner or admin."
   },
   common: {
     cancel: "Cancel",
