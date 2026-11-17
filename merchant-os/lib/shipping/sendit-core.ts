@@ -118,7 +118,7 @@ export type ParcelOrder = {
 };
 
 /** Body for POST /deliveries (merchant keeps their own stock: products_from_stock = 0). */
-export function buildDeliveryPayload(order: ParcelOrder, districtId: number, settings: SenditSettings) {
+export function buildDeliveryPayload(order: ParcelOrder, districtId: number, settings: SenditSettings, exchangeOfCode: string | null = null) {
   const products = order.items
     .map((item) => `${item.productName}${item.variantTitle ? ` (${item.variantTitle})` : ""} x${item.quantity}`)
     .join(" ; ")
@@ -136,7 +136,9 @@ export function buildDeliveryPayload(order: ParcelOrder, districtId: number, set
     allow_try: settings.allowTry ? 1 : 0,
     products_from_stock: 0,
     products,
-    option_exchange: 0
+    // Exchange: Sendit delivers this parcel and brings back the original one.
+    option_exchange: exchangeOfCode ? 1 : 0,
+    ...(exchangeOfCode ? { delivery_exchange_id: exchangeOfCode } : {})
   };
 }
 

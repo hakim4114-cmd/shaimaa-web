@@ -89,3 +89,44 @@ export async function saveProduct(input: ProductInput): Promise<SaveProductResul
   revalidatePath("/inventory");
   return { productId: data };
 }
+
+const imageTypes = new Set(["image/jpeg", "image/png", "image/webp"]);
+
+/** Uploads the product's main image (already resized in the browser) to the private bucket. */
+export async function uploadProductImage(productId: string, form: FormData): Promise<{ ok?: true; error?: AppErrorCode }> {
+  if (!z.string().uuid().safeParse(productId).success) return { error: "NOT_FOUND" };
+  const file = form.get("file");
+  if (!(file instanceof File) || !imageTypes.has(file.type) || file.size === 0 || file.size > 2 * 1024 * 1024) return { error: "IMAGE_INVALID" };
+  const { supabase, organizationId, can } = await requireOrganization();
+  if (!can.editCatalog) return { error: "FORBIDDEN" };
+  const { data: product } = await supabase.from("products").select("id, image_path").eq("organization_id", organizationId).eq("id", productId).maybeSingle();
+  if (!product) return { error: "NOT_FOUND" };
+
+  const ext = file.type === "image/png" ? "png" : file.type === "image/webp" ? "webp" : "jpg";
+  const path = `${organizationId}/${productId}/${Date.now()}.${ext}`;
+  const { error: uploadError } = await supabase.storage.from("product-images").upload(path, file, { contentType: file.type, upsert: false });
+  if (uploadError) return { error: "IMAGE_UPLOAD_FAILED" };
+  const { error } = await supabase.from("products").update({ image_path: path }).eq("id", productId);
+  if (error) {
+    await supabase.storage.from("product-images").remove([path]);
+    return { error: mapDatabaseError(error) };
+  }
+  if (product.image_path) await supabase.storage.from("product-images").remove([product.image_path]);
+  revalidatePath("/products");
+  revalidatePath(`/products/${productId}`);
+  return { ok: true };
+}
+
+export async function removeProductImage(productId: string): Promise<{ ok?: true; error?: AppErrorCode }> {
+  if (!z.string().uuid().safeParse(productId).success) return { error: "NOT_FOUND" };
+  const { supabase, organizationId, can } = await requireOrganization();
+  if (!can.editCatalog) return { error: "FORBIDDEN" };
+  const { data: product } = await supabase.from("products").select("image_path").eq("organization_id", organizationId).eq("id", productId).maybeSingle();
+  if (!product) return { error: "NOT_FOUND" };
+  const { error } = await supabase.from("products").update({ image_path: null }).eq("id", productId);
+  if (error) return { error: mapDatabaseError(error) };
+  if (product.image_path) await supabase.storage.from("product-images").remove([product.image_path]);
+  revalidatePath("/products");
+  revalidatePath(`/products/${productId}`);
+  return { ok: true };
+}

@@ -199,6 +199,11 @@ const en = {
     priceRange: "{min} – {max}",
     variantsCount: "{count} variants",
     archivedVariants: "Archived variants are kept for order history and hidden from new orders.",
+    image: "Photo",
+    imageHint: "One main photo, resized automatically. Stored privately.",
+    addImage: "Add a photo",
+    replaceImage: "Replace",
+    removeImage: "Remove"
   },
   productStatus: {
     draft: "Draft",
@@ -305,6 +310,9 @@ const en = {
     INVOICE_ALREADY_RECORDED: "This invoice is already recorded.",
     COD_AMOUNT_MISMATCH: "The collected amount differs from the order's amount to collect.",
     ORDER_NOT_AWAITING_REMITTANCE: "This order is not waiting for a payout.",
+    IMAGE_INVALID: "Use a JPEG, PNG or WebP photo under 2 MB.",
+    IMAGE_UPLOAD_FAILED: "The photo could not be uploaded. Try again.",
+    ORDER_NOT_EXCHANGEABLE: "Only a delivered order can be exchanged.",
     UNKNOWN: "Something went wrong. Try again.",
   },
   orders: {
@@ -435,7 +443,19 @@ const en = {
     openWhatsapp: "Open in WhatsApp",
     blockNumber: "Block this number",
     blockDescription: "New orders from this number will be stopped at entry (an owner or admin can override).",
-    blocked: "Number blocked"
+    blocked: "Number blocked",
+    exchange: {
+      button: "Exchange",
+      title: "Exchange this order",
+      description: "The customer receives the new items; with Sendit, the courier brings back the old parcel. The old items come back through Returns.",
+      difference: "Price difference (MAD)",
+      differenceHint: "0 for the same price",
+      reason: "Reason",
+      toCollect: "To collect from the customer:",
+      create: "Create the exchange",
+      replacement: "Exchange order",
+      original: "Exchange of"
+    }
   },
   callOutcome: {
     confirmed: "Confirmed",

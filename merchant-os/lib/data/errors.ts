@@ -51,6 +51,9 @@ export const appErrorCodes = [
   "INVOICE_ALREADY_RECORDED",
   "COD_AMOUNT_MISMATCH",
   "ORDER_NOT_AWAITING_REMITTANCE",
+  "IMAGE_INVALID",
+  "IMAGE_UPLOAD_FAILED",
+  "ORDER_NOT_EXCHANGEABLE",
   "UNKNOWN"
 ] as const;
 
@@ -91,7 +94,8 @@ const raised: Partial<Record<string, AppErrorCode>> = {
   ORDER_NOT_AWAITING_REMITTANCE: "ORDER_NOT_AWAITING_REMITTANCE",
   PARCEL_NOT_FOUND: "INVOICE_HAS_MISMATCHES",
   RETURN_NOT_FOUND: "NOT_FOUND",
-  RETURN_ITEM_NOT_FOUND: "NOT_FOUND"
+  RETURN_ITEM_NOT_FOUND: "NOT_FOUND",
+  ORDER_NOT_EXCHANGEABLE: "ORDER_NOT_EXCHANGEABLE"
 };
 
 export function mapDatabaseError(error: { code?: string; message?: string } | null | undefined): AppErrorCode {

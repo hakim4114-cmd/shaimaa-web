@@ -66,6 +66,16 @@ describe("Sendit payload", () => {
     });
   });
 
+  it("marks exchange parcels with the original parcel code", () => {
+    const payload = buildDeliveryPayload(
+      { orderNumber: "MOS-2", fullName: "A", phone: "+212612345678", address: "x", codAmountCents: 5500, notes: "", items: [] },
+      77,
+      readSenditSettings({}),
+      "DHX001"
+    );
+    expect(payload).toMatchObject({ option_exchange: 1, delivery_exchange_id: "DHX001", amount: 55 });
+  });
+
   it("defaults to allowing opening and trying, and reads options safely", () => {
     expect(readSenditSettings(null)).toMatchObject({ allowOpen: true, allowTry: true, pickupDistrictId: null });
     expect(readSenditSettings({ allow_try: false, pickup_district_id: "x" })).toMatchObject({ allowTry: false, pickupDistrictId: null });

@@ -7,7 +7,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { Input, NativeSelect } from "@/components/ui/input";
 import { PageHeader } from "@/components/ui/page-header";
 import { TBody, TD, TH, THead, TR, Table } from "@/components/ui/table";
-import { listProducts, type ProductStatus } from "@/lib/data/catalog";
+import { listProducts, signProductImages, type ProductStatus } from "@/lib/data/catalog";
 import { requireOrganization } from "@/lib/data/context";
 import { interpolate } from "@/lib/i18n/dictionaries";
 import { getI18n } from "@/lib/i18n/server";
@@ -29,6 +29,7 @@ export default async function ProductsPage({ searchParams }: { searchParams: Pro
   const status = statuses.find((s) => s === params.status);
   const { supabase, organizationId, can } = await requireOrganization();
   const products = await listProducts(supabase, organizationId, { q, status });
+  const images = await signProductImages(supabase, products.map((p) => p.imagePath));
   const filtered = Boolean(q || status);
 
   return (
@@ -100,10 +101,20 @@ export default async function ProductsPage({ searchParams }: { searchParams: Pro
                 return (
                   <TR key={product.id}>
                     <TD className="min-w-44 max-w-80 whitespace-normal">
-                      <Link href={`/products/${product.id}`} className="font-medium text-foreground hover:text-accent">
-                        {product.name}
-                      </Link>
-                      {product.category ? <p className="text-xs text-muted-foreground">{product.category}</p> : null}
+                      <div className="flex items-center gap-3">
+                        <span className="size-10 shrink-0 overflow-hidden rounded-md bg-surface-muted ring-1 ring-border">
+                          {product.imagePath && images[product.imagePath] ? (
+                            // eslint-disable-next-line @next/next/no-img-element -- signed URL from private storage
+                            <img src={images[product.imagePath]} alt="" className="size-full object-cover" loading="lazy" />
+                          ) : null}
+                        </span>
+                        <div className="min-w-0">
+                          <Link href={`/products/${product.id}`} className="font-medium text-foreground hover:text-accent">
+                            {product.name}
+                          </Link>
+                          {product.category ? <p className="text-xs text-muted-foreground">{product.category}</p> : null}
+                        </div>
+                      </div>
                     </TD>
                     <TD className="text-muted-foreground">{interpolate(tp.variantsCount, { count: active.length })}</TD>
                     <TD className="tabular text-end">

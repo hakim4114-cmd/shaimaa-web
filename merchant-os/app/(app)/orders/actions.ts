@@ -212,3 +212,37 @@ export async function unblockNumber(id: string): Promise<ActionResult> {
   revalidatePath("/orders", "layout");
   return { ok: true };
 }
+
+const exchangeInput = z.object({
+  orderId: z.string().uuid(),
+  items: z.array(z.object({ variantId: z.string().uuid(), quantity: z.number().int().min(1).max(1000) })).min(1).max(50),
+  priceDifference: z.string().max(20),
+  shippingFee: z.string().max(20),
+  reason: z.string().trim().min(2).max(500)
+});
+
+/** Replacement order for a delivered one; the old item comes back through Returns. */
+export async function createExchange(input: z.infer<typeof exchangeInput>): Promise<OrderResult> {
+  const parsed = exchangeInput.safeParse(input);
+  if (!parsed.success) return { error: parsed.error.issues.some((i) => i.path[0] === "reason") ? "REASON_REQUIRED" : "INVALID_INPUT" };
+  const value = parsed.data;
+  const difference = value.priceDifference.trim() === "" ? 0 : parseMoneyToCents(value.priceDifference);
+  const fee = value.shippingFee.trim() === "" ? 0 : parseMoneyToCents(value.shippingFee);
+  if (difference === null) return { error: "INVALID_DISCOUNT" };
+  if (fee === null) return { error: "INVALID_SHIPPING_FEE" };
+  const { supabase, can } = await requireOrganization();
+  if (!can.manageOrders) return { error: "FORBIDDEN" };
+  const { data, error } = await supabase.rpc("create_exchange_order", {
+    p_order_id: value.orderId,
+    p_payload: {
+      items: value.items.map((i) => ({ variant_id: i.variantId, quantity: i.quantity })),
+      price_difference_cents: difference,
+      shipping_fee_cents: fee,
+      reason: value.reason
+    } as unknown as Json
+  });
+  if (error || !data) return { error: mapDatabaseError(error) };
+  revalidateOrders(value.orderId);
+  revalidatePath("/returns");
+  return { orderId: data.id };
+}
