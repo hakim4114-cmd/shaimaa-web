@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.4.1 — Review fixes and fewer deployments (2026-11-17)
+
+### Fixed
+- **A month can be closed only once it is over.** It was possible to close the current month mid-month, which permanently locked a partial profit and the owner pay computed from it. This is now enforced by the database (row-level policy) and explained on the page.
+
+### Changed
+- `merchant-os/vercel.json`: Vercel now builds Merchant OS only for `main`, and only when files under `merchant-os/` changed. Branch previews and storefront-only commits are skipped, which keeps the daily deployment limit free for real releases.
+
 ## 1.4.0 — Reminders and recurring obligations (2026-11-17)
 
 ### Added

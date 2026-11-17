@@ -79,6 +79,11 @@ export default async function MonthlyClosePage({ searchParams }: { searchParams:
             )}
             {closed ? (
               <p className="text-xs text-muted-foreground">{formatDateTime(closed.closedAt, locale)}</p>
+            ) : offset === 0 ? (
+              <>
+                {can.overrideBlocklist ? <FundPlanForm initial={plan.map((p) => ({ name: p.name, percent: p.percent }))} /> : null}
+                <p className="rounded-md bg-surface-muted p-3 text-sm text-muted-foreground">{tr.monthNotOver}</p>
+              </>
             ) : can.overrideBlocklist ? (
               <>
                 <FundPlanForm initial={plan.map((p) => ({ name: p.name, percent: p.percent }))} />

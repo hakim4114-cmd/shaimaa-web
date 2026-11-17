@@ -327,6 +327,7 @@ const fr: Dictionary = {
     TOO_MANY_TOKENS: "5 liens au maximum. Révoquez-en un d'abord.",
     OVER_SAFE_LIMIT: "Au-delà du montant sûr : une raison écrite est requise.",
     ALREADY_PAID: "Déjà payée.",
+    MONTH_NOT_OVER: "Un mois ne peut être clôturé qu'une fois terminé.",
     UNKNOWN: "Une erreur est survenue. Réessayez.",
   },
   orders: {
@@ -871,7 +872,8 @@ const fr: Dictionary = {
     closedBadge: "Clôturé",
     dormantTitle: "Stock dormant",
     dormantDescription: "Articles sans vente (ou depuis la première réception s'ils n'ont jamais été vendus), valorisés au coût.",
-    idleOver: "Sans vente depuis {days} j et plus"
+    idleOver: "Sans vente depuis {days} j et plus",
+    monthNotOver: "Ce mois n'est pas terminé : vous pourrez le clôturer dès le 1er du mois prochain (onglet Mois dernier). La proposition ci-dessus n'est qu'un aperçu."
   },
   assistant: {
     title: "Claude (lecture seule)",

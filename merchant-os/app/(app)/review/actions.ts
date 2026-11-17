@@ -54,7 +54,8 @@ export async function saveFundPlan(lines: { name: string; percent: string }[]): 
 
 /** Records the month as closed, with the allocations proposed from its net profit. */
 export async function closeMonth(offset: number, note: string): Promise<RoutineResult> {
-  if (![0, 1].includes(offset)) return { error: "INVALID_INPUT" };
+  // Only a finished month can be closed: a close is permanent.
+  if (offset !== 1) return { error: "MONTH_NOT_OVER" };
   const { supabase, organizationId, can } = await requireOrganization();
   if (!can.overrideBlocklist) return { error: "FORBIDDEN" };
   const { from, to } = monthRange(offset);
