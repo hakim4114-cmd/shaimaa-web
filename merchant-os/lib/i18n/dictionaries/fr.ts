@@ -621,7 +621,13 @@ const fr: Dictionary = {
       salaries: "Salaires",
       rent: "Loyer",
       software: "Logiciels & abonnements",
-      other: "Autre"
+      other: "Autre",
+      internet: "Internet",
+      phone: "Téléphone",
+      ai_tools: "Outils IA (ChatGPT, Claude…)",
+      electricity: "Électricité & eau",
+      transport: "Transport",
+      debt_repayment: "Remboursement de dette"
     },
     campaign: "Campagne",
     noCampaign: "Sans campagne",
@@ -630,7 +636,7 @@ const fr: Dictionary = {
     date: "Date",
     description: "Note",
     addExpense: "Ajouter une dépense",
-    expenseHint: "Les achats de stock sont une sortie d'argent, pas une charge du bénéfice (leur coût entre via les produits vendus).",
+    expenseHint: "Les achats de stock et les remboursements de dette sont des sorties d'argent, pas des charges du bénéfice (le stock entre via les produits vendus ; un remboursement rend de l'argent emprunté).",
     expenses: "Dépenses",
     noExpenses: "Aucune dépense sur cette période.",
     deleteExpense: "Supprimer cette dépense ?",

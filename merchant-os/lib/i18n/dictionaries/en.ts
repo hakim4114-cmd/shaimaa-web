@@ -618,7 +618,13 @@ const en = {
       salaries: "Salaries",
       rent: "Rent",
       software: "Software & subscriptions",
-      other: "Other"
+      other: "Other",
+      internet: "Internet",
+      phone: "Phone",
+      ai_tools: "AI tools (ChatGPT, Claude…)",
+      electricity: "Electricity & water",
+      transport: "Transport",
+      debt_repayment: "Debt repayment"
     },
     campaign: "Campaign",
     noCampaign: "No campaign",
@@ -627,7 +633,7 @@ const en = {
     date: "Date",
     description: "Note",
     addExpense: "Add an expense",
-    expenseHint: "Stock purchases count as cash out, not as expenses in profit (their cost enters through sold goods).",
+    expenseHint: "Stock purchases and debt repayments are cash out, not costs in profit (stock enters through goods sold; a repayment only returns borrowed money).",
     expenses: "Expenses",
     noExpenses: "No expenses in this period.",
     deleteExpense: "Delete this expense?",

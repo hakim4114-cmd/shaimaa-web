@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.3.1 — More expense categories (2026-11-17)
+
+### Added
+- Expense and obligation categories requested by the owner: internet, phone, AI tools, electricity & water, transport, debt repayment.
+
+### Changed
+- Operating expenses in the profit report are now «every category except stock purchases, production and debt repayment». New categories therefore count automatically.
+- Debt repayment counts as cash out only, never as a cost in profit: repaying a loan gives back borrowed money.
+
 ## 1.3.0 — Owner pay and cash (2026-11-17)
 
 ### Added

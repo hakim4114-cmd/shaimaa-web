@@ -2631,6 +2631,12 @@ export type Database = {
         | "rent"
         | "software"
         | "other"
+        | "internet"
+        | "phone"
+        | "ai_tools"
+        | "electricity"
+        | "transport"
+        | "debt_repayment"
       inventory_movement_type:
         | "receipt"
         | "adjustment"
@@ -2847,6 +2853,12 @@ export const Constants = {
         "rent",
         "software",
         "other",
+        "internet",
+        "phone",
+        "ai_tools",
+        "electricity",
+        "transport",
+        "debt_repayment",
       ],
       inventory_movement_type: [
         "receipt",

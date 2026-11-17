@@ -83,6 +83,8 @@ select tests.login(:'owner');
 insert into public.expenses (organization_id, category, amount_cents, incurred_on, campaign_id) values (:'org', 'advertising', 20000, current_date, :'camp');
 insert into public.expenses (organization_id, category, amount_cents, incurred_on) values (:'org', 'packaging', 1000, current_date);
 insert into public.expenses (organization_id, category, amount_cents, incurred_on) values (:'org', 'inventory_purchase', 160000, current_date);
+insert into public.expenses (organization_id, category, amount_cents, incurred_on) values (:'org', 'internet', 5000, current_date);
+insert into public.expenses (organization_id, category, amount_cents, incurred_on) values (:'org', 'debt_repayment', 50000, current_date);
 
 -- Report ----------------------------------------------------------------------
 select public.report_summary(:'org', current_date - 1, current_date + 1) as r \gset
@@ -93,9 +95,9 @@ select tests.eq((:'r'::jsonb ->> 'orders_refused')::int, 1, 'refusals counted');
 select tests.eq((:'r'::jsonb ->> 'delivered_revenue_cents')::bigint, 43500::bigint, 'revenue = delivered order value incl. shipping fee charged');
 select tests.eq((:'r'::jsonb ->> 'cogs_cents')::bigint, 16000::bigint, 'COGS from delivered lines only');
 select tests.eq((:'r'::jsonb ->> 'shipping_cost_cents')::bigint, 6000::bigint, 'shipping cost counts delivered and refused parcels');
-select tests.eq((:'r'::jsonb ->> 'operating_expenses_cents')::bigint, 21000::bigint, 'stock purchases are not operating expenses');
-select tests.eq((:'r'::jsonb ->> 'net_profit_cents')::bigint, 500::bigint, 'net profit = 43500 - 16000 - 6000 - 21000');
-select tests.eq((:'r'::jsonb ->> 'cash_out_cents')::bigint, 181000::bigint, 'cash out includes stock purchases');
+select tests.eq((:'r'::jsonb ->> 'operating_expenses_cents')::bigint, 26000::bigint, 'internet is an operating expense; stock purchases and debt repayment are not');
+select tests.eq((:'r'::jsonb ->> 'net_profit_cents')::bigint, -4500::bigint, 'net profit = 43500 - 16000 - 6000 - 26000');
+select tests.eq((:'r'::jsonb ->> 'cash_out_cents')::bigint, 236000::bigint, 'cash out includes stock purchases and debt repayment');
 select tests.eq((:'r'::jsonb ->> 'cod_receivable_cents')::bigint, 43500::bigint, 'delivered COD is receivable until the payout');
 select tests.eq((:'r'::jsonb ->> 'return_rate')::numeric, 0.5, 'return rate = refused / shipped');
 select tests.eq((:'r'::jsonb ->> 'cost_per_delivered_cents')::numeric, 20000::numeric, 'ad cost per delivered order');
