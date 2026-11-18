@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.4.2 — Release build (2026-11-18)
+
+### Changed
+- No code change. Triggers the production build of 1.4.0 and 1.4.1, which Vercel skipped on 2026-11-17 because the daily deployment limit was reached.
+
 ## 1.4.1 — Review fixes and fewer deployments (2026-11-17)
 
 ### Fixed
