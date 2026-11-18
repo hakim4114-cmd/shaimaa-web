@@ -4,6 +4,16 @@ Decision of the owner (2026-11-18): Merchant OS will be offered to other COD mer
 
 Confidence labels: **[confirmed]** checked in code, docs or official sources; **[likely]** strong inference; **[guess]** not verified.
 
+## 0. Trial period (owner decision, 2026-11-18)
+
+Merchant OS is used only by Maison Shaimaa for **3 to 6 months** on the free plans. Paid hosting and opening to other merchants come after, when cash allows.
+
+During the trial:
+- Sign-up stays closed; no other merchant is onboarded.
+- Free-plan risks to manage: Vercel Hobby is meant for non-commercial use **[confirmed]**, so running a business on it is tolerated at best **[likely]**; Supabase Free has no downloadable daily backups **[likely]** and pauses projects inactive for a week **[likely]**. Mitigation: a weekly Excel export of orders, products and money, kept outside the app; move to paid plans as soon as real money depends on the data.
+- Measure, to decide Phase B/C with evidence: orders per day, confirmation rate, refusal rate (overall, per city, per source), delay to delivery, cash waiting at the carrier, time spent per order, and which screens are actually used.
+- Exit criteria to go paid and open: the app runs the shop daily without spreadsheets for at least 2 months, the numbers above are trusted, and Phase A items are ready.
+
 ## 1. The market position
 
 Existing Moroccan tools (for example eGrow, seen in a 2026-11 ad) already sell: one order board fed by Shopify, YouCan and WooCommerce; WhatsApp confirmation with buttons (confirm, edit, cancel); automatic sending to carriers; WhatsApp tracking messages to the customer. **[confirmed from the ad; their full feature list and pricing are a guess]**
