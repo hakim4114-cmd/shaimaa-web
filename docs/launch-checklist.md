@@ -7,8 +7,7 @@ Use this checklist before the first public deployment. Do not paste real secrets
 1. Confirm the project root contains `.env.local`.
 2. Confirm `.env.local` is not inside `docs/` or any other folder.
 3. Confirm `NEXT_PUBLIC_GOOGLE_SCRIPT_URL` points to the current Google Apps Script COD endpoint.
-4. Leave Wassilni/Base44 variables empty if the real API is not ready.
-5. Run:
+4. Run:
 
 ```bash
 npm run lint
@@ -54,15 +53,12 @@ GOOGLE_ADMIN_ORDERS_SCRIPT_URL=
 MAISON_ADMIN_ROUTES_ENABLED=true
 ADMIN_PASSWORD=
 ADMIN_SESSION_SECRET=
-WASSILNI_API_BASE_URL=
-WASSILNI_API_KEY=
-WASSILNI_WEBHOOK_SECRET=
 ```
 
 Rules:
 
 - Only `NEXT_PUBLIC_GOOGLE_SCRIPT_URL` should be public.
-- Do not use `NEXT_PUBLIC_` for Wassilni/Base44 secrets.
+- Do not use `NEXT_PUBLIC_` for any server-only secret.
 - Use a long random `ADMIN_SESSION_SECRET` in production.
 - Rotate the temporary local admin password before public launch.
 
@@ -85,8 +81,6 @@ Rules:
 4. Confirm the order appears in Google Sheets.
 5. Confirm redirect to `/thank-you` happens only after Google Sheets accepts the order.
 6. Confirm duplicate clicking does not create multiple browser submissions.
-7. If Wassilni/Base44 env vars are configured, confirm the secondary order copy arrives there after Google Sheets success.
-8. Break or disable Wassilni/Base44 temporarily and confirm Google Sheets orders still complete.
 
 ## Tracking Smoke Test
 
@@ -111,14 +105,12 @@ Rules:
 
 1. Keep the previous deployment available in the hosting provider.
 2. If COD submission fails, roll back immediately to the last known working deployment.
-3. If only Wassilni/Base44 shadow sync fails, leave the site online and remove/empty Wassilni env vars.
-4. If admin access fails, rotate `ADMIN_PASSWORD` and `ADMIN_SESSION_SECRET`, redeploy, and retest.
-5. Keep Google Sheets as the operational source until Wassilni/Base44 is proven reliable.
+3. If admin access fails, rotate `ADMIN_PASSWORD` and `ADMIN_SESSION_SECRET`, redeploy, and retest.
+4. Keep Google Sheets as the operational source.
 
 ## Known Limitations
 
 - Google Sheets / Apps Script remains the primary COD receiver.
-- Wassilni/Base44 is secondary shadow sync only.
 - Product data still comes from local static files.
 - There is no payment integration.
 - There is no delivery provider API.

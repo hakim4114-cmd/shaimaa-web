@@ -64,33 +64,8 @@ function appendSuspiciousOrderNote(orderData, suspicious) {
   };
 }
 
-async function submitOrderToSecondaryReceiver(orderData) {
-  try {
-    await fetch("/api/orders/wassilni", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ order: orderData })
-    });
-  } catch {
-    // The secondary receiver must never block the confirmed Google Sheets order.
-  }
-}
-
 function getPrimaryOrderId(result) {
   return result?.orderId || result?.order_id || "";
-}
-
-function createSecondaryOrderData(orderData, primaryOrderId) {
-  if (!primaryOrderId) {
-    return orderData;
-  }
-
-  return {
-    ...orderData,
-    orderId: String(primaryOrderId)
-  };
 }
 
 export function CODOrderForm({
@@ -170,8 +145,6 @@ export function CODOrderForm({
       if (primaryOrderId) {
         sessionStorage.setItem("maison-shaimaa-order-id", primaryOrderId);
       }
-
-      await submitOrderToSecondaryReceiver(createSecondaryOrderData(finalOrderData, primaryOrderId));
 
       router.push("/thank-you");
     } catch {

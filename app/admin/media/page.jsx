@@ -20,19 +20,8 @@ export default function AdminMediaPage() {
       <AdminPageHeader
         eyebrow="Assets"
         title="Media"
-        description="Wassilni/Base44 should own product media and asset references once connected. This page is a read-only media readiness monitor."
+        description="Read-only media readiness monitor."
       />
-
-      <AdminSectionCard
-        title="Wassilni/Base44 media ownership"
-        description="Product images, gallery images, videos, logo, favicon, and Open Graph assets should be managed in Wassilni/Base44 or its chosen storage provider."
-      >
-        <div className="flex flex-wrap gap-2">
-          <AdminStatusBadge tone="warning">Connected to Wassilni planned</AdminStatusBadge>
-          <AdminStatusBadge>Read-only integration monitor</AdminStatusBadge>
-          <AdminStatusBadge>Upload disabled</AdminStatusBadge>
-        </div>
-      </AdminSectionCard>
 
       <AdminSectionCard title="Product media coverage" description="Current product data uses placeholders until final images are available.">
         <div className="grid gap-4 md:grid-cols-3">

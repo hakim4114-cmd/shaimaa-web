@@ -9,7 +9,6 @@ A Next.js storefront for a premium Moroccan traditional fashion brand. Customers
 - Product listing and product detail pages (static catalog)
 - COD order form with Moroccan phone validation and risk scoring
 - Order saving to Google Sheets through a Google Apps Script Web App
-- Shadow order sync to Wassilni/Base44 (optional, never blocks the primary flow)
 - Order tracking page backed by a server-side tracking endpoint
 - Password-protected admin area (orders, analytics, settings) behind a feature flag
 - Trilingual interface: Arabic (default, RTL), French, English — switched client-side
@@ -65,12 +64,9 @@ GOOGLE_ADMIN_ORDERS_SCRIPT_URL   # Apps Script endpoint for the admin orders vie
 MAISON_ADMIN_ROUTES_ENABLED      # "true" to enable /admin in production
 ADMIN_PASSWORD                   # admin login password
 ADMIN_SESSION_SECRET             # secret for signing the admin session cookie
-WASSILNI_API_BASE_URL            # optional Wassilni/Base44 shadow sync
-WASSILNI_API_KEY                 # optional Wassilni/Base44 shadow sync
-WASSILNI_WEBHOOK_SECRET          # optional Wassilni/Base44 shadow sync
 ```
 
-The site runs without any of these set: the order form shows an error message, the Supabase section shows a configuration notice, the admin area returns 404 in production, and the Wassilni sync silently skips.
+The site runs without any of these set: the order form shows an error message, the Supabase section shows a configuration notice, and the admin area returns 404 in production.
 
 ## Main folders
 
@@ -84,13 +80,12 @@ The site runs without any of these set: the order form shows an error message, t
 - `data/products.js` — static product catalog and size data.
 - `data/translations.js` — all interface copy in Arabic, French, and English.
 - `data/faqs.js` — FAQ content.
-- `lib/` — order validation, Google Sheets/Supabase clients, admin session helpers, Wassilni integration.
-- `docs/` — Apps Script setup, Wassilni migration plan, and launch checklist.
+- `lib/` — order validation, Google Sheets/Supabase clients, admin session helpers.
+- `docs/` — Apps Script setup, product manager setup, and launch checklist.
 
 ## Documentation
 
 - `docs/google-sheets-apps-script.md` — how to set up the Google Sheet and Apps Script for order saving.
-- `docs/wassilni-integration.md` — the planned migration to Wassilni/Base44 as the system of record.
 - `docs/product-manager-setup.md` — one-time setup to manage products and photos from the admin.
 - `docs/launch-checklist.md` — checks to run before a public deployment.
 - `CLAUDE.md` — architecture and convention guidance for AI coding assistants.

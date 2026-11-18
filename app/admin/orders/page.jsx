@@ -8,19 +8,8 @@ export default function AdminOrdersPage() {
       <AdminPageHeader
         eyebrow="COD operations"
         title="Orders"
-        description="Wassilni/Base44 is the planned source of truth for order operations. This page is a read-only integration monitor, with current Google Sheets admin reads kept as transition support."
+        description="Read-only view of COD orders from Google Sheets."
       />
-
-      <AdminSectionCard
-        title="Wassilni/Base44 ownership"
-        description="Order confirmation, cancellation, fake-order marking, and fulfillment status should be managed in Wassilni/Base44 once its API is connected."
-      >
-        <div className="flex flex-wrap gap-2">
-          <AdminStatusBadge tone="warning">Wassilni connection planned</AdminStatusBadge>
-          <AdminStatusBadge>Read-only monitor</AdminStatusBadge>
-          <AdminStatusBadge>Not source of truth</AdminStatusBadge>
-        </div>
-      </AdminSectionCard>
 
       <AdminSectionCard
         title="Order workflow"
@@ -55,7 +44,7 @@ export default function AdminOrdersPage() {
         <div className="mb-4">
           <h2 className="font-display text-3xl font-semibold text-cedar">COD order list</h2>
           <p className="mt-2 text-sm leading-6 text-coffee">
-            Read-only transition data from Google Sheets through the protected admin API. Wassilni/Base44 should replace this once live API details are available.
+            Read-only transition data from Google Sheets through the protected admin API.
           </p>
         </div>
         <AdminOrdersClient />
