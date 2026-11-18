@@ -5,8 +5,7 @@
 Merchant OS lives in `merchant-os/` inside the `shaimaa-web` repository because the current GitHub access covers only that repository. It is fully self-contained:
 
 - own `package.json`, lockfile, `tsconfig.json`, ESLint, Vitest and Next.js config;
-- `next.config.ts` pins the Turbopack root to `merchant-os/` so the storefront's files (notably its `proxy.js`) are never resolved;
-- the storefront's tooling ignores `merchant-os/`;
+- `next.config.ts` pins the Turbopack root to `merchant-os/` (kept from when a storefront lived at the repository root; removed 2026-11-18);
 - separate Vercel project (Root Directory `merchant-os`) and separate Supabase project. Server functions run in `lhr1` (London, set in `vercel.json`) to sit next to the database in `eu-west-2`; keep the two in the same region if either moves.
 
 Moving it to its own repository later is a `git mv` plus CI path changes.
