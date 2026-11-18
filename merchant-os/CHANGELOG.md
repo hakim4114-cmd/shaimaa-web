@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.8.0 — Confirmation channel (2026-11-18)
+
+### Added
+- When recording a confirmation attempt, choose how the customer was reached: **phone call or WhatsApp**. The channel shows in the call history, and a confirmed order keeps the channel that confirmed it (`orders.confirmed_via`).
+- Weekly review: **"Confirmation: phone or WhatsApp?"**, the refusal rate of confirmed orders per channel over the last 60 days (orders whose status was changed by hand are shown apart). This is the data needed to decide later which orders may be confirmed by WhatsApp only.
+
 ## 1.7.0 — Automatic sending to Sendit (2026-11-18)
 
 ### Added

@@ -939,6 +939,7 @@ export type Database = {
         Row: {
           actor_id: string | null
           call_back_at: string | null
+          channel: Database["public"]["Enums"]["contact_channel"]
           created_at: string
           id: number
           note: string | null
@@ -949,6 +950,7 @@ export type Database = {
         Insert: {
           actor_id?: string | null
           call_back_at?: string | null
+          channel?: Database["public"]["Enums"]["contact_channel"]
           created_at?: string
           id?: never
           note?: string | null
@@ -959,6 +961,7 @@ export type Database = {
         Update: {
           actor_id?: string | null
           call_back_at?: string | null
+          channel?: Database["public"]["Enums"]["contact_channel"]
           created_at?: string
           id?: never
           note?: string | null
@@ -1146,6 +1149,7 @@ export type Database = {
           city_id: number | null
           cod_amount_cents: number
           confirmed_at: string | null
+          confirmed_via: Database["public"]["Enums"]["contact_channel"] | null
           created_at: string
           created_by: string | null
           customer_id: string
@@ -1180,6 +1184,7 @@ export type Database = {
           city_id?: number | null
           cod_amount_cents?: number
           confirmed_at?: string | null
+          confirmed_via?: Database["public"]["Enums"]["contact_channel"] | null
           created_at?: string
           created_by?: string | null
           customer_id: string
@@ -1214,6 +1219,7 @@ export type Database = {
           city_id?: number | null
           cod_amount_cents?: number
           confirmed_at?: string | null
+          confirmed_via?: Database["public"]["Enums"]["contact_channel"] | null
           created_at?: string
           created_by?: string | null
           customer_id?: string
@@ -2219,6 +2225,16 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      confirmation_channel_report: {
+        Args: { p_from: string; p_organization_id: string; p_to: string }
+        Returns: {
+          channel: string
+          confirmed: number
+          delivered: number
+          in_progress: number
+          refused: number
+        }[]
+      }
       create_assistant_token: {
         Args: {
           p_name: string
@@ -2237,6 +2253,7 @@ export type Database = {
           city_id: number | null
           cod_amount_cents: number
           confirmed_at: string | null
+          confirmed_via: Database["public"]["Enums"]["contact_channel"] | null
           created_at: string
           created_by: string | null
           customer_id: string
@@ -2280,6 +2297,7 @@ export type Database = {
           city_id: number | null
           cod_amount_cents: number
           confirmed_at: string | null
+          confirmed_via: Database["public"]["Enums"]["contact_channel"] | null
           created_at: string
           created_by: string | null
           customer_id: string
@@ -2464,6 +2482,7 @@ export type Database = {
       log_call_attempt: {
         Args: {
           p_call_back_at?: string
+          p_channel?: Database["public"]["Enums"]["contact_channel"]
           p_note?: string
           p_order_id: string
           p_outcome: Database["public"]["Enums"]["call_outcome"]
@@ -2476,6 +2495,7 @@ export type Database = {
           city_id: number | null
           cod_amount_cents: number
           confirmed_at: string | null
+          confirmed_via: Database["public"]["Enums"]["contact_channel"] | null
           created_at: string
           created_by: string | null
           customer_id: string
@@ -2781,6 +2801,7 @@ export type Database = {
           city_id: number | null
           cod_amount_cents: number
           confirmed_at: string | null
+          confirmed_via: Database["public"]["Enums"]["contact_channel"] | null
           created_at: string
           created_by: string | null
           customer_id: string
@@ -2824,6 +2845,7 @@ export type Database = {
           city_id: number | null
           cod_amount_cents: number
           confirmed_at: string | null
+          confirmed_via: Database["public"]["Enums"]["contact_channel"] | null
           created_at: string
           created_by: string | null
           customer_id: string
@@ -2912,6 +2934,7 @@ export type Database = {
         | "capital_in"
         | "adjustment"
         | "owner_withdrawal"
+      contact_channel: "phone" | "whatsapp"
       data_source: "manual" | "import" | "api"
       expense_category:
         | "inventory_purchase"
@@ -3135,6 +3158,7 @@ export const Constants = {
         "adjustment",
         "owner_withdrawal",
       ],
+      contact_channel: ["phone", "whatsapp"],
       data_source: ["manual", "import", "api"],
       expense_category: [
         "inventory_purchase",

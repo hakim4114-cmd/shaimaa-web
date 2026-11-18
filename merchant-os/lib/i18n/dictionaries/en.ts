@@ -459,6 +459,8 @@ const en = {
       fr: "French"
     },
     openWhatsapp: "Open in WhatsApp",
+    channel: "Reached by",
+    channels: { phone: "Phone call", whatsapp: "WhatsApp" },
     pasteTitle: "Paste the customer's message",
     pastePlaceholder: "Paste the WhatsApp or Instagram message here (name, phone, city, address)…",
     pasteApply: "Fill the form",
@@ -831,6 +833,14 @@ const en = {
     done: "{created} of {total} order(s) created. They are in the call list."
   },
   routines: {
+    channelTitle: "Confirmation: phone or WhatsApp?",
+    channelDescription: "Refusal rate of confirmed orders by how they were confirmed. Orders created:",
+    channelEmpty: "No confirmed orders in this period yet.",
+    channelCol: "Confirmed by",
+    confirmedCol: "Confirmed",
+    refusedCol: "Refused / returned",
+    refusalRateCol: "Refusal rate",
+    channels: { phone: "Phone call", whatsapp: "WhatsApp", manual: "Status changed by hand" },
     weeklyTitle: "Weekly review",
     weeklyDescription: "Eight indicators, this week against last week.",
     monthlyTitle: "Monthly close",

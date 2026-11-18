@@ -67,6 +67,7 @@ export function CallPanel({ orderId, phoneHref }: { orderId: string; phoneHref: 
   const [outcome, setOutcome] = useState<CallOutcome | null>(null);
   const [note, setNote] = useState("");
   const [callBack, setCallBack] = useState("");
+  const [channel, setChannel] = useState<"phone" | "whatsapp">("phone");
   const [error, setError] = useState<AppErrorCode | null>(null);
   const presets = callBackPresets();
 
@@ -75,7 +76,7 @@ export function CallPanel({ orderId, phoneHref }: { orderId: string; phoneHref: 
     setError(null);
     const callBackAt = outcomeNeedsTime(outcome) && callBack ? new Date(callBack).toISOString() : null;
     startTransition(async () => {
-      const result = await logCall({ orderId, outcome, note, callBackAt });
+      const result = await logCall({ orderId, outcome, note, callBackAt, channel });
       if (result.error) {
         setError(result.error);
         return;
@@ -85,6 +86,7 @@ export function CallPanel({ orderId, phoneHref }: { orderId: string; phoneHref: 
       setOutcome(null);
       setNote("");
       setCallBack("");
+      setChannel("phone");
       router.refresh();
     });
   }
@@ -104,6 +106,25 @@ export function CallPanel({ orderId, phoneHref }: { orderId: string; phoneHref: 
       />
       <CardBody className="flex flex-col gap-4">
         {error ? <FormAlert>{t.errors[error]}</FormAlert> : null}
+        <div className="flex flex-wrap items-center gap-2 text-sm" role="radiogroup" aria-label={to.channel}>
+          <span className="text-muted-foreground">{to.channel}</span>
+          {(["phone", "whatsapp"] as const).map((value) => (
+            <button
+              key={value}
+              type="button"
+              role="radio"
+              aria-checked={channel === value}
+              onClick={() => setChannel(value)}
+              className={cn(
+                "inline-flex min-h-9 items-center gap-1.5 rounded-full border px-3 text-sm font-medium transition-colors",
+                channel === value ? "border-accent bg-accent-soft text-accent-soft-foreground" : "border-border bg-surface text-foreground hover:bg-surface-hover"
+              )}
+            >
+              {value === "phone" ? <Phone className="size-4" aria-hidden /> : <MessageCircle className="size-4" aria-hidden />}
+              {to.channels[value]}
+            </button>
+          ))}
+        </div>
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-4" role="radiogroup" aria-label={to.logCall}>
           {callOutcomes.map((value) => (
             <button

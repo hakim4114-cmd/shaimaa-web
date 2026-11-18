@@ -155,6 +155,10 @@ Rules marked **[DB]** are enforced by migration `20261116000400_order_workflow.s
 - Orders keep `call_attempts`, `last_call_outcome` and `next_call_at` for the "calls to make today" list **[DB]**.
 - Call notes are visible to owner, admin and operator only **[DB]**.
 
+### Confirmation channel (1.8.0)
+- Every confirmation attempt records its channel, `phone` (default) or `whatsapp`; a confirmation through `log_call_attempt` stores the channel on the order (`confirmed_via`); a direct status change leaves it empty ("manual") **[DB]**.
+- `confirmation_channel_report(org, from, to)` counts, per channel, confirmed orders created in the period and how many were delivered, refused or returned, or are still in progress **[DB]**. Refusal rate = refused or returned ÷ (delivered + refused or returned).
+
 ### Risk and blocklist
 - `customer_history(org, phone)` returns orders, delivered, refused, returned and cancelled counts and whether the number is blocked, for display at order entry **[DB]**.
 - A blocked phone cannot get a new order; an owner or admin may override explicitly (`allow_blocked`) **[DB]**. Operators can add numbers; only owner/admin can edit or remove them **[DB]**.
