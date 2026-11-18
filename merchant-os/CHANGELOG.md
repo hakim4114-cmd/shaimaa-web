@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.4.3 — Faster pages (2026-11-18)
+
+### Changed
+- Server functions now run in London (`lhr1`), next to the Supabase database (`eu-west-2`), instead of Vercel's default Washington (`iad1`). Every page makes several database calls in a row; each one no longer crosses the Atlantic. London is also closer to Morocco.
+
 ## 1.4.2 — Release build (2026-11-18)
 
 ### Changed
