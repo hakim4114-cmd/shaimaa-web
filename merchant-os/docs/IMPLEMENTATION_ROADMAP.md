@@ -1,5 +1,7 @@
 # Implementation roadmap
 
+> Product direction and the multi-merchant roadmap (2026-11-18) are in `docs/PRODUCT_STRATEGY.md`.
+
 Revised 2026-11-16 after a critical review with the owner: the plan had grown faster than the business. The order below follows a solo COD merchant's real day (orders in → confirmation calls → preparation → shipping → cash) and defers everything that is not needed in the first year of selling.
 
 ## Done

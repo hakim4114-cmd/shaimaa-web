@@ -1,6 +1,6 @@
 import { createHmac } from "node:crypto";
 import { describe, expect, it } from "vitest";
-import { buildDeliveryPayload, madToCents, mapSenditStatus, readSenditSettings, senditStatuses, toSenditPhone, verifySenditSignature } from "@/lib/shipping/sendit-core";
+import { buildDeliveryPayload, madToCents, pickDistrictForCity, mapSenditStatus, readSenditSettings, senditStatuses, toSenditPhone, verifySenditSignature } from "@/lib/shipping/sendit-core";
 
 describe("Sendit status mapping", () => {
   it("covers every documented status", () => {
@@ -143,5 +143,22 @@ describe("weeks and months", () => {
     expect(monthRange(0, now)).toEqual({ from: "2026-11-01", to: "2026-11-30" });
     expect(monthRange(1, now)).toEqual({ from: "2026-10-01", to: "2026-10-31" });
     expect(monthRange(10, now)).toEqual({ from: "2026-01-01", to: "2026-01-31" });
+  });
+});
+
+describe("pickDistrictForCity", () => {
+  const d = (id: string, name: string, city: string) => ({ id, name, city });
+  it("takes the only district of a city", () => {
+    expect(pickDistrictForCity("Sidi Slimane", [d("1", "Sidi Slimane - Centre", "Sidi Slimane"), d("2", "Kénitra", "Kénitra")])?.id).toBe("1");
+  });
+  it("takes the district named like the city when the city has several", () => {
+    const list = [d("3", "Kénitra - Saknia", "Kénitra"), d("4", "Kenitra", "Kénitra"), d("5", "Kénitra - Maamora", "Kénitra")];
+    expect(pickDistrictForCity("kenitra", list)?.id).toBe("4");
+  });
+  it("never guesses", () => {
+    const list = [d("6", "Casablanca - Maarif", "Casablanca"), d("7", "Casablanca - Sidi Maarouf", "Casablanca")];
+    expect(pickDistrictForCity("Casablanca", list)).toBeNull();
+    expect(pickDistrictForCity("", list)).toBeNull();
+    expect(pickDistrictForCity("Rabat", list)).toBeNull();
   });
 });

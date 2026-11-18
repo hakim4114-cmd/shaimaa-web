@@ -9,8 +9,6 @@ import { getSenditProvider } from "@/lib/data/shipping";
 import { normalizeMoroccanPhone } from "@/lib/phone";
 import {
   SenditError,
-  createDelivery,
-  deleteDelivery,
   getDelivery,
   getLabels,
   pickupCities,
@@ -18,10 +16,11 @@ import {
   searchDistricts,
   type SenditDistrict
 } from "@/lib/shipping/sendit";
-import { buildDeliveryPayload, mapSenditStatus, toSenditPhone, type ShipmentStatus } from "@/lib/shipping/sendit-core";
+import { mapSenditStatus, toSenditPhone, type ShipmentStatus } from "@/lib/shipping/sendit-core";
 import type { Json } from "@/lib/supabase/database.types";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { loadSenditKeys } from "@/lib/shipping/sendit-keys";
+import { shipOrder } from "@/lib/shipping/ship-order";
 
 export type ShippingResult<T = undefined> = { ok?: true; data?: T; error?: AppErrorCode; detail?: string };
 
@@ -84,6 +83,7 @@ const settingsInput = z.object({
   pickupAddress: z.string().trim().min(3).max(250),
   allowOpen: z.boolean(),
   allowTry: z.boolean(),
+  autoShip: z.boolean().default(false),
   active: z.boolean()
 });
 
@@ -103,7 +103,8 @@ export async function saveSenditSettings(input: z.infer<typeof settingsInput>): 
     pickup_phone: phone,
     pickup_address: value.pickupAddress,
     allow_open: value.allowOpen,
-    allow_try: value.allowTry
+    allow_try: value.allowTry,
+    auto_ship: value.autoShip
   } as unknown as Json;
 
   const existing = await getSenditProvider(supabase, organizationId);
@@ -144,7 +145,8 @@ export async function shipWithSendit(input: z.infer<typeof shipInput>): Promise<
   const parsed = shipInput.safeParse(input);
   if (!parsed.success) return { error: "INVALID_INPUT" };
   const { orderId, district } = parsed.data;
-  const { supabase, organizationId, can } = await requireOrganization();
+  const ctx = await requireOrganization();
+  const { supabase, organizationId, can } = ctx;
   if (!can.prepareOrders || !can.seeContacts) return { error: "FORBIDDEN" };
 
   const provider = await getSenditProvider(supabase, organizationId);
@@ -153,58 +155,11 @@ export async function shipWithSendit(input: z.infer<typeof shipInput>): Promise<
   if (!keys) return { error: "SENDIT_NOT_CONFIGURED" };
   const order = await getOrder(supabase, organizationId, orderId, { withContacts: true, withCalls: false });
   if (!order || !order.contact) return { error: "NOT_FOUND" };
-  if (!["confirmed", "preparing", "ready_to_ship"].includes(order.status)) return { error: "ORDER_NOT_SHIPPABLE" };
 
-  // Exchange replacement: tell Sendit which parcel to bring back.
-  const { data: link } = await supabase.from("orders").select("exchange_of_order_id").eq("id", order.id).maybeSingle();
-  let exchangeOfCode: string | null = null;
-  if (link?.exchange_of_order_id) {
-    const { data: original } = await supabase
-      .from("shipments")
-      .select("tracking_number")
-      .eq("order_id", link.exchange_of_order_id)
-      .eq("provider_id", provider.id)
-      .neq("status", "cancelled")
-      .maybeSingle();
-    exchangeOfCode = original?.tracking_number ?? null;
-  }
-
-  const payload = buildDeliveryPayload(
-    {
-      orderNumber: order.orderNumber,
-      fullName: order.contact.fullName,
-      phone: order.contact.phone,
-      address: [order.contact.address, order.city].filter(Boolean).join(", "),
-      codAmountCents: order.codAmountCents,
-      notes: order.notes,
-      items: order.items
-    },
-    Number(district.id),
-    provider.settings,
-    exchangeOfCode
-  );
-
-  let parcel: Awaited<ReturnType<typeof createDelivery>>;
-  try {
-    parcel = await createDelivery(keys, payload);
-  } catch (error) {
-    return fromError(error);
-  }
-
-  const { error } = await supabase.rpc("register_carrier_shipment", {
-    p_order_id: order.id,
-    p_provider_id: provider.id,
-    p_tracking_number: parcel.code,
-    p_shipping_cost_cents: parcel.feeCents || district.feeCents,
-    p_carrier: { district_id: district.id, district_name: district.name, status: parcel.status } as unknown as Json
-  });
-  if (error) {
-    // Do not leave a parcel at Sendit that the app does not know about.
-    await deleteDelivery(keys, parcel.code).catch(() => undefined);
-    return { error: mapDatabaseError(error) };
-  }
+  const outcome = await shipOrder(ctx, provider, keys, order, district);
+  if (outcome.error || !outcome.code) return { error: outcome.error ?? "UNKNOWN", detail: outcome.detail };
   revalidateShipping(order.id);
-  return { ok: true, data: { code: parcel.code } };
+  return { ok: true, data: { code: outcome.code } };
 }
 
 const codesInput = z.array(z.string().regex(/^[A-Za-z0-9._/-]{3,64}$/)).min(1).max(100);

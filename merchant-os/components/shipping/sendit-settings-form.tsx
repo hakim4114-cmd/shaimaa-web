@@ -20,6 +20,7 @@ type Initial = {
   pickupAddress: string;
   allowOpen: boolean;
   allowTry: boolean;
+  autoShip: boolean;
 };
 
 export function SenditSettingsForm({ initial, keysConfigured, webhookUrl }: { initial: Initial; keysConfigured: boolean; webhookUrl: string | null }) {
@@ -170,6 +171,13 @@ export function SenditSettingsForm({ initial, keysConfigured, webhookUrl }: { in
         <label className="flex items-center gap-2 text-sm sm:col-span-2">
           <input type="checkbox" className="size-5 accent-[var(--accent)]" checked={value.active} onChange={(e) => setValue((v) => ({ ...v, active: e.target.checked }))} />
           {ts.enableSendit}
+        </label>
+        <label className="flex items-start gap-2 text-sm sm:col-span-2">
+          <input type="checkbox" className="mt-0.5 size-5 shrink-0 accent-[var(--accent)]" checked={value.autoShip} onChange={(e) => setValue((v) => ({ ...v, autoShip: e.target.checked }))} />
+          <span>
+            <span className="font-medium">{ts.autoShip}</span>
+            <span className="block text-xs text-muted-foreground">{ts.autoShipHint}</span>
+          </span>
         </label>
         <div className="sm:col-span-2">
           <Button type="submit" disabled={pending || !value.pickupDistrictId}>

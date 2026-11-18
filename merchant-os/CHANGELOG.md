@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.7.0 — Automatic sending to Sendit (2026-11-18)
+
+### Added
+- **Send to Sendit automatically when an order is confirmed** (Settings → Sendit, off by default). The parcel is created with the order's details right after the confirming call or status change, and the result is shown on screen and noted in the order timeline.
+- It never guesses the Sendit district: it uses the district chosen last time for that city (remembered whenever you ship by hand), or the only district of the city / the district named exactly like it. Otherwise the order stays confirmed and waits for you to choose, once; the choice is remembered.
+- The manual "Ship with Sendit" button and the automatic path share one code path (`lib/shipping/ship-order.ts`).
+
 ## 1.6.0 — Each merchant uses their own Sendit account (2026-11-18)
 
 ### Changed
