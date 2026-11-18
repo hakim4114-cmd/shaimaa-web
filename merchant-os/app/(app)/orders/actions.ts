@@ -129,7 +129,8 @@ const callInput = z.object({
   orderId: z.string().uuid(),
   outcome: z.enum(callOutcomes as [string, ...string[]]),
   note: z.string().max(1000),
-  callBackAt: z.string().datetime({ offset: true }).nullable()
+  callBackAt: z.string().datetime({ offset: true }).nullable(),
+  channel: z.enum(["phone", "whatsapp"]).default("phone")
 });
 
 export async function logCall(input: z.infer<typeof callInput>): Promise<ActionResult> {
@@ -146,7 +147,8 @@ export async function logCall(input: z.infer<typeof callInput>): Promise<ActionR
     p_order_id: value.orderId,
     p_outcome: value.outcome as (typeof callOutcomes)[number],
     p_note: value.note.trim() || undefined,
-    p_call_back_at: value.outcome === "call_back_requested" ? (value.callBackAt ?? undefined) : undefined
+    p_call_back_at: value.outcome === "call_back_requested" ? (value.callBackAt ?? undefined) : undefined,
+    p_channel: value.channel
   });
   if (error) return { error: mapDatabaseError(error) };
   const autoShip = value.outcome === "confirmed" ? await autoShipAfterConfirmation(ctx, value.orderId) : undefined;

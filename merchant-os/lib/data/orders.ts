@@ -159,7 +159,7 @@ export type OrderDetail = {
   createdAt: string;
   contact: Contact | null;
   items: { id: string; variantId: string; productName: string; variantTitle: string; sku: string; quantity: number; unitPriceCents: number; lineTotalCents: number }[];
-  calls: { id: number; outcome: CallOutcome; note: string | null; callBackAt: string | null; createdAt: string }[];
+  calls: { id: number; outcome: CallOutcome; channel: "phone" | "whatsapp"; note: string | null; callBackAt: string | null; createdAt: string }[];
   events: { id: number; type: string; fromStatus: OrderStatus | null; toStatus: OrderStatus | null; note: string | null; createdAt: string }[];
 };
 
@@ -208,10 +208,10 @@ export async function getOrder(supabase: Client, organizationId: string, id: str
   if (options.withCalls) {
     const { data: callRows } = await supabase
       .from("order_call_attempts")
-      .select("id, outcome, note, call_back_at, created_at")
+      .select("id, outcome, channel, note, call_back_at, created_at")
       .eq("order_id", id)
       .order("created_at", { ascending: false });
-    calls = (callRows ?? []).map((row) => ({ id: row.id, outcome: row.outcome, note: row.note, callBackAt: row.call_back_at, createdAt: row.created_at }));
+    calls = (callRows ?? []).map((row) => ({ id: row.id, outcome: row.outcome, channel: row.channel, note: row.note, callBackAt: row.call_back_at, createdAt: row.created_at }));
   }
 
   return {

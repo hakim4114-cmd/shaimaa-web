@@ -461,6 +461,8 @@ const ar: Dictionary = {
       fr: "الفرنسية"
     },
     openWhatsapp: "فتح في واتساب",
+    channel: "تواصلنا عبر",
+    channels: { phone: "مكالمة", whatsapp: "واتساب" },
     pasteTitle: "لصق رسالة الزبون",
     pastePlaceholder: "لصق هنا الرسالة ديال واتساب ولا إنستغرام (الاسم، الهاتف، المدينة، العنوان)…",
     pasteApply: "عمّر الخانات",
@@ -833,6 +835,14 @@ const ar: Dictionary = {
     done: "تخلقو {created} من {total} طلب. راهم فلائحة الاتصال."
   },
   routines: {
+    channelTitle: "التأكيد: مكالمة ولا واتساب؟",
+    channelDescription: "نسبة الرفض ديال الطلبات المؤكدة حسب طريقة التأكيد. الطلبات اللي تصاوبو:",
+    channelEmpty: "حتى طلب مؤكد فهاد المدة.",
+    channelCol: "تأكد عبر",
+    confirmedCol: "مؤكدة",
+    refusedCol: "مرفوضة / مرجعة",
+    refusalRateCol: "نسبة الرفض",
+    channels: { phone: "مكالمة", whatsapp: "واتساب", manual: "تبدلات الحالة يدويا" },
     weeklyTitle: "المراجعة الأسبوعية",
     weeklyDescription: "ثمانية مؤشرات، هاد السيمانة مقارنة مع اللي قبلها.",
     monthlyTitle: "الإغلاق الشهري",

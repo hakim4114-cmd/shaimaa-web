@@ -462,6 +462,8 @@ const fr: Dictionary = {
       fr: "Français"
     },
     openWhatsapp: "Ouvrir dans WhatsApp",
+    channel: "Joint par",
+    channels: { phone: "Appel", whatsapp: "WhatsApp" },
     pasteTitle: "Coller le message du client",
     pastePlaceholder: "Collez ici le message WhatsApp ou Instagram (nom, téléphone, ville, adresse)…",
     pasteApply: "Remplir le formulaire",
@@ -834,6 +836,14 @@ const fr: Dictionary = {
     done: "{created} sur {total} commande(s) créées. Elles sont dans la liste d'appels."
   },
   routines: {
+    channelTitle: "Confirmation : appel ou WhatsApp ?",
+    channelDescription: "Taux de refus des commandes confirmées selon le canal de confirmation. Commandes créées :",
+    channelEmpty: "Aucune commande confirmée sur cette période.",
+    channelCol: "Confirmée par",
+    confirmedCol: "Confirmées",
+    refusedCol: "Refusées / retournées",
+    refusalRateCol: "Taux de refus",
+    channels: { phone: "Appel", whatsapp: "WhatsApp", manual: "Statut changé à la main" },
     weeklyTitle: "Revue hebdomadaire",
     weeklyDescription: "Huit indicateurs, cette semaine face à la précédente.",
     monthlyTitle: "Clôture mensuelle",

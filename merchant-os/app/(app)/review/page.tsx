@@ -44,13 +44,16 @@ export default async function WeeklyReviewPage({ searchParams }: { searchParams:
   const prev = weekRange(offset + 1);
   const { supabase, organizationId, can } = await requireOrganization();
   if (!can.seeMoney) redirect("/");
-  const [now, before, receivable, stock, campaigns, decisions] = await Promise.all([
+  // Refusals show up days after confirmation: compare channels over 60 days.
+  const channelRange = { from: weekRange(8).from, to: week.to };
+  const [now, before, receivable, stock, campaigns, decisions, channels] = await Promise.all([
     getReport(supabase, organizationId, week.from, week.to),
     getReport(supabase, organizationId, prev.from, prev.to),
     listReceivable(supabase, organizationId),
     getStockHealth(supabase, organizationId),
     getCampaignReport(supabase, organizationId, week.from, week.to),
-    can.overrideBlocklist ? listDecisions(supabase, organizationId) : Promise.resolve([])
+    can.overrideBlocklist ? listDecisions(supabase, organizationId) : Promise.resolve([]),
+    supabase.rpc("confirmation_channel_report", { p_organization_id: organizationId, p_from: channelRange.from, p_to: channelRange.to })
   ]);
   if (!now || !before) return null;
   const money = (c: number | null) => (c === null ? "—" : formatMoney(c, locale));
@@ -120,6 +123,38 @@ export default async function WeeklyReviewPage({ searchParams }: { searchParams:
           ))}
           {campaigns.every((c) => !c.spendCents && !c.orders) ? <li className="px-5 py-3 text-sm text-muted-foreground">{t.money.noCampaigns}</li> : null}
         </ul>
+      </Card>
+      <Card className="overflow-hidden">
+        <CardHeader title={tr.channelTitle} description={`${tr.channelDescription} ${channelRange.from} → ${channelRange.to}`} />
+        {(channels.data ?? []).length === 0 ? (
+          <p className="px-5 py-3 text-sm text-muted-foreground">{tr.channelEmpty}</p>
+        ) : (
+          <Table>
+            <THead>
+              <TR className="hover:bg-transparent">
+                <TH>{tr.channelCol}</TH>
+                <TH>{tr.confirmedCol}</TH>
+                <TH>{t.money.deliveredCol}</TH>
+                <TH>{tr.refusedCol}</TH>
+                <TH>{tr.refusalRateCol}</TH>
+              </TR>
+            </THead>
+            <TBody>
+              {(channels.data ?? []).map((row) => {
+                const closed = Number(row.delivered) + Number(row.refused);
+                return (
+                  <TR key={row.channel}>
+                    <TD className="font-medium">{tr.channels[row.channel as "phone" | "whatsapp" | "manual"] ?? row.channel}</TD>
+                    <TD className="tabular">{Number(row.confirmed)}</TD>
+                    <TD className="tabular">{Number(row.delivered)}</TD>
+                    <TD className="tabular">{Number(row.refused)}</TD>
+                    <TD className="tabular font-medium">{closed ? `${Math.round((Number(row.refused) / closed) * 100)}%` : "—"}</TD>
+                  </TR>
+                );
+              })}
+            </TBody>
+          </Table>
+        )}
       </Card>
       {can.overrideBlocklist ? (
         <div className="grid gap-6 lg:grid-cols-2">

@@ -255,6 +255,7 @@ export default async function OrderPage({ params }: { params: Promise<{ id: stri
                   <li key={call.id} className="px-5 py-3 text-sm">
                     <p className={cn("font-medium", call.outcome === "confirmed" && "text-success", call.outcome === "cancelled" && "text-danger")}>
                       {t.callOutcome[call.outcome]}
+                      {call.channel === "whatsapp" ? <span className="ms-2 text-xs font-normal text-muted-foreground">· {to.channels.whatsapp}</span> : null}
                     </p>
                     {call.callBackAt ? <p className="text-xs text-warning">{interpolate(to.callBackAt, { time: formatDateTime(call.callBackAt, locale, "short") })}</p> : null}
                     {call.note ? <p className="break-words text-muted-foreground">{call.note}</p> : null}
