@@ -90,6 +90,8 @@ export type SenditSettings = {
   pickupAddress: string;
   allowOpen: boolean;
   allowTry: boolean;
+  /** Send the parcel to Sendit as soon as an order is confirmed (opt-in). */
+  autoShip: boolean;
 };
 
 export function readSenditSettings(value: unknown): SenditSettings {
@@ -103,8 +105,31 @@ export function readSenditSettings(value: unknown): SenditSettings {
     pickupPhone: text("pickup_phone"),
     pickupAddress: text("pickup_address"),
     allowOpen: s.allow_open !== false,
-    allowTry: s.allow_try !== false
+    allowTry: s.allow_try !== false,
+    autoShip: s.auto_ship === true
   };
+}
+
+const foldPlace = (s: string) =>
+  s
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9\u0600-\u06ff]+/g, " ")
+    .trim();
+
+/**
+ * Picks the Sendit district for an order's city without guessing: the only
+ * district of that city, or the one district named exactly like the city
+ * (for example "Kénitra" among "Kénitra - Saknia"…). Otherwise null.
+ */
+export function pickDistrictForCity<T extends { name: string; city: string }>(city: string, districts: T[]): T | null {
+  const target = foldPlace(city);
+  if (!target) return null;
+  const inCity = districts.filter((d) => foldPlace(d.city) === target);
+  if (inCity.length === 1) return inCity[0] ?? null;
+  const named = (inCity.length ? inCity : districts).filter((d) => foldPlace(d.name) === target);
+  return named.length === 1 ? (named[0] ?? null) : null;
 }
 
 export type ParcelOrder = {

@@ -62,7 +62,8 @@ export default async function SettingsPage() {
               pickupPhone: s?.pickupPhone ? formatMoroccanPhone(s.pickupPhone) : "",
               pickupAddress: s?.pickupAddress ?? "",
               allowOpen: s?.allowOpen ?? true,
-              allowTry: s?.allowTry ?? true
+              allowTry: s?.allowTry ?? true,
+              autoShip: s?.autoShip ?? false
             }}
           />
         </CardBody>

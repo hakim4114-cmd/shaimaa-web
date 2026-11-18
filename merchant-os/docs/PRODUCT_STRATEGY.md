@@ -48,7 +48,7 @@ Each phase starts only when the previous one is used for real. Order inside a ph
 5. Support channel and status page; error monitoring.
 
 ### Phase B — Matching the basics, done better
-1. **Auto-send to the carrier on confirmation** (opt-in): only when the city maps to exactly one Sendit district; otherwise it stays manual. No Meta needed.
+1. ✅ 1.7.0 — **Auto-send to the carrier on confirmation** (opt-in): only when the Sendit district is certain (remembered per city, or unique); otherwise it stays manual. No Meta needed.
 2. **WhatsApp Business Platform (Cloud API)** with the merchant's own number and keys (same pattern as Sendit keys):
    - confirmation with buttons, used by D3 for low-risk orders only;
    - tracking messages from Sendit status events (shipped, out for delivery, failed attempt);

@@ -97,6 +97,62 @@ export type Database = {
           },
         ]
       }
+      carrier_city_districts: {
+        Row: {
+          city_id: number
+          district_id: string
+          district_name: string
+          organization_id: string
+          provider_id: string
+          updated_at: string
+        }
+        Insert: {
+          city_id: number
+          district_id: string
+          district_name?: string
+          organization_id: string
+          provider_id: string
+          updated_at?: string
+        }
+        Update: {
+          city_id?: number
+          district_id?: string
+          district_name?: string
+          organization_id?: string
+          provider_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "carrier_city_districts_city_id_fkey"
+            columns: ["city_id"]
+            isOneToOne: false
+            referencedRelation: "cities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "carrier_city_districts_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "carrier_city_districts_provider_id_fkey"
+            columns: ["provider_id"]
+            isOneToOne: false
+            referencedRelation: "shipping_providers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "carrier_city_districts_provider_id_organization_id_fkey"
+            columns: ["provider_id", "organization_id"]
+            isOneToOne: false
+            referencedRelation: "shipping_providers"
+            referencedColumns: ["id", "organization_id"]
+          },
+        ]
+      }
       carrier_events: {
         Row: {
           carrier_status: string

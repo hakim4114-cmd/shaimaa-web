@@ -10,6 +10,7 @@ import { callOutcomes, orderSources } from "@/lib/orders/calls";
 import { parseMoneyToCents } from "@/lib/money";
 import { normalizeMoroccanPhone } from "@/lib/phone";
 import type { Json } from "@/lib/supabase/database.types";
+import { autoShipAfterConfirmation, type AutoShipResult } from "@/lib/shipping/ship-order";
 
 export type LookupResult = {
   phone: string | null;
@@ -122,7 +123,7 @@ export async function updateOrder(orderId: string, input: OrderInput): Promise<O
   return { orderId };
 }
 
-export type ActionResult = { ok?: true; error?: AppErrorCode };
+export type ActionResult = { ok?: true; error?: AppErrorCode; autoShip?: AutoShipResult };
 
 const callInput = z.object({
   orderId: z.string().uuid(),
@@ -138,7 +139,8 @@ export async function logCall(input: z.infer<typeof callInput>): Promise<ActionR
   if (value.outcome === "cancelled" && value.note.trim() === "") return { error: "NOTE_REQUIRED" };
   if (value.outcome === "call_back_requested" && !value.callBackAt) return { error: "CALL_BACK_TIME_REQUIRED" };
 
-  const { supabase, can } = await requireOrganization();
+  const ctx = await requireOrganization();
+  const { supabase, can } = ctx;
   if (!can.manageOrders) return { error: "FORBIDDEN" };
   const { error } = await supabase.rpc("log_call_attempt", {
     p_order_id: value.orderId,
@@ -147,8 +149,10 @@ export async function logCall(input: z.infer<typeof callInput>): Promise<ActionR
     p_call_back_at: value.outcome === "call_back_requested" ? (value.callBackAt ?? undefined) : undefined
   });
   if (error) return { error: mapDatabaseError(error) };
+  const autoShip = value.outcome === "confirmed" ? await autoShipAfterConfirmation(ctx, value.orderId) : undefined;
   revalidateOrders(value.orderId);
-  return { ok: true };
+  if (autoShip?.status === "shipped") revalidatePath("/shipping");
+  return { ok: true, autoShip };
 }
 
 const statusInput = z.object({
@@ -167,13 +171,16 @@ export async function changeOrderStatus(input: z.infer<typeof statusInput>): Pro
   const value = parsed.data;
   if (value.to === "cancelled" && value.note.trim() === "") return { error: "NOTE_REQUIRED" };
 
-  const { supabase, can } = await requireOrganization();
+  const ctx = await requireOrganization();
+  const { supabase, can } = ctx;
   const allowed = value.to === "preparing" || value.to === "ready_to_ship" ? can.prepareOrders : can.manageOrders;
   if (!allowed) return { error: "FORBIDDEN" };
   const { error } = await supabase.rpc("transition_order", { p_order_id: value.orderId, p_to: value.to, p_note: value.note.trim() || undefined });
   if (error) return { error: mapDatabaseError(error) };
+  const autoShip = value.to === "confirmed" ? await autoShipAfterConfirmation(ctx, value.orderId) : undefined;
   revalidateOrders(value.orderId);
-  return { ok: true };
+  if (autoShip?.status === "shipped") revalidatePath("/shipping");
+  return { ok: true, autoShip };
 }
 
 export async function addOrderNote(orderId: string, note: string): Promise<ActionResult> {
