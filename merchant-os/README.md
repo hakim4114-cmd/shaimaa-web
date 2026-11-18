@@ -2,7 +2,7 @@
 
 E-commerce operations platform for small and medium cash-on-delivery merchants, starting with Morocco: products, inventory, orders, customers, shipping, COD reconciliation, returns, finance and (later) marketing, support and AI assistance.
 
-Merchant OS is a **separate product** from the Maison Shaimaa storefront that shares this repository. It has its own dependencies, database and deployment; the storefront code is not imported or modified.
+Merchant OS is the only product in this repository (the old Maison Shaimaa storefront at the root was removed on 2026-11-18). It has its own dependencies, database and deployment.
 
 ## Status
 
