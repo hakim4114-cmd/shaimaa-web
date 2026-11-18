@@ -54,8 +54,9 @@ Each phase starts only when the previous one is used for real. Order inside a ph
    - tracking messages from Sendit status events (shipped, out for delivery, failed attempt);
    - a message after a refused parcel (reason).
    Needs a Meta Business account, verification, a number and approved templates; billed per message by Meta **[likely]**. Test on Maison Shaimaa first.
-3. More carriers (whichever merchants ask for most), via the adapter interface.
-4. YouCan, through a YouCan partner app (OAuth); Shopify as an app later if the webhook setup is too hard for merchants.
+3. **Team confirmation** (for merchants with call agents): assign orders to agents (round-robin or by load), each agent's queue, and per-agent performance (confirmation rate, then delivery and refusal rate of the orders they confirmed, not only speed). Every call already records who made it (`order_call_attempts.actor_id`). Not needed while the owner works alone.
+4. More carriers (whichever merchants ask for most), via the adapter interface.
+5. YouCan, through a YouCan partner app (OAuth); Shopify as an app later if the webhook setup is too hard for merchants.
 
 ### Phase C — The differentiators
 1. D3 risk score and risk-based confirmation (explainable score, never a black box; the merchant sees why).
