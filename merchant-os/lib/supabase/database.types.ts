@@ -2529,6 +2529,7 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      low_stock_count: { Args: { p_organization_id: string }; Returns: number }
       pay_payable: {
         Args: { p_paid_on: string; p_payable_id: string }
         Returns: {

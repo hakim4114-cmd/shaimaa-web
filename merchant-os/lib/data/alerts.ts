@@ -25,12 +25,10 @@ export async function getAlerts({ supabase, organizationId, can }: Ctx): Promise
     supabase.from("shipments").select("id", head).eq("organization_id", organizationId).eq("status", "failed_attempt"),
     supabase.from("returns").select("id", head).eq("organization_id", organizationId).eq("status", "awaiting_receipt"),
     can.manageOrders ? supabase.from("external_orders").select("id", head).eq("organization_id", organizationId).eq("status", "needs_attention") : null,
-    supabase.from("inventory_levels").select("variant_id, available, variant:product_variants!inner(min_stock_level, status)").eq("organization_id", organizationId).eq("variant.status", "active")
+    supabase.rpc("low_stock_count", { p_organization_id: organizationId })
   ]);
   const count = (q: (typeof queries)[number]) => (q && "count" in q ? (q.count ?? 0) : 0);
-  const low = ((queries[6]?.data ?? []) as unknown as { available: number | null; variant: { min_stock_level: number } | null }[]).filter(
-    (row) => row.variant && (row.available ?? 0) <= row.variant.min_stock_level
-  ).length;
+  const low = Number(queries[6]?.data ?? 0);
   const alerts: Alert[] = [
     { key: "obligationsOverdue", count: count(queries[0]), href: "/pay", tone: "danger" },
     { key: "obligationsSoon", count: count(queries[1]), href: "/pay", tone: "warning" },

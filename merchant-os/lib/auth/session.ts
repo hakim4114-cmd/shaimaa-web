@@ -29,9 +29,15 @@ export const getSessionContext = cache(async (): Promise<SessionContext | null> 
     return null;
   }
   const supabase = await createSupabaseServerClient();
-  const {
-    data: { user }
-  } = await supabase.auth.getUser();
+  // Signature-verified JWT claims (no Auth server round trip with asymmetric keys).
+  const { data: auth, error: claimsError } = await supabase.auth.getClaims();
+  const claims = auth?.claims;
+  let user: { id: string; email: string } | null = claims?.sub ? { id: claims.sub, email: typeof claims.email === "string" ? claims.email : "" } : null;
+  if (!user && claimsError) {
+    // Key fetch or verification problem: fall back to asking the Auth server.
+    const fallback = (await supabase.auth.getUser()).data.user;
+    user = fallback ? { id: fallback.id, email: fallback.email ?? "" } : null;
+  }
   if (!user) {
     return null;
   }
@@ -52,5 +58,5 @@ export const getSessionContext = cache(async (): Promise<SessionContext | null> 
   const preferred = (await cookies()).get(activeOrganizationCookieName)?.value;
   const active = memberships.find((m) => m.organization.id === preferred) ?? memberships[0] ?? null;
 
-  return { user: { id: user.id, email: user.email ?? "" }, memberships, active };
+  return { user, memberships, active };
 });
