@@ -20,6 +20,7 @@ import { UserMenu, type ShellAccount } from "./user-menu";
 export function AppShell({
   showDevTools,
   initialCollapsed,
+  essentialOnly = false,
   account,
   alerts = [],
   children
@@ -27,12 +28,13 @@ export function AppShell({
   showDevTools: boolean;
   account: ShellAccount | null;
   initialCollapsed: boolean;
+  essentialOnly?: boolean;
   alerts?: Alert[];
   children: ReactNode;
 }) {
   const { t } = useI18n();
   // Built on the client: nav items hold icon components, which cannot cross the server boundary.
-  const groups = useMemo(() => visibleNavigation(showDevTools), [showDevTools]);
+  const groups = useMemo(() => visibleNavigation(showDevTools, essentialOnly), [showDevTools, essentialOnly]);
   const [collapsed, setCollapsed] = useState(initialCollapsed);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);

@@ -92,6 +92,9 @@ select public.ingest_store_order(:'shop', tests.order_payload('1005', 'WAL-BLK',
 select tests.eq((select cod_amount_cents from public.orders where external_id = '1005'), 0::bigint, 'a prepaid store order has nothing to collect');
 select tests.eq((select count(*) from public.orders where store_id = :'shop'), 2::bigint, 'orders needing attention create no order');
 select tests.expect_error(format($$select public.ingest_store_order(%L, '{}')$$, :'org'), 'STORE_NOT_FOUND');
+select public.ingest_store_order(:'shop', jsonb_set(tests.order_payload('1008', 'WAL-BLK', '+212611223399'), '{customer,full_name}', '""'::jsonb)) ->> 'status' as s8 \gset
+select tests.eq(:'s8'::text, 'imported'::text, 'a store order without a name is still imported');
+select tests.eq((select full_name from public.customers where phone = '+212611223399'), 'Client 3399', 'a missing name becomes Client + last 4 digits');
 
 -- Inbox: who sees it, retry, ignore ----------------------------------------------
 reset role;

@@ -123,7 +123,27 @@ export async function updateOrder(orderId: string, input: OrderInput): Promise<O
   return { orderId };
 }
 
-export type ActionResult = { ok?: true; error?: AppErrorCode; autoShip?: AutoShipResult };
+export type ActionResult = { ok?: true; error?: AppErrorCode; confirmed?: boolean };
+
+/**
+ * Automatic sending to Sendit, called by the page right after a confirmation
+ * succeeded, as its own request: the confirmation never waits for Sendit.
+ * When it cannot send, the reason is written in the order timeline.
+ */
+export async function autoShipOrder(orderId: string): Promise<AutoShipResult> {
+  if (!z.string().uuid().safeParse(orderId).success) return { status: "off" };
+  const ctx = await requireOrganization();
+  const result = await autoShipAfterConfirmation(ctx, orderId);
+  if (result.status === "failed" || (result.status === "skipped" && result.reason !== "not_allowed")) {
+    const reason = result.status === "failed" ? `${result.error}${result.detail ? ` (${result.detail})` : ""}` : result.reason;
+    await ctx.supabase.rpc("add_order_note", { p_order_id: orderId, p_note: `Sendit auto: not sent — ${reason}`.slice(0, 1000) });
+  }
+  if (result.status !== "off") {
+    revalidateOrders(orderId);
+    revalidatePath("/shipping");
+  }
+  return result;
+}
 
 const callInput = z.object({
   orderId: z.string().uuid(),
@@ -151,10 +171,8 @@ export async function logCall(input: z.infer<typeof callInput>): Promise<ActionR
     p_channel: value.channel
   });
   if (error) return { error: mapDatabaseError(error) };
-  const autoShip = value.outcome === "confirmed" ? await autoShipAfterConfirmation(ctx, value.orderId) : undefined;
   revalidateOrders(value.orderId);
-  if (autoShip?.status === "shipped") revalidatePath("/shipping");
-  return { ok: true, autoShip };
+  return { ok: true, confirmed: value.outcome === "confirmed" };
 }
 
 const statusInput = z.object({
@@ -179,10 +197,8 @@ export async function changeOrderStatus(input: z.infer<typeof statusInput>): Pro
   if (!allowed) return { error: "FORBIDDEN" };
   const { error } = await supabase.rpc("transition_order", { p_order_id: value.orderId, p_to: value.to, p_note: value.note.trim() || undefined });
   if (error) return { error: mapDatabaseError(error) };
-  const autoShip = value.to === "confirmed" ? await autoShipAfterConfirmation(ctx, value.orderId) : undefined;
   revalidateOrders(value.orderId);
-  if (autoShip?.status === "shipped") revalidatePath("/shipping");
-  return { ok: true, autoShip };
+  return { ok: true, confirmed: value.to === "confirmed" };
 }
 
 export async function addOrderNote(orderId: string, note: string): Promise<ActionResult> {

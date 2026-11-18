@@ -48,8 +48,11 @@ const ar: Dictionary = {
     themeDark: "داكن",
     themeSystem: "حسب النظام",
     language: "اللغة",
+    sections: "الأقسام",
+    sectionsEssential: "الأساسية",
+    sectionsAll: "كل الأقسام",
     notificationsAllClear: "والو كيتسناك دابا.",
-    alerts: { obligationsOverdue: "التزامات فات الوقت ديالها", obligationsSoon: "التزامات حالّة فـ 7 أيام", callsDue: "مكالمات خاصك تديرها", deliveryProblems: "مشاكل التوصيل", returnsWaiting: "مرتجعات للاستلام", lowStock: "منتجات المخزون ديالها ناقص", storeOrders: "طلبات المتجر خاصها تصحيح" }
+    alerts: { obligationsOverdue: "التزامات فات الوقت ديالها", obligationsSoon: "التزامات حالّة فـ 7 أيام", callsDue: "مكالمات خاصك تديرها", deliveryProblems: "مشاكل التوصيل", returnsWaiting: "مرتجعات للاستلام", lowStock: "منتجات المخزون ديالها ناقص", storeOrders: "طلبات المتجر خاصها تصحيح", waitingToShip: "مؤكدة من أكثر من 24 ساعة وباقي ما تصيفطاتش" }
   },
   commandCenter: {
     title: "لوحة القيادة",
@@ -92,6 +95,8 @@ const ar: Dictionary = {
     noAccount: "جديد على Merchant OS؟",
     haveAccount: "لديك حساب بالفعل؟",
     goSignUp: "أنشئ حسابًا",
+    signupClosedTitle: "التسجيل مسدود",
+    signupClosedText: "Merchant OS فتجربة خاصة. الدخول غير بدعوة.",
     goSignIn: "سجّل الدخول",
     verifyTitle: "تحقق من بريدك",
     verifySubtitle: "أرسلنا رابط تأكيد إلى {email}. افتحه في هذا المتصفح لتفعيل حسابك. تنتهي صلاحية الرابط خلال ساعة.",
@@ -153,12 +158,22 @@ const ar: Dictionary = {
     }
   },
   workspace: {
-    readyTitle: "مساحة عملك جاهزة",
-    readyDescription: "أنت مسجّل في {organization} بصفة {role}. تصل الوحدات تباعًا، وستعرض هذه الصفحة أرقامًا حقيقية فور وجود طلبات.",
+    readyTitle: "البداية",
+    readyDescription: "داخل لـ {organization} بصفة {role}. دير هاد الخطوات بالترتيب؛ كل وحدة كتتعلم بوحدها ملي تساليها.",
     stepDatabase: "قاعدة البيانات متصلة",
     stepOrganization: "تم إنشاء النشاط",
-    stepCatalog: "أضف المنتجات والمخزون",
-    stepOrders: "سجّل أول طلباتك",
+    stepCatalog: "زيد المنتجات ديالك مع التكلفة",
+    stepOrders: "سجل أول طلب",
+    stepCatalogHint: "بلا التكلفة، الربح ومركز التسعير كيكونو غالطين.",
+    stepRates: "حدد ثمن التوصيل لكل مدينة",
+    stepRatesHint: "الإعدادات ← أثمنة التوصيل. كيتستعمل فكل طلب يدوي.",
+    stepSendit: "ربط Sendit (المفاتيح وعنوان الاستلام)",
+    stepSenditHint: "الإعدادات ← Sendit: لصق المفاتيح، اختار مدينة الاستلام، وجرب الاتصال.",
+    stepCash: "دخل الفلوس اللي بديتي بيهم",
+    stepCashHint: "الأجرة ← الإعدادات: الرصيد ديال البداية، باش السحب الآمن يكون صحيح.",
+    stepOrdersHint: "الطلبات ← طلب جديد، ولا لصق رسالة الزبون من واتساب.",
+    stepShip: "صيفط أول طرد",
+    stepShipHint: "أكد الطلب ومن بعد صيفطو مع Sendit؛ وتأكد من المعلومات عند Sendit.",
     upcoming: "التالي"
   },
   products: {

@@ -48,8 +48,11 @@ const fr: Dictionary = {
     themeDark: "Sombre",
     themeSystem: "Système",
     language: "Langue",
+    sections: "Rubriques",
+    sectionsEssential: "L'essentiel",
+    sectionsAll: "Toutes les rubriques",
     notificationsAllClear: "Rien ne demande votre attention pour l'instant.",
-    alerts: { obligationsOverdue: "Dettes en retard", obligationsSoon: "Dettes à payer sous 7 jours", callsDue: "Appels à passer", deliveryProblems: "Problèmes de livraison", returnsWaiting: "Retours à recevoir", lowStock: "Produits en stock bas", storeOrders: "Commandes boutique à corriger" }
+    alerts: { obligationsOverdue: "Dettes en retard", obligationsSoon: "Dettes à payer sous 7 jours", callsDue: "Appels à passer", deliveryProblems: "Problèmes de livraison", returnsWaiting: "Retours à recevoir", lowStock: "Produits en stock bas", storeOrders: "Commandes boutique à corriger", waitingToShip: "Confirmées depuis plus de 24 h, pas encore expédiées" }
   },
   commandCenter: {
     title: "Tableau de bord",
@@ -93,6 +96,8 @@ const fr: Dictionary = {
     noAccount: "Nouveau sur Merchant OS ?",
     haveAccount: "Vous avez déjà un compte ?",
     goSignUp: "Créer un compte",
+    signupClosedTitle: "Inscriptions fermées",
+    signupClosedText: "Merchant OS est en essai privé. L'accès se fait uniquement sur invitation.",
     goSignIn: "Se connecter",
     verifyTitle: "Vérifiez votre e-mail",
     verifySubtitle: "Nous avons envoyé un lien de confirmation à {email}. Ouvrez-le dans ce navigateur pour activer votre compte. Le lien expire dans une heure.",
@@ -154,12 +159,22 @@ const fr: Dictionary = {
     }
   },
   workspace: {
-    readyTitle: "Votre espace est prêt",
-    readyDescription: "Connecté à {organization} en tant que {role}. Les modules arrivent un par un ; cette page affichera de vrais chiffres dès qu'il y aura des commandes.",
+    readyTitle: "Bien démarrer",
+    readyDescription: "Connecté à {organization} en tant que {role}. Suivez ces étapes dans l'ordre ; chacune se coche toute seule une fois faite.",
     stepDatabase: "Base de données connectée",
     stepOrganization: "Entreprise créée",
-    stepCatalog: "Ajouter des produits et du stock",
-    stepOrders: "Enregistrer vos premières commandes",
+    stepCatalog: "Ajoutez vos produits avec leur coût",
+    stepOrders: "Enregistrez votre première commande",
+    stepCatalogHint: "Sans le coût, le bénéfice et le centre de prix sont faux.",
+    stepRates: "Fixez les frais de livraison par ville",
+    stepRatesHint: "Paramètres → Tarifs de livraison. Utilisés pour chaque commande manuelle.",
+    stepSendit: "Connectez Sendit (clés et adresse de ramassage)",
+    stepSenditHint: "Paramètres → Sendit : collez vos clés, choisissez la ville de ramassage, testez la connexion.",
+    stepCash: "Saisissez votre trésorerie de départ",
+    stepCashHint: "Rémunération → réglages : l'argent de départ, pour que le retrait sûr soit juste.",
+    stepOrdersHint: "Commandes → Nouvelle, ou collez le message WhatsApp du client.",
+    stepShip: "Expédiez votre premier colis",
+    stepShipHint: "Confirmez la commande puis expédiez-la avec Sendit ; vérifiez les détails chez Sendit.",
     upcoming: "À venir"
   },
   products: {

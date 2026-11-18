@@ -3,7 +3,7 @@
 import { Languages, Monitor, Moon, SlidersHorizontal, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useRouter } from "next/navigation";
-import { useTransition } from "react";
+import { useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -17,12 +17,19 @@ import {
 import { setLocale } from "@/lib/i18n/actions";
 import { locales, localeNativeName } from "@/lib/i18n/config";
 import { useI18n } from "@/lib/i18n/provider";
+import { navModeCookieName } from "@/lib/shell";
+
+function readNavMode(): "essential" | "full" {
+  if (typeof document === "undefined") return "essential";
+  return document.cookie.split("; ").some((c) => c === `${navModeCookieName}=full`) ? "full" : "essential";
+}
 
 export function PreferencesMenu() {
   const { t, locale } = useI18n();
   const { theme, setTheme } = useTheme();
   const router = useRouter();
   const [pending, startTransition] = useTransition();
+  const [navMode, setNavMode] = useState<"essential" | "full">(readNavMode);
 
   return (
     <DropdownMenu>
@@ -62,6 +69,20 @@ export function PreferencesMenu() {
               {localeNativeName[code]}
             </DropdownMenuRadioItem>
           ))}
+        </DropdownMenuRadioGroup>
+        <DropdownMenuSeparator />
+        <DropdownMenuLabel>{t.topbar.sections}</DropdownMenuLabel>
+        <DropdownMenuRadioGroup
+          value={navMode}
+          onValueChange={(next) => {
+            const mode = next === "full" ? "full" : "essential";
+            setNavMode(mode);
+            document.cookie = `${navModeCookieName}=${mode}; path=/; max-age=31536000; samesite=lax`;
+            router.refresh();
+          }}
+        >
+          <DropdownMenuRadioItem value="essential">{t.topbar.sectionsEssential}</DropdownMenuRadioItem>
+          <DropdownMenuRadioItem value="full">{t.topbar.sectionsAll}</DropdownMenuRadioItem>
         </DropdownMenuRadioGroup>
       </DropdownMenuContent>
     </DropdownMenu>
