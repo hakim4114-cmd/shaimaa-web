@@ -23,6 +23,10 @@ export async function proxy(request: NextRequest) {
     // Not configured yet: the command centre explains the setup steps.
     return response;
   }
+  // Webhooks and the Claude connector authenticate with their own signature or token: no session work.
+  if (request.nextUrl.pathname.startsWith("/api/webhooks/") || request.nextUrl.pathname.startsWith("/api/mcp/")) {
+    return response;
+  }
 
   const supabase = createServerClient(config.url, config.anonKey, {
     cookies: {
@@ -41,10 +45,15 @@ export async function proxy(request: NextRequest) {
     }
   });
 
-  // getUser() validates the token with Supabase Auth (getSession() would trust the cookie).
-  const {
-    data: { user }
-  } = await supabase.auth.getUser();
+  // getClaims() verifies the JWT signature (asymmetric project keys, checked locally against the
+  // cached JWKS) and refreshes an expired session; getSession() alone would trust the cookie.
+  const { data, error } = await supabase.auth.getClaims();
+  let user: { sub: string } | null = data?.claims?.sub ? { sub: data.claims.sub } : null;
+  if (error && !user) {
+    // Key fetch or verification problem: fall back to asking the Auth server.
+    const fallback = await supabase.auth.getUser();
+    user = fallback.data.user ? { sub: fallback.data.user.id } : null;
+  }
   const { pathname } = request.nextUrl;
 
   if (!user && !isPublic(pathname)) {

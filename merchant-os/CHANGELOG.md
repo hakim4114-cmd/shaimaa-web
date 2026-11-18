@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.9.0 — Review fixes: faster pages, correct low-stock count (2026-11-19)
+
+### Changed
+- **Faster navigation:** the session is checked from the signed JWT (`getClaims`, verified locally against the project's ES256 keys) instead of calling the Auth server twice per page (proxy + layout). Falls back to the Auth server if verification cannot run.
+- Webhooks and the Claude connector no longer go through session handling in the proxy.
+- The bell's low-stock count is one SQL function (`low_stock_count`) instead of loading every stock row on each page.
+
+### Fixed
+- Low-stock count was per location row: a variant stocked in two locations could be counted twice, or flagged although its total was enough. It is now per variant, summed over locations.
+
 ## 1.8.0 — Confirmation channel (2026-11-18)
 
 ### Added
