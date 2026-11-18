@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.5.0 — Online stores and WhatsApp (2026-11-18)
+
+### Added
+- **Online stores**: connect Shopify, WooCommerce (WordPress) or a custom site in Settings. New orders arrive by themselves through a signed webhook, as *New* orders (still called and confirmed), never twice.
+- **Store orders to fix**: orders that cannot be created (unknown SKU, invalid phone, blocked customer, other currency, paused store) wait with the reason and how to fix it; retry or dismiss. Shown in the bell and on the Orders page.
+- **WhatsApp**: two new prefilled messages (parcel shipped with its tracking number, delivery reminder) and "paste the customer's message" on the new-order form, which fills phone, city, name and address.
+
+### Not yet
+- YouCan: it sends orders only to a registered YouCan partner app (OAuth); planned as its own step.
+
 ## 1.4.3 — Faster pages (2026-11-18)
 
 ### Changed

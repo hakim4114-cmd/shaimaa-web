@@ -16,6 +16,7 @@ import { useI18n } from "@/lib/i18n/provider";
 import { formatMoney, parseMoneyToCents } from "@/lib/money";
 import { orderSources, type OrderSource } from "@/lib/orders/calls";
 import { formatMoroccanPhone, normalizeMoroccanPhone } from "@/lib/phone";
+import { parseCustomerMessage } from "@/lib/orders/paste";
 import { cn } from "@/lib/utils";
 
 const OTHER_CITY = "other";
@@ -73,6 +74,8 @@ export function OrderForm({
   const [cityValue, setCityValue] = useState(initial.cityId ? String(initial.cityId) : initial.cityOther ? OTHER_CITY : "");
   const [cityOther, setCityOther] = useState(initial.cityOther);
   const [address, setAddress] = useState(initial.address);
+  const [pasted, setPasted] = useState("");
+  const [pasteOpen, setPasteOpen] = useState(false);
   // Keys must be identical on the server and the client (hydration), so they come from the index first.
   const [lines, setLines] = useState<Line[]>(() =>
     (initial.items.length ? initial.items : [{ variantId: "", quantity: 1 }]).map((item, index) => ({ ...item, key: `line-${index}` }))
@@ -191,6 +194,41 @@ export function OrderForm({
       <Card>
         <CardHeader title={to.sectionCustomer} />
         <CardBody className="grid gap-4 sm:grid-cols-2">
+          {mode === "create" ? (
+            <details className="rounded-md bg-surface-muted p-3 text-sm sm:col-span-2" open={pasteOpen} onToggle={(e) => setPasteOpen(e.currentTarget.open)}>
+              <summary className="cursor-pointer font-medium">{to.pasteTitle}</summary>
+              <div className="mt-2 flex flex-col gap-2">
+                <Textarea
+                  value={pasted}
+                  rows={4}
+                  maxLength={2000}
+                  placeholder={to.pastePlaceholder}
+                  aria-label={to.pasteTitle}
+                  onChange={(e) => setPasted(e.target.value)}
+                />
+                <div className="flex flex-wrap items-center gap-2">
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    size="sm"
+                    disabled={!pasted.trim()}
+                    onClick={() => {
+                      const found = parseCustomerMessage(pasted, cities);
+                      if (found.phone) setPhone(formatMoroccanPhone(found.phone));
+                      if (found.fullName) setFullName(found.fullName);
+                      if (found.cityId !== null) setCityValue(String(found.cityId));
+                      if (found.address) setAddress(found.address);
+                      setPasteOpen(false);
+                      setPasted("");
+                    }}
+                  >
+                    {to.pasteApply}
+                  </Button>
+                  <span className="text-xs text-muted-foreground">{to.pasteHint}</span>
+                </div>
+              </div>
+            </details>
+          ) : null}
           <Field label={to.phone} htmlFor={`${id}-phone`} hint={mode === "edit" ? to.phoneLocked : to.phoneHint} error={phoneInvalid ? t.errors.PHONE_INVALID : undefined}>
             <Input
               id={`${id}-phone`}

@@ -8,6 +8,7 @@ import { getSenditProvider } from "@/lib/data/shipping";
 import { defaultShippingFees, listCities } from "@/lib/data/orders";
 import { ShippingRatesForm } from "@/components/shipping/shipping-rates-form";
 import { AssistantLinks } from "@/components/shipping/assistant-links";
+import { StoreConnections, type StoreRow } from "@/components/stores/store-connections";
 import { getI18n } from "@/lib/i18n/server";
 import { formatMoroccanPhone } from "@/lib/phone";
 import { senditKeys } from "@/lib/shipping/sendit";
@@ -22,11 +23,12 @@ export default async function SettingsPage() {
   const ts = t.shipping;
   const { supabase, organizationId, can } = await requireOrganization();
   if (!can.overrideBlocklist) redirect("/");
-  const [provider, cities, fees, tokens] = await Promise.all([
+  const [provider, cities, fees, tokens, stores] = await Promise.all([
     getSenditProvider(supabase, organizationId),
     listCities(supabase),
     defaultShippingFees(supabase, organizationId),
-    supabase.from("assistant_tokens").select("id, name, created_at, last_used_at").eq("organization_id", organizationId).order("created_at", { ascending: false })
+    supabase.from("assistant_tokens").select("id, name, created_at, last_used_at").eq("organization_id", organizationId).order("created_at", { ascending: false }),
+    supabase.from("stores").select("id, name, platform, is_active, last_order_at").eq("organization_id", organizationId).order("created_at")
   ]);
 
   const h = await headers();
@@ -38,6 +40,15 @@ export default async function SettingsPage() {
   return (
     <div className="mx-auto flex w-full max-w-3xl flex-col gap-6">
       <PageHeader title={ts.settingsTitle} description={ts.settingsDescription} />
+      <Card>
+        <CardHeader title={t.stores.title} description={t.stores.description} />
+        <CardBody>
+          <StoreConnections
+            origin={origin}
+            stores={(stores.data ?? []).map((row): StoreRow => ({ id: row.id, name: row.name, platform: row.platform, active: row.is_active, lastOrderAt: row.last_order_at }))}
+          />
+        </CardBody>
+      </Card>
       <Card>
         <CardHeader title="Sendit" description={ts.senditDescription} />
         <CardBody>

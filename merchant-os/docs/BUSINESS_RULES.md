@@ -162,6 +162,17 @@ Rules marked **[DB]** are enforced by migration `20261116000400_order_workflow.s
 ### Editing before confirmation
 - While an order is `new` or `confirmation_pending` (stock not reserved yet), lines, discount, shipping fee, COD, city, address and name can be changed; lines are re-priced from the catalog and totals recomputed; COD follows the total unless it was a deposit **[DB]**. After confirmation the order is locked (`ORDER_LOCKED`) **[DB]**. Every edit is logged in the timeline with what changed **[DB]**.
 
+## Store orders (1.5.0)
+
+Rules marked **[DB]** are enforced by `20261118000100_store_connections.sql` and covered by `supabase/tests/95_store_intake.test.sql`.
+
+- A store order is imported at most once per store (`external_orders` and `orders` are unique on store + external id); repeated deliveries change nothing **[DB]**.
+- An imported order starts as `new` with source `website`: it is called and confirmed like any other order, and stock is reserved only at confirmation **[DB]**.
+- It is not imported, but kept as **needs attention** with a reason, when: the store is paused, the currency is not MAD, there are no lines or more than 50, the phone is not a valid Moroccan number, the customer is blocked, a SKU matches no active product, or there is no default warehouse **[DB]**. The merchant fixes the cause and retries, or dismisses it (owner, admin, operator) **[DB]**.
+- Lines keep the price the customer saw in the store, and the catalog cost; the store discount is capped at the subtotal; a prepaid order has a COD amount of 0 **[DB]**. Editing a store order before confirmation re-prices its lines from the catalog, as for any order.
+- The typed city is matched to the city list (French or Arabic name, or alias); otherwise kept as free text **[DB]**.
+- Signing secrets are readable only by the server; connections and secrets are managed by owner/admin; the inbox is visible to owner, admin and operator **[DB]**.
+
 ## Carrier scorecard (planned — with shipping, Phase 2)
 
 Carrier choice is decided on the merchant's own measured data, not on carriers' marketing. Per carrier, and per carrier × city, over a chosen period:

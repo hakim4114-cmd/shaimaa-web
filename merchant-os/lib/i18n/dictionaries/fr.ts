@@ -49,7 +49,7 @@ const fr: Dictionary = {
     themeSystem: "Système",
     language: "Langue",
     notificationsAllClear: "Rien ne demande votre attention pour l'instant.",
-    alerts: { obligationsOverdue: "Dettes en retard", obligationsSoon: "Dettes à payer sous 7 jours", callsDue: "Appels à passer", deliveryProblems: "Problèmes de livraison", returnsWaiting: "Retours à recevoir", lowStock: "Produits en stock bas" }
+    alerts: { obligationsOverdue: "Dettes en retard", obligationsSoon: "Dettes à payer sous 7 jours", callsDue: "Appels à passer", deliveryProblems: "Problèmes de livraison", returnsWaiting: "Retours à recevoir", lowStock: "Produits en stock bas", storeOrders: "Commandes boutique à corriger" }
   },
   commandCenter: {
     title: "Tableau de bord",
@@ -328,6 +328,9 @@ const fr: Dictionary = {
     OVER_SAFE_LIMIT: "Au-delà du montant sûr : une raison écrite est requise.",
     ALREADY_PAID: "Déjà payée.",
     MONTH_NOT_OVER: "Un mois ne peut être clôturé qu'une fois terminé.",
+    TOO_MANY_STORES: "Vous pouvez connecter jusqu'à 20 boutiques.",
+    SECRET_TOO_SHORT: "Clé trop courte : copiez-la en entier (16 caractères minimum).",
+    NOT_RETRYABLE: "Cette commande boutique a déjà été traitée.",
     UNKNOWN: "Une erreur est survenue. Réessayez.",
   },
   orders: {
@@ -448,6 +451,8 @@ const fr: Dictionary = {
       confirm: "Demander la confirmation",
       noAnswer: "Injoignable",
       confirmed: "Commande confirmée",
+      shipped: "Colis expédié (suivi)",
+      deliveryReminder: "Rappel de livraison",
       cancelled: "Commande annulée"
     },
     languages: {
@@ -456,6 +461,10 @@ const fr: Dictionary = {
       fr: "Français"
     },
     openWhatsapp: "Ouvrir dans WhatsApp",
+    pasteTitle: "Coller le message du client",
+    pastePlaceholder: "Collez ici le message WhatsApp ou Instagram (nom, téléphone, ville, adresse)…",
+    pasteApply: "Remplir le formulaire",
+    pasteHint: "Vérifiez les champs avant d'enregistrer.",
     blockNumber: "Bloquer ce numéro",
     blockDescription: "Les nouvelles commandes de ce numéro seront arrêtées à la saisie (un propriétaire ou admin peut passer outre).",
     blocked: "Numéro bloqué",
@@ -874,6 +883,73 @@ const fr: Dictionary = {
     dormantDescription: "Articles sans vente (ou depuis la première réception s'ils n'ont jamais été vendus), valorisés au coût.",
     idleOver: "Sans vente depuis {days} j et plus",
     monthNotOver: "Ce mois n'est pas terminé : vous pourrez le clôturer dès le 1er du mois prochain (onglet Mois dernier). La proposition ci-dessus n'est qu'un aperçu."
+  },
+  stores: {
+    title: "Boutiques en ligne",
+    description: "Les commandes de votre boutique Shopify, WooCommerce ou de votre propre site arrivent ici toutes seules.",
+    add: "Connecter une boutique",
+    platform: "Plateforme",
+    name: "Nom de la boutique",
+    url: "Adresse de la boutique (facultatif)",
+    platforms: {
+      shopify: "Shopify",
+      woocommerce: "WooCommerce (WordPress)",
+      custom: "Site sur mesure",
+      youcan: "YouCan"
+    },
+    shopifySecret: "Clé de signature Shopify",
+    shopifySecretHint: "Dans Shopify : Paramètres → Notifications → Webhooks. La clé s'affiche sous la liste (« Vos webhooks seront signés avec… »).",
+    secretGenerated: "Une clé secrète est créée pour vous ; vous la collerez dans votre boutique.",
+    connect: "Connecter",
+    setupNow: "Terminez la configuration dans votre boutique",
+    webhookUrl: "Adresse du webhook",
+    secret: "Clé secrète",
+    secretOnce: "Copiez la clé maintenant : elle ne sera plus affichée.",
+    done: "Terminé",
+    stepsShopify: ["Dans Shopify : Paramètres → Notifications → Webhooks → Créer un webhook.", "Événement : Création de commande. Format : JSON.", "URL : collez l'adresse du webhook ci-dessus, puis enregistrez.", "Passez une commande test : elle doit apparaître dans Commandes en quelques secondes."],
+    stepsWoo: ["Dans WordPress : WooCommerce → Réglages → Avancé → Webhooks → Ajouter un webhook.", "État : Actif. Sujet : Commande créée.", "URL de livraison : l'adresse du webhook ci-dessus. Secret : la clé ci-dessus. Version de l'API : v3.", "Enregistrez, puis passez une commande test."],
+    stepsCustom: ["Envoyez chaque nouvelle commande en JSON (POST) à l'adresse du webhook.", "Signez le corps brut : en-tête X-Merchant-Signature = HMAC-SHA256 (hex) avec la clé secrète.", "Le format est décrit dans docs/INTEGRATIONS.md (id, client, articles avec SKU, livraison, remise)."],
+    active: "Active",
+    paused: "En pause",
+    pause: "Mettre en pause",
+    resume: "Reprendre",
+    renewSecret: "Nouvelle clé",
+    lastOrder: "dernière commande",
+    noOrderYet: "aucune commande reçue",
+    empty: "Aucune boutique connectée.",
+    ruleNew: "Les commandes boutique arrivent en « Nouvelle » : vous les appelez et confirmez toujours, la liste noire s'applique.",
+    ruleSku: "Chaque produit de la boutique doit avoir le même SKU que dans Merchant OS, sinon la commande attend dans « Commandes boutique à corriger ».",
+    youcanSoon: "YouCan : bientôt (nécessite une application partenaire YouCan)."
+  },
+  storeInbox: {
+    title: "Commandes boutique à corriger",
+    description: "Commandes reçues de vos boutiques qui n'ont pas pu être créées. Corrigez la cause, puis réessayez.",
+    empty: "Rien à corriger",
+    emptyHint: "Toutes les commandes boutique ont été importées.",
+    banner: "{count} commande(s) boutique demandent votre attention",
+    retry: "Réessayer",
+    ignore: "Écarter",
+    stillWaiting: "Toujours bloquée : corrigez d'abord la cause.",
+    reasons: {
+      unknown_sku: "SKU inconnu",
+      invalid_phone: "Téléphone invalide",
+      customer_blocked: "Client bloqué",
+      currency: "Autre devise",
+      no_items: "Aucun produit",
+      no_location: "Aucun entrepôt",
+      store_inactive: "Boutique en pause",
+      invalid_order: "Commande invalide"
+    },
+    fixes: {
+      unknown_sku: "Donnez au produit le même SKU que dans la boutique (Produits), puis réessayez.",
+      invalid_phone: "Ce n'est pas un numéro marocain. Contactez le client et créez la commande à la main.",
+      customer_blocked: "Ce client est sur votre liste noire. Retirez-le pour importer, ou écartez.",
+      currency: "Seules les commandes en MAD sont importées. Réglez la devise de la boutique sur MAD.",
+      no_items: "La commande ne contient aucun produit.",
+      no_location: "Créez un entrepôt par défaut dans Stock, puis réessayez.",
+      store_inactive: "La boutique était en pause à l'arrivée de la commande. Reprenez-la dans Paramètres, puis réessayez.",
+      invalid_order: "La commande est incomplète ou trop grande. Créez-la à la main."
+    }
   },
   assistant: {
     title: "Claude (lecture seule)",

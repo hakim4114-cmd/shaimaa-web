@@ -58,7 +58,15 @@ export default async function OrderPage({ params }: { params: Promise<{ id: stri
   const history = can.manageOrders && order.contact ? await getCustomerHistory(supabase, organizationId, order.contact.phone) : null;
   const itemsText = order.items.map((item) => `• ${item.productName}${item.variantTitle ? ` (${item.variantTitle})` : ""} × ${item.quantity}`).join("\n");
   const defaultTemplate: WhatsappTemplate =
-    order.status === "cancelled" ? "cancelled" : awaitingConfirmation ? (order.callAttempts > 0 ? "noAnswer" : "confirm") : "confirmed";
+    order.status === "cancelled"
+      ? "cancelled"
+      : awaitingConfirmation
+        ? order.callAttempts > 0
+          ? "noAnswer"
+          : "confirm"
+        : order.status === "shipped"
+          ? "shipped"
+          : "confirmed";
 
   return (
     <div className="flex flex-col gap-6">
@@ -233,7 +241,8 @@ export default async function OrderPage({ params }: { params: Promise<{ id: stri
                 orderNumber: order.orderNumber,
                 items: itemsText,
                 total: formatMoneyPlain(order.codAmountCents, locale),
-                city: order.city
+                city: order.city,
+                tracking: shipment?.trackingNumber ?? null
               }}
             />
           ) : null}

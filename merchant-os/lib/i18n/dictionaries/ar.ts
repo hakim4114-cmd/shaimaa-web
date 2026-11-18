@@ -49,7 +49,7 @@ const ar: Dictionary = {
     themeSystem: "حسب النظام",
     language: "اللغة",
     notificationsAllClear: "والو كيتسناك دابا.",
-    alerts: { obligationsOverdue: "التزامات فات الوقت ديالها", obligationsSoon: "التزامات حالّة فـ 7 أيام", callsDue: "مكالمات خاصك تديرها", deliveryProblems: "مشاكل التوصيل", returnsWaiting: "مرتجعات للاستلام", lowStock: "منتجات المخزون ديالها ناقص" }
+    alerts: { obligationsOverdue: "التزامات فات الوقت ديالها", obligationsSoon: "التزامات حالّة فـ 7 أيام", callsDue: "مكالمات خاصك تديرها", deliveryProblems: "مشاكل التوصيل", returnsWaiting: "مرتجعات للاستلام", lowStock: "منتجات المخزون ديالها ناقص", storeOrders: "طلبات المتجر خاصها تصحيح" }
   },
   commandCenter: {
     title: "لوحة القيادة",
@@ -327,6 +327,9 @@ const ar: Dictionary = {
     OVER_SAFE_LIMIT: "فوق المبلغ الآمن: خاص سبب مكتوب.",
     ALREADY_PAID: "تخلّص من قبل.",
     MONTH_NOT_OVER: "الشهر ما كيتسدش حتى يسالي.",
+    TOO_MANY_STORES: "تقدر تربط حتى 20 متجر.",
+    SECRET_TOO_SHORT: "المفتاح قصير بزاف: نسخو كامل (16 حرف على الأقل).",
+    NOT_RETRYABLE: "هاد الطلب ديال المتجر تعالج من قبل.",
     UNKNOWN: "حدث خطأ. أعد المحاولة.",
   },
   orders: {
@@ -447,6 +450,8 @@ const ar: Dictionary = {
       confirm: "طلب التأكيد",
       noAnswer: "لم نتمكن من الوصول إليك",
       confirmed: "تم تأكيد الطلب",
+      shipped: "الطلبية تصيفطات (رقم التتبع)",
+      deliveryReminder: "تذكير بالتوصيل",
       cancelled: "تم إلغاء الطلب"
     },
     languages: {
@@ -455,6 +460,10 @@ const ar: Dictionary = {
       fr: "الفرنسية"
     },
     openWhatsapp: "فتح في واتساب",
+    pasteTitle: "لصق رسالة الزبون",
+    pastePlaceholder: "لصق هنا الرسالة ديال واتساب ولا إنستغرام (الاسم، الهاتف، المدينة، العنوان)…",
+    pasteApply: "عمّر الخانات",
+    pasteHint: "راجع الخانات قبل ما تسجل.",
     blockNumber: "حظر هذا الرقم",
     blockDescription: "ستُوقَف الطلبات الجديدة من هذا الرقم عند الإدخال (يستطيع المالك أو المسؤول التجاوز).",
     blocked: "تم حظر الرقم",
@@ -873,6 +882,73 @@ const ar: Dictionary = {
     dormantDescription: "القطع اللي ما تباعتش (ولا من أول استلام إلا عمرها ما تباعت)، محسوبة بالتكلفة.",
     idleOver: "بلا بيع {days} يوم ولا أكثر",
     monthNotOver: "هاد الشهر مازال ما سالاش: تقدر تسدّو من نهار 1 ديال الشهر الجاي (خانة الشهر الماضي). الاقتراح اللي فوق غير معاينة."
+  },
+  stores: {
+    title: "المتاجر الإلكترونية",
+    description: "الطلبات ديال المتجر ديالك ف Shopify ولا WooCommerce ولا الموقع ديالك كيوصلو هنا بوحدهم.",
+    add: "ربط متجر",
+    platform: "المنصة",
+    name: "اسم المتجر",
+    url: "رابط المتجر (اختياري)",
+    platforms: {
+      shopify: "Shopify",
+      woocommerce: "WooCommerce (WordPress)",
+      custom: "موقع خاص",
+      youcan: "YouCan"
+    },
+    shopifySecret: "مفتاح التوقيع ديال Shopify",
+    shopifySecretHint: "ف Shopify: Settings ← Notifications ← Webhooks. المفتاح كيبان تحت اللائحة (Your webhooks will be signed with…).",
+    secretGenerated: "غادي يتصاوب ليك مفتاح سري، وغادي تلصقو فالمتجر ديالك.",
+    connect: "ربط",
+    setupNow: "كمل الإعداد فالمتجر ديالك",
+    webhookUrl: "رابط الاستقبال (Webhook)",
+    secret: "المفتاح السري",
+    secretOnce: "نسخ المفتاح دابا: ما غاديش يبان مرة أخرى.",
+    done: "ساليت",
+    stepsShopify: ["ف Shopify: Settings ← Notifications ← Webhooks ← Create webhook.", "Event: Order creation. Format: JSON.", "URL: لصق رابط الاستقبال اللي فوق، ومن بعد سجل.", "دير طلب تجريبي: خاصو يبان فالطلبات فثواني."],
+    stepsWoo: ["ف WordPress: WooCommerce ← Settings ← Advanced ← Webhooks ← Add webhook.", "Status: Active. Topic: Order created.", "Delivery URL: رابط الاستقبال اللي فوق. Secret: المفتاح اللي فوق. API version: v3.", "سجل، ومن بعد دير طلب تجريبي."],
+    stepsCustom: ["صيفط كل طلب جديد بصيغة JSON (POST) لرابط الاستقبال.", "وقّع المحتوى: الترويسة X-Merchant-Signature = HMAC-SHA256 (hex) بالمفتاح السري.", "الصيغة موضحة ف docs/INTEGRATIONS.md (id، الزبون، المنتجات بالـ SKU، التوصيل، التخفيض)."],
+    active: "خدام",
+    paused: "موقوف",
+    pause: "وقّف",
+    resume: "رجّع",
+    renewSecret: "مفتاح جديد",
+    lastOrder: "آخر طلب",
+    noOrderYet: "حتى طلب ما وصل باقي",
+    empty: "حتى متجر ما مربوط.",
+    ruleNew: "طلبات المتجر كيدخلو فـ «جديد»: باقي خاصك تعيط وتأكد، واللائحة السوداء كتطبق.",
+    ruleSku: "كل منتج فالمتجر خاصو يكون عندو نفس الـ SKU اللي ف Merchant OS، وإلا الطلب كيتسنى فـ «طلبات المتجر خاصها تصحيح».",
+    youcanSoon: "YouCan: قريبا (كيحتاج تطبيق شريك ف YouCan)."
+  },
+  storeInbox: {
+    title: "طلبات المتجر خاصها تصحيح",
+    description: "طلبات جات من المتاجر ديالك وما قدرناش نخلقوها. صحح السبب ومن بعد عاود.",
+    empty: "والو ما يتصحح",
+    emptyHint: "جميع طلبات المتاجر دخلات.",
+    banner: "{count} طلب من المتجر محتاج المراجعة ديالك",
+    retry: "عاود",
+    ignore: "تجاهل",
+    stillWaiting: "باقي محبوس: صحح السبب الأول.",
+    reasons: {
+      unknown_sku: "SKU ما معروفش",
+      invalid_phone: "رقم غالط",
+      customer_blocked: "زبون محظور",
+      currency: "عملة أخرى",
+      no_items: "بلا منتجات",
+      no_location: "ما كاينش مخزن",
+      store_inactive: "المتجر موقوف",
+      invalid_order: "طلب ناقص"
+    },
+    fixes: {
+      unknown_sku: "عطي للمنتج نفس الـ SKU اللي فالمتجر (المنتجات)، ومن بعد عاود.",
+      invalid_phone: "الرقم ماشي رقم مغربي. تواصل مع الزبون وخلق الطلب يدويا.",
+      customer_blocked: "هاد الزبون فاللائحة السوداء. حيدو منها باش يدخل الطلب، ولا تجاهلو.",
+      currency: "كيدخلو غير الطلبات بالدرهم. بدل العملة ديال المتجر لـ MAD.",
+      no_items: "الطلب ما فيه حتى منتج.",
+      no_location: "زيد مخزن افتراضي فالمخزون، ومن بعد عاود.",
+      store_inactive: "المتجر كان موقوف ملي وصل الطلب. رجعو من الإعدادات ومن بعد عاود.",
+      invalid_order: "الطلب ناقص ولا كبير بزاف. خلقو يدويا."
+    }
   },
   assistant: {
     title: "Claude (قراءة فقط)",

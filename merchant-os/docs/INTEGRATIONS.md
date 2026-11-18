@@ -83,13 +83,39 @@ Printable documents planned: **delivery slip per order** (customer, phone, city,
 2. **Live link:** the owner creates a read-only, revocable link for one report; Google Sheets pulls it with `=IMPORTDATA("…")` and refreshes it periodically. No Google account connection needed. Customer phone numbers and addresses are excluded from these links by default.
 3. **Full connection** (only if levels 1–2 are not enough): Google Sheets API with the owner's Google account (OAuth). Needs a Google Cloud project and consent screen; writes reports into a chosen spreadsheet automatically.
 
+## Online stores (1.5.0)
+
+A merchant connects a store in **Settings → Online stores**. Each connection has its own webhook address, `/api/webhooks/store/{storeId}`, and a signing secret stored in `store_secrets`, which only the server (service role) can read. The route checks the signature, turns the platform payload into one normalized order (`lib/integrations/stores.ts`), then calls `ingest_store_order`. Every delivery is kept in `external_orders`: imported, waiting for the merchant (`needs_attention` with a reason), or dismissed. Business rules: `docs/BUSINESS_RULES.md` → Store orders.
+
+| Platform | How the merchant connects | Signature | Topic |
+| --- | --- | --- | --- |
+| Shopify | Admin → Settings → Notifications → Webhooks → *Order creation*, JSON. The merchant pastes the key Shopify shows ("Your webhooks will be signed with…"). | `X-Shopify-Hmac-Sha256`, base64 HMAC-SHA256 of the raw body | `X-Shopify-Topic: orders/create` (others are acknowledged and ignored) |
+| WooCommerce | WooCommerce → Settings → Advanced → Webhooks → *Order created*, API v3. We generate the secret. The unsigned `webhook_id=…` ping sent on save is answered 200. | `X-WC-Webhook-Signature`, base64 | `X-WC-Webhook-Topic: order.created` |
+| Custom site | POST JSON (below). We generate the secret. | `X-Merchant-Signature`, hex (base64 also accepted) | — |
+| YouCan | **Not available yet.** YouCan delivers order webhooks only to a registered YouCan app (OAuth client, Partner account); the signature (`X-YOUCAN-SIGNATURE`, hex HMAC-SHA256) uses that app's client secret, and the `order.created` payload is trimmed, so items and address must be fetched with the API (`docs.youcan.shop/store-admin/resthooks/overview`). Needs a partner app, an OAuth install flow and per-store tokens. | | |
+
+Mapping notes: Shopify lines use `price` (before discounts) and `total_discounts`; shipping from `total_shipping_price_set`, else the sum of `shipping_lines`; `financial_status = paid` means nothing to collect. WooCommerce lines use `subtotal / quantity` and `discount_total`; an order is prepaid only when it is not `cod` and has `date_paid`. Phone numbers are converted to E.164 when they are Moroccan; otherwise kept as typed and flagged `invalid_phone`.
+
+Custom site format (amounts in MAD, decimals allowed):
+
+```json
+{
+  "id": "A-1001", "number": "1001", "currency": "MAD", "paid": false,
+  "customer": { "name": "Salma B", "phone": "0611223344", "city": "Kénitra", "address": "Hay Saknia, rue 5" },
+  "items": [{ "sku": "WAL-BLK", "title": "Wallet", "quantity": 1, "price": 149 }],
+  "shipping": 35, "discount": 0, "note": "after 6pm"
+}
+```
+
+Responses: 200 when handled (including "already imported" and "needs attention": the store must not retry those), 401 bad signature, 400 malformed order, 404 unknown store, 500 temporary error (the store retries).
+
 ## CSV import/export (Phase 3)
 
 Orders, products/stock and carrier statements. Every import: upload → column mapping → validation report → dry run → apply in one transaction → import log with row-level errors.
 
 ## WhatsApp (Phase 3)
 
-Through the official WhatsApp Business Platform (Cloud API) only, after the merchant has a verified business number and approved message templates. Until then the app may offer `wa.me` click-to-chat links, which are clearly labelled as opening WhatsApp on the user's device, not as an integration. Support conversations (`support_conversations`, `support_messages`) are added with this phase.
+Implemented without an API (1.5.0): prefilled `wa.me` messages from the order page (confirm, no answer, confirmed, shipped with tracking number, delivery reminder, cancelled; Darija, Arabic, French) and "paste the customer's message" on the new-order form (`lib/orders/paste.ts`: phone, city, name, address, always reviewed before saving). Sending automatically requires the official WhatsApp Business Platform (Cloud API), after the merchant has a verified business number and approved message templates. Until then the app offers `wa.me` click-to-chat links, which are clearly labelled as opening WhatsApp on the user's device, not as an integration. Support conversations (`support_conversations`, `support_messages`) are added with this phase.
 
 ## Marketing (Phase 3–5)
 

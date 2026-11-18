@@ -1,4 +1,4 @@
-import { Package, PhoneCall, Plus, Search, Upload } from "lucide-react";
+import { Inbox, Package, PhoneCall, Plus, Search, Upload } from "lucide-react";
 import { ExportMenu } from "@/components/export/export-menu";
 import Link from "next/link";
 import { buttonVariants } from "@/components/ui/button";
@@ -53,10 +53,14 @@ export default async function OrdersPage({ searchParams }: { searchParams: Promi
   const q = typeof params.q === "string" ? params.q.trim().slice(0, 100) : "";
   const view = orderViews.find((v) => v === params.view) ?? (q ? "all" : "to_call");
   const { supabase, organizationId, can } = await requireOrganization();
-  const [orders, counts] = await Promise.all([
+  const [orders, counts, inbox] = await Promise.all([
     listOrders(supabase, organizationId, { view, q, withContacts: can.seeContacts }),
-    countOrdersByView(supabase, organizationId)
+    countOrdersByView(supabase, organizationId),
+    can.manageOrders
+      ? supabase.from("external_orders").select("id", { count: "exact", head: true }).eq("organization_id", organizationId).eq("status", "needs_attention")
+      : null
   ]);
+  const inboxCount = inbox?.count ?? 0;
   // eslint-disable-next-line react-hooks/purity -- a server render is a single point in time
   const now = Date.now();
   const countFor = (tab: OrderView) =>
@@ -83,6 +87,13 @@ export default async function OrdersPage({ searchParams }: { searchParams: Promi
           </>
         }
       />
+
+      {inboxCount > 0 ? (
+        <Link href="/orders/inbox" className="flex items-center gap-3 rounded-lg border border-danger/30 bg-danger-soft px-4 py-3 text-sm font-medium text-danger">
+          <Inbox className="size-4 shrink-0" aria-hidden />
+          {interpolate(t.storeInbox.banner, { count: inboxCount })}
+        </Link>
+      ) : null}
 
       {counts && counts.due > 0 && view !== "to_call" ? (
         <Link href="/orders?view=to_call" className="flex items-center gap-3 rounded-lg border border-warning/30 bg-warning-soft px-4 py-3 text-sm font-medium text-warning">
