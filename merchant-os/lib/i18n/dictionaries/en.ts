@@ -46,8 +46,11 @@ const en = {
     themeDark: "Dark",
     themeSystem: "System",
     language: "Language",
+    sections: "Sections",
+    sectionsEssential: "Essentials",
+    sectionsAll: "All sections",
     notificationsAllClear: "Nothing needs your attention right now.",
-    alerts: { obligationsOverdue: "Obligations overdue", obligationsSoon: "Obligations due within 7 days", callsDue: "Calls to make", deliveryProblems: "Delivery problems", returnsWaiting: "Returns to receive", lowStock: "Products low in stock", storeOrders: "Store orders to fix" }
+    alerts: { obligationsOverdue: "Obligations overdue", obligationsSoon: "Obligations due within 7 days", callsDue: "Calls to make", deliveryProblems: "Delivery problems", returnsWaiting: "Returns to receive", lowStock: "Products low in stock", storeOrders: "Store orders to fix", waitingToShip: "Confirmed over 24 h ago, not shipped yet" }
   },
   commandCenter: {
     title: "Command center",
@@ -90,6 +93,8 @@ const en = {
     noAccount: "New to Merchant OS?",
     haveAccount: "Already have an account?",
     goSignUp: "Create an account",
+    signupClosedTitle: "Sign-up is closed",
+    signupClosedText: "Merchant OS is in a private trial. Access is by invitation only.",
     goSignIn: "Sign in",
     verifyTitle: "Check your email",
     verifySubtitle: "We sent a confirmation link to {email}. Open it in this browser to activate your account. The link expires in one hour.",
@@ -151,12 +156,22 @@ const en = {
     }
   },
   workspace: {
-    readyTitle: "Your workspace is ready",
-    readyDescription: "Signed in to {organization} as {role}. Modules arrive one by one; this page shows real figures as soon as orders exist.",
+    readyTitle: "Getting started",
+    readyDescription: "Signed in to {organization} as {role}. Do these steps in order; each one ticks itself when it is done.",
     stepDatabase: "Database connected",
     stepOrganization: "Business created",
-    stepCatalog: "Add products and stock",
-    stepOrders: "Record your first orders",
+    stepCatalog: "Add your products with their cost",
+    stepOrders: "Record your first order",
+    stepCatalogHint: "Without the cost, profit and the pricing center are wrong.",
+    stepRates: "Set the delivery fee per city",
+    stepRatesHint: "Settings → Shipping rates. Used for every manual order.",
+    stepSendit: "Connect Sendit (keys and pickup address)",
+    stepSenditHint: "Settings → Sendit: paste your keys, choose your pickup city, test the connection.",
+    stepCash: "Enter your opening cash",
+    stepCashHint: "Owner pay → settings: the money you start with, so safe pay is right.",
+    stepOrdersHint: "Orders → New, or paste the customer's WhatsApp message.",
+    stepShip: "Ship your first parcel",
+    stepShipHint: "Confirm the order, then ship it with Sendit; check the details at Sendit.",
     upcoming: "Next"
   },
   products: {

@@ -8,6 +8,7 @@ import { Field, Input } from "@/components/ui/input";
 import type { AuthErrorCode, FormState } from "@/lib/auth/errors";
 import { useI18n } from "@/lib/i18n/provider";
 import { FormAlert } from "./form-alert";
+import { signupOpen } from "@/lib/auth/signup";
 
 function useErrorText() {
   const { t } = useI18n();
@@ -35,12 +36,14 @@ export function SignInForm({ next, initialError }: { next: string; initialError?
       <Button type="submit" disabled={pending} className="mt-1 w-full">
         {pending ? t.common.loading : t.auth.signInButton}
       </Button>
-      <p className="text-center text-sm text-muted-foreground">
-        {t.auth.noAccount}{" "}
-        <Link href="/sign-up" className="font-medium text-accent hover:underline">
-          {t.auth.goSignUp}
-        </Link>
-      </p>
+      {signupOpen ? (
+        <p className="text-center text-sm text-muted-foreground">
+          {t.auth.noAccount}{" "}
+          <Link href="/sign-up" className="font-medium text-accent hover:underline">
+            {t.auth.goSignUp}
+          </Link>
+        </p>
+      ) : null}
     </form>
   );
 }

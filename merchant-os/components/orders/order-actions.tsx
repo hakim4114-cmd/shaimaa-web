@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useId, useState, useTransition } from "react";
 import { toast } from "sonner";
 import type { AutoShipResult } from "@/lib/shipping/ship-order";
-import { addOrderNote, blockNumber, changeOrderStatus, logCall } from "@/app/(app)/orders/actions";
+import { addOrderNote, autoShipOrder, blockNumber, changeOrderStatus, logCall } from "@/app/(app)/orders/actions";
 import { FormAlert } from "@/components/auth/form-alert";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Card, CardBody, CardHeader } from "@/components/ui/card";
@@ -44,22 +44,37 @@ function callBackPresets() {
   return { inOneHour, evening: evening > now ? evening : null, tomorrow };
 }
 
-/** Records the outcome of one confirmation call. */
-/** Tells the user what automatic sending to Sendit did after a confirmation. */
-function useAutoShipReport() {
+/**
+ * After a confirmation: asks the server to send the parcel to Sendit (if the
+ * merchant turned it on), as a separate request so the confirmation itself
+ * never waits for Sendit, then tells the user what happened.
+ */
+function useAutoShipAfterConfirm() {
   const { t } = useI18n();
   const ts = t.shipping;
-  return (result: AutoShipResult | undefined) => {
-    if (!result || result.status === "off") return;
+  const router = useRouter();
+  const report = (result: AutoShipResult) => {
+    if (result.status === "off") return;
     if (result.status === "shipped") toast.success(interpolate(ts.autoShipped, { code: result.code, district: result.district }));
     else if (result.status === "skipped") toast.info(result.reason === "district_unknown" ? ts.autoShipNoDistrict : ts.autoShipNotPossible);
     else toast.error(`${ts.autoShipFailed} ${t.errors[result.error]}${result.detail ? ` (${result.detail})` : ""}`);
   };
+  return (orderId: string, confirmed: boolean | undefined) => {
+    if (!confirmed) return;
+    void autoShipOrder(orderId)
+      .then((result) => {
+        report(result);
+        if (result.status !== "off") router.refresh();
+      })
+      .catch(() => toast.error(ts.autoShipFailed));
+  };
 }
+
+/** Records the outcome of one confirmation call. */
 
 export function CallPanel({ orderId, phoneHref }: { orderId: string; phoneHref: string | null }) {
   const { t } = useI18n();
-  const reportAutoShip = useAutoShipReport();
+  const afterConfirm = useAutoShipAfterConfirm();
   const to = t.orders;
   const id = useId();
   const router = useRouter();
@@ -82,7 +97,7 @@ export function CallPanel({ orderId, phoneHref }: { orderId: string; phoneHref: 
         return;
       }
       toast.success(to.callSaved);
-      reportAutoShip(result.autoShip);
+      afterConfirm(orderId, result.confirmed);
       setOutcome(null);
       setNote("");
       setCallBack("");
@@ -192,7 +207,7 @@ export function CallPanel({ orderId, phoneHref }: { orderId: string; phoneHref: 
 /** Manual workflow steps available before shipping (step 5 adds shipping). */
 export function StatusActions({ orderId, status, canManage, canPrepare }: { orderId: string; status: OrderStatus; canManage: boolean; canPrepare: boolean }) {
   const { t } = useI18n();
-  const reportAutoShip = useAutoShipReport();
+  const afterConfirm = useAutoShipAfterConfirm();
   const to = t.orders;
   const router = useRouter();
   const [pending, startTransition] = useTransition();
@@ -212,7 +227,7 @@ export function StatusActions({ orderId, status, canManage, canPrepare }: { orde
         return;
       }
       toast.success(t.orderStatus[target]);
-      reportAutoShip(result.autoShip);
+      afterConfirm(orderId, result.confirmed);
       router.refresh();
     });
   }

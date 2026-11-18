@@ -6,11 +6,13 @@ import { getSessionContext } from "@/lib/auth/session";
 import { getAlerts } from "@/lib/data/alerts";
 import { requireOrganization } from "@/lib/data/context";
 import { isDevelopment } from "@/lib/env";
-import { sidebarCookieName } from "@/lib/shell";
+import { navModeCookieName, sidebarCookieName } from "@/lib/shell";
 import { getSupabasePublicConfig } from "@/lib/supabase/config";
 
 export default async function AppLayout({ children }: { children: ReactNode }) {
-  const collapsed = (await cookies()).get(sidebarCookieName)?.value === "collapsed";
+  const cookieStore = await cookies();
+  const collapsed = cookieStore.get(sidebarCookieName)?.value === "collapsed";
+  const essentialOnly = cookieStore.get(navModeCookieName)?.value !== "full";
   const configured = getSupabasePublicConfig() !== null;
   const session = configured ? await getSessionContext() : null;
 
@@ -33,7 +35,7 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
   const alerts = session && session.active ? await getAlerts(await requireOrganization()).catch(() => []) : [];
 
   return (
-    <AppShell showDevTools={isDevelopment} initialCollapsed={collapsed} account={account} alerts={alerts}>
+    <AppShell showDevTools={isDevelopment} initialCollapsed={collapsed} essentialOnly={essentialOnly} account={account} alerts={alerts}>
       {children}
     </AppShell>
   );

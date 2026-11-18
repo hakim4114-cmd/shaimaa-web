@@ -22,19 +22,26 @@ export default async function CommandCenterPage({ searchParams }: { searchParams
 
   if (session?.active) {
     const supabase = await createSupabaseServerClient();
-    const { count: productCount } = await supabase
-      .from("products")
-      .select("id", { count: "exact", head: true })
-      .eq("organization_id", session.active.organization.id);
-    const { count: orderCount } = await supabase
-      .from("orders")
-      .select("id", { count: "exact", head: true })
-      .eq("organization_id", session.active.organization.id);
-    const readySteps: { label: string; done: boolean; href?: string }[] = [
-      { label: t.workspace.stepDatabase, done: true },
-      { label: t.workspace.stepOrganization, done: true },
-      { label: t.workspace.stepCatalog, done: (productCount ?? 0) > 0, href: "/products" },
-      { label: t.workspace.stepOrders, done: (orderCount ?? 0) > 0, href: "/orders/new" }
+    const orgId = session.active.organization.id;
+    const head = { count: "exact" as const, head: true };
+    // "Getting started": each step is checked from real records, in the order a new shop needs them.
+    const [costed, rates, provider, cash, orders, parcels] = await Promise.all([
+      supabase.from("product_variants").select("id", head).eq("organization_id", orgId).eq("status", "active").not("cost_cents", "is", null),
+      supabase.from("shipping_rates").select("city_id", head).eq("organization_id", orgId).is("provider_id", null),
+      supabase.from("shipping_providers").select("credentials_set, settings").eq("organization_id", orgId).eq("adapter_key", "sendit").maybeSingle(),
+      supabase.from("cash_settings").select("organization_id", head).eq("organization_id", orgId),
+      supabase.from("orders").select("id", head).eq("organization_id", orgId),
+      supabase.from("shipments").select("id", head).eq("organization_id", orgId)
+    ]);
+    const pickupSet = Boolean((provider.data?.settings as { pickup_district_id?: unknown } | null)?.pickup_district_id);
+    const tw = t.workspace;
+    const readySteps: { label: string; hint: string; done: boolean; href?: string }[] = [
+      { label: tw.stepCatalog, hint: tw.stepCatalogHint, done: (costed.count ?? 0) > 0, href: "/products" },
+      { label: tw.stepRates, hint: tw.stepRatesHint, done: (rates.count ?? 0) > 0, href: "/settings" },
+      { label: tw.stepSendit, hint: tw.stepSenditHint, done: Boolean(provider.data?.credentials_set) && pickupSet, href: "/settings" },
+      { label: tw.stepCash, hint: tw.stepCashHint, done: (cash.count ?? 0) > 0, href: "/pay" },
+      { label: tw.stepOrders, hint: tw.stepOrdersHint, done: (orders.count ?? 0) > 0, href: "/orders/new" },
+      { label: tw.stepShip, hint: tw.stepShipHint, done: (parcels.count ?? 0) > 0, href: "/orders?view=confirmed" }
     ];
     const setupDone = readySteps.every((step) => step.done);
     const ctx = await requireOrganization();
@@ -103,20 +110,22 @@ export default async function CommandCenterPage({ searchParams }: { searchParams
           <CardBody>
             <ol className="flex flex-col divide-y divide-border">
               {readySteps.map((step) => (
-                <li key={step.label} className="flex items-center gap-3 py-3 first:pt-0 last:pb-0">
+                <li key={step.label} className="flex items-start gap-3 py-3 first:pt-0 last:pb-0">
                   {step.done ? (
-                    <CircleCheck className="size-5 shrink-0 text-success" aria-hidden />
+                    <CircleCheck className="mt-0.5 size-5 shrink-0 text-success" aria-hidden />
                   ) : (
-                    <CircleDashed className="size-5 shrink-0 text-subtle-foreground" aria-hidden />
+                    <CircleDashed className="mt-0.5 size-5 shrink-0 text-subtle-foreground" aria-hidden />
                   )}
-                  {step.href && !step.done ? (
-                    <Link href={step.href} className="min-w-0 flex-1 text-sm font-medium text-accent hover:underline">
-                      {step.label}
-                    </Link>
-                  ) : (
-                    <span className="min-w-0 flex-1 text-sm text-foreground">{step.label}</span>
-                  )}
-                  {step.done || step.href ? null : <Badge>{t.workspace.upcoming}</Badge>}
+                  <span className="min-w-0 flex-1">
+                    {step.href && !step.done ? (
+                      <Link href={step.href} className="text-sm font-medium text-accent hover:underline">
+                        {step.label}
+                      </Link>
+                    ) : (
+                      <span className={step.done ? "text-sm text-muted-foreground line-through" : "text-sm text-foreground"}>{step.label}</span>
+                    )}
+                    {step.done ? null : <span className="block text-xs text-muted-foreground">{step.hint}</span>}
+                  </span>
                 </li>
               ))}
             </ol>

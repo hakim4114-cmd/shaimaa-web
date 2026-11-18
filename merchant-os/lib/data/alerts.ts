@@ -4,7 +4,7 @@ import type { requireOrganization } from "./context";
 
 type Ctx = Awaited<ReturnType<typeof requireOrganization>>;
 
-export type AlertKey = "obligationsOverdue" | "obligationsSoon" | "callsDue" | "deliveryProblems" | "returnsWaiting" | "lowStock" | "storeOrders";
+export type AlertKey = "obligationsOverdue" | "obligationsSoon" | "callsDue" | "deliveryProblems" | "returnsWaiting" | "lowStock" | "storeOrders" | "waitingToShip";
 export type Alert = { key: AlertKey; count: number; href: string; tone: "danger" | "warning" | "info" };
 
 function addDays(day: string, n: number) {
@@ -25,7 +25,11 @@ export async function getAlerts({ supabase, organizationId, can }: Ctx): Promise
     supabase.from("shipments").select("id", head).eq("organization_id", organizationId).eq("status", "failed_attempt"),
     supabase.from("returns").select("id", head).eq("organization_id", organizationId).eq("status", "awaiting_receipt"),
     can.manageOrders ? supabase.from("external_orders").select("id", head).eq("organization_id", organizationId).eq("status", "needs_attention") : null,
-    supabase.rpc("low_stock_count", { p_organization_id: organizationId })
+    supabase.rpc("low_stock_count", { p_organization_id: organizationId }),
+    // Confirmed more than 24 hours ago and still no parcel (auto-send skipped or failed, or forgotten).
+    can.prepareOrders
+      ? supabase.from("orders").select("id", head).eq("organization_id", organizationId).in("status", ["confirmed", "preparing"]).lt("confirmed_at", new Date(Date.now() - 86400000).toISOString())
+      : null
   ]);
   const count = (q: (typeof queries)[number]) => (q && "count" in q ? (q.count ?? 0) : 0);
   const low = Number(queries[6]?.data ?? 0);
@@ -34,6 +38,7 @@ export async function getAlerts({ supabase, organizationId, can }: Ctx): Promise
     { key: "obligationsSoon", count: count(queries[1]), href: "/pay", tone: "warning" },
     { key: "storeOrders", count: count(queries[5]), href: "/orders/inbox", tone: "danger" },
     { key: "callsDue", count: count(queries[2]), href: "/orders?view=to_call", tone: "info" },
+    { key: "waitingToShip", count: count(queries[7]), href: "/orders?view=confirmed", tone: "warning" },
     { key: "deliveryProblems", count: count(queries[3]), href: "/shipping?view=problems", tone: "warning" },
     { key: "returnsWaiting", count: count(queries[4]), href: "/returns", tone: "info" },
     { key: "lowStock", count: low, href: "/inventory?low=1", tone: "warning" }

@@ -1,5 +1,20 @@
 # Changelog
 
+## 1.10.0 — Review follow-ups (2026-11-19)
+
+### Changed
+- **Public sign-up is closed** during the private trial (Supabase `disable_signup`); the sign-up page says so and the sign-in page no longer links to it. Set `NEXT_PUBLIC_SIGNUP_OPEN=true` only after re-enabling sign-up in Supabase.
+- **Confirming never waits for Sendit:** automatic sending now runs as its own request right after the confirmation; when it cannot send, the reason is written in the order timeline.
+- **Getting started** on the home page: six real steps (products with cost, delivery fees, Sendit, opening cash, first order, first parcel), each ticked from your data.
+- **Essentials view** (Preferences → Sections, the default): hides Customers, Finance, Weekly review, Monthly close, Marketing and Pricing until you choose "All sections". The "Assistant (coming soon)" placeholder is removed; the Claude link is in Settings.
+- Manual and store orders share one code path for the customer record and the order number.
+
+### Added
+- Bell: orders confirmed more than 24 hours ago and still not shipped.
+
+### Fixed
+- A store order without a usable customer name failed and the store retried forever; it is now imported with "Client" + the last 4 digits of the phone.
+
 ## 1.9.0 — Review fixes: faster pages, correct low-stock count (2026-11-19)
 
 ### Changed

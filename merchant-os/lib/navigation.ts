@@ -11,7 +11,6 @@ import {
   Package,
   Palette,
   Settings,
-  Sparkles,
   Truck,
   Undo2,
   Users,
@@ -30,6 +29,8 @@ export type NavItem = {
   /** Roadmap phase that delivers the module (shown while href is absent). */
   phase?: number;
   devOnly?: boolean;
+  /** Hidden in the essential view (Preferences → Sections) until the owner needs it. */
+  advanced?: boolean;
 };
 
 export type NavGroup = { key: keyof Dictionary["nav"]["groups"]; items: NavItem[] };
@@ -42,7 +43,7 @@ export const navigation: NavGroup[] = [
     items: [
       { key: "commandCenter", icon: LayoutDashboard, href: "/" },
       { key: "orders", icon: Package, href: "/orders" },
-      { key: "customers", icon: Users, href: "/customers" },
+      { key: "customers", icon: Users, href: "/customers", advanced: true },
       { key: "shipping", icon: Truck, href: "/shipping" },
       { key: "returns", icon: Undo2, href: "/returns" }
     ]
@@ -58,18 +59,17 @@ export const navigation: NavGroup[] = [
     key: "money",
     items: [
       { key: "cod", icon: Banknote, href: "/cash" },
-      { key: "finance", icon: Wallet, href: "/finance" },
+      { key: "finance", icon: Wallet, href: "/finance", advanced: true },
       { key: "pay", icon: HandCoins, href: "/pay" },
-      { key: "review", icon: CalendarCheck, href: "/review" },
-      { key: "close", icon: CalendarRange, href: "/close" }
+      { key: "review", icon: CalendarCheck, href: "/review", advanced: true },
+      { key: "close", icon: CalendarRange, href: "/close", advanced: true }
     ]
   },
   {
     key: "growth",
     items: [
-      { key: "marketing", icon: Megaphone, href: "/marketing" },
-      { key: "pricing", icon: Calculator, href: "/pricing" },
-      { key: "assistant", icon: Sparkles, phase: 7 }
+      { key: "marketing", icon: Megaphone, href: "/marketing", advanced: true },
+      { key: "pricing", icon: Calculator, href: "/pricing", advanced: true }
     ]
   },
   {
@@ -81,8 +81,8 @@ export const navigation: NavGroup[] = [
   }
 ];
 
-export function visibleNavigation(isDevelopment: boolean): NavGroup[] {
+export function visibleNavigation(isDevelopment: boolean, essentialOnly = false): NavGroup[] {
   return navigation
-    .map((group) => ({ ...group, items: group.items.filter((item) => !item.devOnly || isDevelopment) }))
+    .map((group) => ({ ...group, items: group.items.filter((item) => (!item.devOnly || isDevelopment) && !(essentialOnly && item.advanced)) }))
     .filter((group) => group.items.length > 0);
 }
