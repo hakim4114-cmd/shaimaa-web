@@ -4,7 +4,7 @@ import { Check, Copy, PlugZap } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useId, useState, useTransition } from "react";
 import { toast } from "sonner";
-import { saveSenditSettings, testSenditConnection } from "@/app/(app)/shipping/actions";
+import { saveSenditKeys, saveSenditSettings, testSenditConnection } from "@/app/(app)/shipping/actions";
 import { FormAlert } from "@/components/auth/form-alert";
 import { Button } from "@/components/ui/button";
 import { Field, Input, NativeSelect } from "@/components/ui/input";
@@ -32,6 +32,26 @@ export function SenditSettingsForm({ initial, keysConfigured, webhookUrl }: { in
   const [cities, setCities] = useState<{ id: number; name: string; arabicName: string }[] | null>(null);
   const [value, setValue] = useState(initial);
   const [copied, setCopied] = useState(false);
+  const [editingKeys, setEditingKeys] = useState(!keysConfigured);
+  const [publicKey, setPublicKey] = useState("");
+  const [secretKey, setSecretKey] = useState("");
+
+  function saveKeys(event: React.FormEvent) {
+    event.preventDefault();
+    setError(null);
+    startTransition(async () => {
+      const result = await saveSenditKeys({ publicKey, secretKey });
+      if (result.error) {
+        setError({ code: result.error, detail: result.detail });
+        return;
+      }
+      setPublicKey("");
+      setSecretKey("");
+      setEditingKeys(false);
+      toast.success(ts.keysSaved);
+      router.refresh();
+    });
+  }
 
   function test() {
     setError(null);
@@ -80,8 +100,33 @@ export function SenditSettingsForm({ initial, keysConfigured, webhookUrl }: { in
         <Button variant="secondary" size="sm" onClick={test} disabled={pending || !keysConfigured}>
           <PlugZap /> {ts.testConnection}
         </Button>
+        {keysConfigured && !editingKeys ? (
+          <Button variant="ghost" size="sm" onClick={() => setEditingKeys(true)}>
+            {ts.changeKeys}
+          </Button>
+        ) : null}
       </div>
-      {!keysConfigured ? <p className="text-sm text-muted-foreground">{ts.keysHelp}</p> : null}
+      {editingKeys ? (
+        <form onSubmit={saveKeys} className="grid gap-3 rounded-md bg-surface-muted p-3 sm:grid-cols-2">
+          <p className="text-sm text-muted-foreground sm:col-span-2">{ts.keysHelp}</p>
+          <Field label={ts.publicKey} htmlFor={`${id}-pk`}>
+            <Input id={`${id}-pk`} dir="ltr" autoComplete="off" spellCheck={false} value={publicKey} maxLength={300} onChange={(e) => setPublicKey(e.target.value)} />
+          </Field>
+          <Field label={ts.secretKey} htmlFor={`${id}-sk`}>
+            <Input id={`${id}-sk`} dir="ltr" type="password" autoComplete="new-password" value={secretKey} maxLength={300} onChange={(e) => setSecretKey(e.target.value)} />
+          </Field>
+          <div className="flex gap-2 sm:col-span-2">
+            <Button type="submit" disabled={pending || publicKey.trim().length < 8 || secretKey.trim().length < 8}>
+              {ts.saveKeys}
+            </Button>
+            {keysConfigured ? (
+              <Button type="button" variant="ghost" onClick={() => setEditingKeys(false)}>
+                {t.common.cancel}
+              </Button>
+            ) : null}
+          </div>
+        </form>
+      ) : null}
 
       <form onSubmit={save} className="grid gap-4 sm:grid-cols-2">
         <Field label={ts.pickupCity} htmlFor={`${id}-city`} hint={cities ? undefined : ts.pickupCityHint}>

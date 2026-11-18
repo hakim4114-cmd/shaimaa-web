@@ -1589,6 +1589,35 @@ export type Database = {
           },
         ]
       }
+      provider_secrets: {
+        Row: {
+          provider_id: string
+          public_key: string
+          secret_key: string
+          updated_at: string
+        }
+        Insert: {
+          provider_id: string
+          public_key: string
+          secret_key: string
+          updated_at?: string
+        }
+        Update: {
+          provider_id?: string
+          public_key?: string
+          secret_key?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "provider_secrets_provider_id_fkey"
+            columns: ["provider_id"]
+            isOneToOne: true
+            referencedRelation: "shipping_providers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       return_items: {
         Row: {
           condition: Database["public"]["Enums"]["item_condition"]
@@ -1872,6 +1901,7 @@ export type Database = {
         Row: {
           adapter_key: string | null
           created_at: string
+          credentials_set: boolean
           id: string
           is_active: boolean
           kind: Database["public"]["Enums"]["shipping_provider_kind"]
@@ -1884,6 +1914,7 @@ export type Database = {
         Insert: {
           adapter_key?: string | null
           created_at?: string
+          credentials_set?: boolean
           id?: string
           is_active?: boolean
           kind?: Database["public"]["Enums"]["shipping_provider_kind"]
@@ -1896,6 +1927,7 @@ export type Database = {
         Update: {
           adapter_key?: string | null
           created_at?: string
+          credentials_set?: boolean
           id?: string
           is_active?: boolean
           kind?: Database["public"]["Enums"]["shipping_provider_kind"]
@@ -2651,6 +2683,14 @@ export type Database = {
       safe_withdrawal: { Args: { p_organization_id: string }; Returns: Json }
       save_product: {
         Args: { p_organization_id: string; p_payload: Json }
+        Returns: string
+      }
+      set_sendit_credentials: {
+        Args: {
+          p_organization_id: string
+          p_public_key: string
+          p_secret_key: string
+        }
         Returns: string
       }
       set_store_secret: {

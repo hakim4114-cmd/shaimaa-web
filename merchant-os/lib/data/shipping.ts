@@ -6,16 +6,16 @@ import type { requireOrganization } from "./context";
 type Client = Awaited<ReturnType<typeof requireOrganization>>["supabase"];
 export type ShipmentStatus = Database["public"]["Enums"]["shipment_status"];
 
-export type SenditProvider = { id: string; isActive: boolean; settings: SenditSettings };
+export type SenditProvider = { id: string; isActive: boolean; credentialsSet: boolean; settings: SenditSettings };
 
 export async function getSenditProvider(supabase: Client, organizationId: string): Promise<SenditProvider | null> {
   const { data } = await supabase
     .from("shipping_providers")
-    .select("id, is_active, settings")
+    .select("id, is_active, credentials_set, settings")
     .eq("organization_id", organizationId)
     .eq("adapter_key", "sendit")
     .maybeSingle();
-  return data ? { id: data.id, isActive: data.is_active, settings: readSenditSettings(data.settings) } : null;
+  return data ? { id: data.id, isActive: data.is_active, credentialsSet: data.credentials_set, settings: readSenditSettings(data.settings) } : null;
 }
 
 export type ShipmentRow = {

@@ -63,6 +63,7 @@ export const appErrorCodes = [
   "TOO_MANY_STORES",
   "SECRET_TOO_SHORT",
   "NOT_RETRYABLE",
+  "KEYS_INCOMPLETE",
   "UNKNOWN"
 ] as const;
 
@@ -110,6 +111,7 @@ const raised: Partial<Record<string, AppErrorCode>> = {
   TOO_MANY_STORES: "TOO_MANY_STORES",
   SECRET_TOO_SHORT: "SECRET_TOO_SHORT",
   NOT_RETRYABLE: "NOT_RETRYABLE",
+  KEYS_INCOMPLETE: "KEYS_INCOMPLETE",
   NOT_FOUND: "NOT_FOUND"
 };
 

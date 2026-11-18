@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.6.0 — Each merchant uses their own Sendit account (2026-11-18)
+
+### Changed
+- **Sendit keys per organization.** An owner or admin enters their own Sendit keys in Settings → Sendit. The keys are checked with Sendit, then stored on the server only (`provider_secrets`, service role). Parcels, labels, pickups, invoices, status refresh and webhook signatures all use the keys of the order's organization.
+- The shared `SENDIT_PUBLIC_KEY` / `SENDIT_SECRET_KEY` environment variables are no longer used: before this, every organization would have created parcels on the same Sendit account.
+
+### Action needed
+- Enter your Sendit keys again in Settings → Sendit (rotate them in Sendit first if they were ever shared), then delete the two old variables from Vercel.
+
 ## 1.5.0 — Online stores and WhatsApp (2026-11-18)
 
 ### Added

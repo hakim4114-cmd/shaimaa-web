@@ -16,12 +16,12 @@ import {
   pickupCities,
   requestPickup,
   searchDistricts,
-  senditKeys,
   type SenditDistrict
 } from "@/lib/shipping/sendit";
 import { buildDeliveryPayload, mapSenditStatus, toSenditPhone, type ShipmentStatus } from "@/lib/shipping/sendit-core";
 import type { Json } from "@/lib/supabase/database.types";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
+import { loadSenditKeys } from "@/lib/shipping/sendit-keys";
 
 export type ShippingResult<T = undefined> = { ok?: true; data?: T; error?: AppErrorCode; detail?: string };
 
@@ -42,14 +42,38 @@ function revalidateShipping(orderId?: string) {
 // ---------------------------------------------------------------------------
 
 export async function testSenditConnection(): Promise<ShippingResult<{ id: number; name: string; arabicName: string }[]>> {
-  const { can } = await requireOrganization();
+  const { organizationId, can } = await requireOrganization();
   if (!can.overrideBlocklist) return { error: "FORBIDDEN" };
-  if (!senditKeys()) return { error: "SENDIT_NOT_CONFIGURED" };
+  const keys = await loadSenditKeys(organizationId);
+  if (!keys) return { error: "SENDIT_NOT_CONFIGURED" };
   try {
-    return { ok: true, data: await pickupCities() };
+    return { ok: true, data: await pickupCities(keys) };
   } catch (error) {
     return fromError(error);
   }
+}
+
+const keysInput = z.object({ publicKey: z.string().trim().min(8).max(300), secretKey: z.string().trim().min(8).max(300) });
+
+/** Saves this organization's own Sendit keys after checking them with Sendit. Stored server-side only. */
+export async function saveSenditKeys(input: z.infer<typeof keysInput>): Promise<ShippingResult> {
+  const parsed = keysInput.safeParse(input);
+  if (!parsed.success) return { error: "KEYS_INCOMPLETE" };
+  const { supabase, organizationId, can } = await requireOrganization();
+  if (!can.overrideBlocklist) return { error: "FORBIDDEN" };
+  try {
+    await pickupCities(parsed.data);
+  } catch (error) {
+    return fromError(error);
+  }
+  const { error } = await supabase.rpc("set_sendit_credentials", {
+    p_organization_id: organizationId,
+    p_public_key: parsed.data.publicKey,
+    p_secret_key: parsed.data.secretKey
+  });
+  if (error) return { error: mapDatabaseError(error) };
+  revalidatePath("/settings");
+  return { ok: true };
 }
 
 const settingsInput = z.object({
@@ -102,9 +126,10 @@ export async function searchSenditDistricts(query: string): Promise<ShippingResu
   if (q.length < 2) return { ok: true, data: [] };
   const { supabase, organizationId, can } = await requireOrganization();
   if (!can.prepareOrders) return { error: "FORBIDDEN" };
-  const provider = await getSenditProvider(supabase, organizationId);
+  const [provider, keys] = await Promise.all([getSenditProvider(supabase, organizationId), loadSenditKeys(organizationId)]);
+  if (!keys) return { error: "SENDIT_NOT_CONFIGURED" };
   try {
-    return { ok: true, data: (await searchDistricts(q, provider?.settings.pickupDistrictId ?? null)).slice(0, 30) };
+    return { ok: true, data: (await searchDistricts(keys, q, provider?.settings.pickupDistrictId ?? null)).slice(0, 30) };
   } catch (error) {
     return fromError(error);
   }
@@ -124,6 +149,8 @@ export async function shipWithSendit(input: z.infer<typeof shipInput>): Promise<
 
   const provider = await getSenditProvider(supabase, organizationId);
   if (!provider || !provider.isActive) return { error: "SENDIT_NOT_ENABLED" };
+  const keys = await loadSenditKeys(organizationId);
+  if (!keys) return { error: "SENDIT_NOT_CONFIGURED" };
   const order = await getOrder(supabase, organizationId, orderId, { withContacts: true, withCalls: false });
   if (!order || !order.contact) return { error: "NOT_FOUND" };
   if (!["confirmed", "preparing", "ready_to_ship"].includes(order.status)) return { error: "ORDER_NOT_SHIPPABLE" };
@@ -159,7 +186,7 @@ export async function shipWithSendit(input: z.infer<typeof shipInput>): Promise<
 
   let parcel: Awaited<ReturnType<typeof createDelivery>>;
   try {
-    parcel = await createDelivery(payload);
+    parcel = await createDelivery(keys, payload);
   } catch (error) {
     return fromError(error);
   }
@@ -173,7 +200,7 @@ export async function shipWithSendit(input: z.infer<typeof shipInput>): Promise<
   });
   if (error) {
     // Do not leave a parcel at Sendit that the app does not know about.
-    await deleteDelivery(parcel.code).catch(() => undefined);
+    await deleteDelivery(keys, parcel.code).catch(() => undefined);
     return { error: mapDatabaseError(error) };
   }
   revalidateShipping(order.id);
@@ -185,10 +212,12 @@ const codesInput = z.array(z.string().regex(/^[A-Za-z0-9._/-]{3,64}$/)).min(1).m
 export async function senditLabels(codes: string[], thermal: boolean): Promise<ShippingResult<string>> {
   const parsed = codesInput.safeParse(codes);
   if (!parsed.success) return { error: "INVALID_INPUT" };
-  const { can } = await requireOrganization();
+  const { organizationId, can } = await requireOrganization();
   if (!can.prepareOrders) return { error: "FORBIDDEN" };
+  const keys = await loadSenditKeys(organizationId);
+  if (!keys) return { error: "SENDIT_NOT_CONFIGURED" };
   try {
-    return { ok: true, data: await getLabels(parsed.data, Boolean(thermal)) };
+    return { ok: true, data: await getLabels(keys, parsed.data, Boolean(thermal)) };
   } catch (error) {
     return fromError(error);
   }
@@ -209,8 +238,10 @@ export async function refreshSenditShipment(shipmentId: string): Promise<Shippin
 
   const admin = createSupabaseAdminClient();
   if (!admin) return { error: "SERVICE_KEY_MISSING" };
+  const keys = await loadSenditKeys(organizationId);
+  if (!keys) return { error: "SENDIT_NOT_CONFIGURED" };
   try {
-    const parcel = await getDelivery(shipment.tracking_number);
+    const parcel = await getDelivery(keys, shipment.tracking_number);
     if (!parcel.status) return { error: "SENDIT_UNAVAILABLE" };
     const { error } = await admin.rpc("apply_carrier_event", {
       p_provider_id: shipment.provider_id,
@@ -246,8 +277,10 @@ export async function requestSenditPickup(): Promise<ShippingResult<{ count: num
     .filter((row) => row.tracking_number && (row.carrier_status === null || row.carrier_status === "PENDING"))
     .map((row) => row.tracking_number as string);
   if (codes.length === 0) return { error: "NOTHING_TO_PICK_UP" };
+  const keys = await loadSenditKeys(organizationId);
+  if (!keys) return { error: "SENDIT_NOT_CONFIGURED" };
   try {
-    const code = await requestPickup({
+    const code = await requestPickup(keys, {
       districtId: s.pickupDistrictId,
       name: s.pickupName,
       phone: toSenditPhone(s.pickupPhone),
