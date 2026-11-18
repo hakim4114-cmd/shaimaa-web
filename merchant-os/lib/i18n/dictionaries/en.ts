@@ -47,7 +47,7 @@ const en = {
     themeSystem: "System",
     language: "Language",
     notificationsAllClear: "Nothing needs your attention right now.",
-    alerts: { obligationsOverdue: "Obligations overdue", obligationsSoon: "Obligations due within 7 days", callsDue: "Calls to make", deliveryProblems: "Delivery problems", returnsWaiting: "Returns to receive", lowStock: "Products low in stock" }
+    alerts: { obligationsOverdue: "Obligations overdue", obligationsSoon: "Obligations due within 7 days", callsDue: "Calls to make", deliveryProblems: "Delivery problems", returnsWaiting: "Returns to receive", lowStock: "Products low in stock", storeOrders: "Store orders to fix" }
   },
   commandCenter: {
     title: "Command center",
@@ -325,6 +325,9 @@ const en = {
     OVER_SAFE_LIMIT: "Above the safe amount: a written reason is required.",
     ALREADY_PAID: "Already paid.",
     MONTH_NOT_OVER: "A month can be closed only once it is over.",
+    TOO_MANY_STORES: "You can connect up to 20 stores.",
+    SECRET_TOO_SHORT: "The key is too short: copy it in full (at least 16 characters).",
+    NOT_RETRYABLE: "This store order was already handled.",
     UNKNOWN: "Something went wrong. Try again.",
   },
   orders: {
@@ -445,6 +448,8 @@ const en = {
       confirm: "Ask to confirm",
       noAnswer: "Couldn't reach you",
       confirmed: "Order confirmed",
+      shipped: "Parcel shipped (tracking)",
+      deliveryReminder: "Delivery reminder",
       cancelled: "Order cancelled"
     },
     languages: {
@@ -453,6 +458,10 @@ const en = {
       fr: "French"
     },
     openWhatsapp: "Open in WhatsApp",
+    pasteTitle: "Paste the customer's message",
+    pastePlaceholder: "Paste the WhatsApp or Instagram message here (name, phone, city, address)…",
+    pasteApply: "Fill the form",
+    pasteHint: "Check the fields before saving.",
     blockNumber: "Block this number",
     blockDescription: "New orders from this number will be stopped at entry (an owner or admin can override).",
     blocked: "Number blocked",
@@ -871,6 +880,73 @@ const en = {
     dormantDescription: "Units with no sale (or since first receipt when never sold), valued at cost.",
     idleOver: "No sale for {days}+ days",
     monthNotOver: "This month is not over yet: you can close it from the 1st of next month (Last month tab). The proposal above is only a preview."
+  },
+  stores: {
+    title: "Online stores",
+    description: "Orders from your Shopify or WooCommerce store, or your own site, arrive here by themselves.",
+    add: "Connect a store",
+    platform: "Platform",
+    name: "Store name",
+    url: "Store address (optional)",
+    platforms: {
+      shopify: "Shopify",
+      woocommerce: "WooCommerce (WordPress)",
+      custom: "Custom site",
+      youcan: "YouCan"
+    },
+    shopifySecret: "Shopify signing key",
+    shopifySecretHint: "In Shopify: Settings → Notifications → Webhooks. The key is shown under the list (“Your webhooks will be signed with…”).",
+    secretGenerated: "A secret key is created for you; you will paste it in your store.",
+    connect: "Connect",
+    setupNow: "Finish the setup in your store",
+    webhookUrl: "Webhook address",
+    secret: "Secret key",
+    secretOnce: "Copy the key now: it will not be shown again.",
+    done: "Done",
+    stepsShopify: ["In Shopify: Settings → Notifications → Webhooks → Create webhook.", "Event: Order creation. Format: JSON.", "URL: paste the webhook address above, then save.", "Place a test order: it should appear in Orders within seconds."],
+    stepsWoo: ["In WordPress: WooCommerce → Settings → Advanced → Webhooks → Add webhook.", "Status: Active. Topic: Order created.", "Delivery URL: the webhook address above. Secret: the key above. API version: v3.", "Save, then place a test order."],
+    stepsCustom: ["Send each new order as JSON (POST) to the webhook address.", "Sign the raw body: header X-Merchant-Signature = HMAC-SHA256 (hex) with the secret key.", "The format is described in docs/INTEGRATIONS.md (id, customer, items with SKU, shipping, discount)."],
+    active: "Active",
+    paused: "Paused",
+    pause: "Pause",
+    resume: "Resume",
+    renewSecret: "New key",
+    lastOrder: "last order",
+    noOrderYet: "no order received yet",
+    empty: "No store connected.",
+    ruleNew: "Store orders arrive as New: you still call and confirm them, and the blocklist applies.",
+    ruleSku: "Each product in the store must have the same SKU as in Merchant OS, otherwise the order waits in “Store orders to fix”.",
+    youcanSoon: "YouCan: coming soon (it requires a YouCan partner app)."
+  },
+  storeInbox: {
+    title: "Store orders to fix",
+    description: "Orders received from your stores that could not be created. Fix the cause, then retry.",
+    empty: "Nothing to fix",
+    emptyHint: "Every store order was imported.",
+    banner: "{count} store order(s) need your attention",
+    retry: "Retry",
+    ignore: "Dismiss",
+    stillWaiting: "Still blocked: fix the cause first.",
+    reasons: {
+      unknown_sku: "Unknown SKU",
+      invalid_phone: "Invalid phone",
+      customer_blocked: "Blocked customer",
+      currency: "Other currency",
+      no_items: "No products",
+      no_location: "No warehouse",
+      store_inactive: "Store paused",
+      invalid_order: "Invalid order"
+    },
+    fixes: {
+      unknown_sku: "Give the product the same SKU as in the store (Products), then retry.",
+      invalid_phone: "The number is not a Moroccan number. Call or message the customer and create the order by hand.",
+      customer_blocked: "This customer is on your blocklist. Remove them from it to import, or dismiss.",
+      currency: "Only orders in MAD are imported. Set your store currency to MAD.",
+      no_items: "The order has no products.",
+      no_location: "Create a default warehouse in Inventory, then retry.",
+      store_inactive: "The store was paused when the order arrived. Resume it in Settings, then retry.",
+      invalid_order: "The order is incomplete or too large. Create it by hand."
+    }
   },
   assistant: {
     title: "Claude (read-only)",

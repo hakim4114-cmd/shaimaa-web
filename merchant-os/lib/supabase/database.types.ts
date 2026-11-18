@@ -523,6 +523,76 @@ export type Database = {
           },
         ]
       }
+      external_orders: {
+        Row: {
+          attempts: number
+          external_id: string
+          external_number: string
+          id: string
+          order_id: string | null
+          organization_id: string
+          payload: Json
+          reason: string | null
+          reason_detail: string
+          received_at: string
+          status: string
+          store_id: string
+          updated_at: string
+        }
+        Insert: {
+          attempts?: number
+          external_id: string
+          external_number?: string
+          id?: string
+          order_id?: string | null
+          organization_id: string
+          payload: Json
+          reason?: string | null
+          reason_detail?: string
+          received_at?: string
+          status: string
+          store_id: string
+          updated_at?: string
+        }
+        Update: {
+          attempts?: number
+          external_id?: string
+          external_number?: string
+          id?: string
+          order_id?: string | null
+          organization_id?: string
+          payload?: Json
+          reason?: string | null
+          reason_detail?: string
+          received_at?: string
+          status?: string
+          store_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "external_orders_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "external_orders_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "external_orders_store_id_fkey"
+            columns: ["store_id"]
+            isOneToOne: false
+            referencedRelation: "stores"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       fund_plan: {
         Row: {
           created_at: string
@@ -1026,6 +1096,7 @@ export type Database = {
           delivered_at: string | null
           discount_cents: number
           exchange_of_order_id: string | null
+          external_id: string | null
           id: string
           internal_notes: string
           last_call_outcome: Database["public"]["Enums"]["call_outcome"] | null
@@ -1059,6 +1130,7 @@ export type Database = {
           delivered_at?: string | null
           discount_cents?: number
           exchange_of_order_id?: string | null
+          external_id?: string | null
           id?: string
           internal_notes?: string
           last_call_outcome?: Database["public"]["Enums"]["call_outcome"] | null
@@ -1092,6 +1164,7 @@ export type Database = {
           delivered_at?: string | null
           discount_cents?: number
           exchange_of_order_id?: string | null
+          external_id?: string | null
           id?: string
           internal_notes?: string
           last_call_outcome?: Database["public"]["Enums"]["call_outcome"] | null
@@ -1900,13 +1973,41 @@ export type Database = {
           },
         ]
       }
+      store_secrets: {
+        Row: {
+          secret: string
+          store_id: string
+          updated_at: string
+        }
+        Insert: {
+          secret: string
+          store_id: string
+          updated_at?: string
+        }
+        Update: {
+          secret?: string
+          store_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "store_secrets_store_id_fkey"
+            columns: ["store_id"]
+            isOneToOne: true
+            referencedRelation: "stores"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       stores: {
         Row: {
           created_at: string
           id: string
           is_active: boolean
+          last_order_at: string | null
           name: string
           organization_id: string
+          platform: Database["public"]["Enums"]["store_platform"]
           updated_at: string
           url: string | null
         }
@@ -1914,8 +2015,10 @@ export type Database = {
           created_at?: string
           id?: string
           is_active?: boolean
+          last_order_at?: string | null
           name: string
           organization_id: string
+          platform?: Database["public"]["Enums"]["store_platform"]
           updated_at?: string
           url?: string | null
         }
@@ -1923,8 +2026,10 @@ export type Database = {
           created_at?: string
           id?: string
           is_active?: boolean
+          last_order_at?: string | null
           name?: string
           organization_id?: string
+          platform?: Database["public"]["Enums"]["store_platform"]
           updated_at?: string
           url?: string | null
         }
@@ -2050,6 +2155,7 @@ export type Database = {
           delivered_at: string | null
           discount_cents: number
           exchange_of_order_id: string | null
+          external_id: string | null
           id: string
           internal_notes: string
           last_call_outcome: Database["public"]["Enums"]["call_outcome"] | null
@@ -2092,6 +2198,7 @@ export type Database = {
           delivered_at: string | null
           discount_cents: number
           exchange_of_order_id: string | null
+          external_id: string | null
           id: string
           internal_notes: string
           last_call_outcome: Database["public"]["Enums"]["call_outcome"] | null
@@ -2177,6 +2284,32 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      create_store_connection: {
+        Args: {
+          p_name: string
+          p_organization_id: string
+          p_platform: Database["public"]["Enums"]["store_platform"]
+          p_secret: string
+          p_url: string
+        }
+        Returns: {
+          created_at: string
+          id: string
+          is_active: boolean
+          last_order_at: string | null
+          name: string
+          organization_id: string
+          platform: Database["public"]["Enums"]["store_platform"]
+          updated_at: string
+          url: string | null
+        }
+        SetofOptions: {
+          from: "*"
+          to: "stores"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       customer_history: {
         Args: { p_organization_id: string; p_phone: string }
         Returns: {
@@ -2188,6 +2321,34 @@ export type Database = {
           refused: number
           returned: number
         }[]
+      }
+      ignore_store_order: {
+        Args: { p_external_order_id: string }
+        Returns: {
+          attempts: number
+          external_id: string
+          external_number: string
+          id: string
+          order_id: string | null
+          organization_id: string
+          payload: Json
+          reason: string | null
+          reason_detail: string
+          received_at: string
+          status: string
+          store_id: string
+          updated_at: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "external_orders"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      ingest_store_order: {
+        Args: { p_order: Json; p_store_id: string }
+        Returns: Json
       }
       inspect_return_item: {
         Args: {
@@ -2233,6 +2394,7 @@ export type Database = {
           delivered_at: string | null
           discount_cents: number
           exchange_of_order_id: string | null
+          external_id: string | null
           id: string
           internal_notes: string
           last_call_outcome: Database["public"]["Enums"]["call_outcome"] | null
@@ -2462,10 +2624,38 @@ export type Database = {
         Args: { p_from: string; p_organization_id: string; p_to: string }
         Returns: Json
       }
+      retry_store_order: {
+        Args: { p_external_order_id: string }
+        Returns: {
+          attempts: number
+          external_id: string
+          external_number: string
+          id: string
+          order_id: string | null
+          organization_id: string
+          payload: Json
+          reason: string | null
+          reason_detail: string
+          received_at: string
+          status: string
+          store_id: string
+          updated_at: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "external_orders"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       safe_withdrawal: { Args: { p_organization_id: string }; Returns: Json }
       save_product: {
         Args: { p_organization_id: string; p_payload: Json }
         Returns: string
+      }
+      set_store_secret: {
+        Args: { p_secret: string; p_store_id: string }
+        Returns: undefined
       }
       stock_health: {
         Args: { p_organization_id: string }
@@ -2501,6 +2691,7 @@ export type Database = {
           delivered_at: string | null
           discount_cents: number
           exchange_of_order_id: string | null
+          external_id: string | null
           id: string
           internal_notes: string
           last_call_outcome: Database["public"]["Enums"]["call_outcome"] | null
@@ -2543,6 +2734,7 @@ export type Database = {
           delivered_at: string | null
           discount_cents: number
           exchange_of_order_id: string | null
+          external_id: string | null
           id: string
           internal_notes: string
           last_call_outcome: Database["public"]["Enums"]["call_outcome"] | null
@@ -2703,6 +2895,7 @@ export type Database = {
         | "cancelled"
       shipping_provider_kind: "manual" | "csv" | "api"
       stock_state: "none" | "reserved" | "released" | "shipped"
+      store_platform: "custom" | "shopify" | "woocommerce" | "youcan"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -2932,6 +3125,7 @@ export const Constants = {
       ],
       shipping_provider_kind: ["manual", "csv", "api"],
       stock_state: ["none", "reserved", "released", "shipped"],
+      store_platform: ["custom", "shopify", "woocommerce", "youcan"],
     },
   },
 } as const
