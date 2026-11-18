@@ -2,6 +2,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { mapSenditStatus, verifySenditSignature, type ShipmentStatus } from "@/lib/shipping/sendit-core";
 import type { Json } from "@/lib/supabase/database.types";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
+import { loadSenditKeysForProvider } from "@/lib/shipping/sendit-keys";
 
 // Sendit → Merchant OS status updates (guide-webhook-sendit.pdf).
 // The URL carries our provider id so several organizations can each have
@@ -17,7 +18,10 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
   const raw = await request.text();
   if (raw.length > 100_000) return NextResponse.json({ error: "too_large" }, { status: 413 });
   const signature = request.headers.get("x-sendit-signature");
-  if (!verifySenditSignature(raw, signature, [process.env.SENDIT_SECRET_KEY?.trim(), process.env.SENDIT_PUBLIC_KEY?.trim()])) {
+  // Signed with that organization's Sendit keys.
+  const keys = await loadSenditKeysForProvider(providerId);
+  if (!keys) return NextResponse.json({ error: "not_found" }, { status: 404 });
+  if (!verifySenditSignature(raw, signature, [keys.secretKey, keys.publicKey])) {
     return NextResponse.json({ error: "invalid_signature" }, { status: 401 });
   }
 

@@ -1,8 +1,10 @@
 import "server-only";
 import { madToCents } from "./sendit-core";
 
-// Sendit REST client. Keys are server-only environment variables; the token
-// from POST /login is cached in memory and renewed on 401.
+// Sendit REST client. Each organization has its own Sendit account: callers
+// pass that organization's keys (lib/shipping/sendit-keys.ts reads them on the
+// server). The token from POST /login is cached in memory per account and
+// renewed on 401.
 const baseUrl = "https://app.sendit.ma/api/v1";
 
 export type SenditErrorCode = "SENDIT_NOT_CONFIGURED" | "SENDIT_AUTH_FAILED" | "SENDIT_REJECTED" | "SENDIT_UNAVAILABLE";
@@ -16,18 +18,14 @@ export class SenditError extends Error {
   }
 }
 
-export function senditKeys() {
-  const publicKey = process.env.SENDIT_PUBLIC_KEY?.trim();
-  const secretKey = process.env.SENDIT_SECRET_KEY?.trim();
-  return publicKey && secretKey ? { publicKey, secretKey } : null;
-}
+export type SenditKeys = { publicKey: string; secretKey: string };
 
-let cachedToken: { value: string; expires: number } | null = null;
+const tokens = new Map<string, { value: string; expires: number }>();
 
-async function call(path: string, init: RequestInit & { json?: unknown } = {}, auth = true): Promise<Record<string, unknown>> {
+async function call(keys: SenditKeys, path: string, init: RequestInit & { json?: unknown } = {}, auth = true): Promise<Record<string, unknown>> {
   const headers: Record<string, string> = { Accept: "application/json" };
   if (init.json !== undefined) headers["Content-Type"] = "application/json";
-  if (auth) headers.Authorization = `Bearer ${await token()}`;
+  if (auth) headers.Authorization = `Bearer ${await token(keys)}`;
   let response: Response;
   try {
     response = await fetch(`${baseUrl}${path}`, {
@@ -41,7 +39,7 @@ async function call(path: string, init: RequestInit & { json?: unknown } = {}, a
     throw new SenditError("SENDIT_UNAVAILABLE");
   }
   if (response.status === 401 && auth) {
-    cachedToken = null;
+    tokens.delete(keys.publicKey);
     throw new SenditError("SENDIT_AUTH_FAILED");
   }
   const body = (await response.json().catch(() => ({}))) as Record<string, unknown>;
@@ -66,28 +64,28 @@ function describe(body: Record<string, unknown>): string {
   return parts.join(" — ").slice(0, 300);
 }
 
-async function token(): Promise<string> {
-  if (cachedToken && cachedToken.expires > Date.now()) return cachedToken.value;
-  const keys = senditKeys();
-  if (!keys) throw new SenditError("SENDIT_NOT_CONFIGURED");
-  const body = await call("/login", { method: "POST", json: { public_key: keys.publicKey, secret_key: keys.secretKey } }, false).catch((error: unknown) => {
+async function token(keys: SenditKeys): Promise<string> {
+  const cached = tokens.get(keys.publicKey);
+  if (cached && cached.expires > Date.now()) return cached.value;
+  const body = await call(keys, "/login", { method: "POST", json: { public_key: keys.publicKey, secret_key: keys.secretKey } }, false).catch((error: unknown) => {
     if (error instanceof SenditError && error.code === "SENDIT_REJECTED") throw new SenditError("SENDIT_AUTH_FAILED", error.detail);
     throw error;
   });
   const value = (body.data as { token?: unknown } | undefined)?.token;
   if (typeof value !== "string" || !value) throw new SenditError("SENDIT_AUTH_FAILED");
   // The token lifetime is not documented: renew every 45 minutes.
-  cachedToken = { value, expires: Date.now() + 45 * 60 * 1000 };
+  tokens.set(keys.publicKey, { value, expires: Date.now() + 45 * 60 * 1000 });
   return value;
 }
 
 /** Retries once with a fresh token when the cached one was rejected. */
-async function authed(path: string, init: RequestInit & { json?: unknown } = {}) {
+async function authed(keys: SenditKeys, path: string, init: RequestInit & { json?: unknown } = {}) {
+  const hadToken = tokens.has(keys.publicKey);
   try {
-    return await call(path, init);
+    return await call(keys, path, init);
   } catch (error) {
-    if (error instanceof SenditError && error.code === "SENDIT_AUTH_FAILED" && cachedToken === null && senditKeys()) {
-      return call(path, init);
+    if (error instanceof SenditError && error.code === "SENDIT_AUTH_FAILED" && hadToken && !tokens.has(keys.publicKey)) {
+      return call(keys, path, init);
     }
     throw error;
   }
@@ -106,48 +104,48 @@ function toDistrict(raw: Record<string, unknown>): SenditDistrict {
   };
 }
 
-export async function searchDistricts(query: string, pickupDistrictId: number | null): Promise<SenditDistrict[]> {
+export async function searchDistricts(keys: SenditKeys, query: string, pickupDistrictId: number | null): Promise<SenditDistrict[]> {
   const params = new URLSearchParams({ querystring: query.slice(0, 60) });
   if (pickupDistrictId) params.set("pickup-district", String(pickupDistrictId));
-  const body = await authed(`/districts?${params}`);
+  const body = await authed(keys, `/districts?${params}`);
   return (Array.isArray(body.data) ? body.data : []).map((row) => toDistrict(row as Record<string, unknown>)).filter((d) => d.id);
 }
 
-export async function pickupCities(): Promise<{ id: number; name: string; arabicName: string }[]> {
-  const body = await authed("/districts/pickup-cities");
+export async function pickupCities(keys: SenditKeys): Promise<{ id: number; name: string; arabicName: string }[]> {
+  const body = await authed(keys, "/districts/pickup-cities");
   return (Array.isArray(body.data) ? body.data : [])
     .map((row) => row as Record<string, unknown>)
     .map((row) => ({ id: Number(row.id), name: String(row.name ?? ""), arabicName: String(row.arabic_name ?? "") }))
     .filter((row) => Number.isInteger(row.id) && row.id > 0);
 }
 
-export async function createDelivery(payload: Record<string, unknown>): Promise<{ code: string; feeCents: number; status: string }> {
-  const body = await authed("/deliveries", { method: "POST", json: payload });
+export async function createDelivery(keys: SenditKeys, payload: Record<string, unknown>): Promise<{ code: string; feeCents: number; status: string }> {
+  const body = await authed(keys, "/deliveries", { method: "POST", json: payload });
   const data = (body.data ?? {}) as Record<string, unknown>;
   const code = typeof data.code === "string" ? data.code : "";
   if (!code) throw new SenditError("SENDIT_UNAVAILABLE", "no parcel code returned");
   return { code, feeCents: madToCents(data.fee), status: typeof data.status === "string" ? data.status : "PENDING" };
 }
 
-export async function deleteDelivery(code: string): Promise<void> {
-  await authed(`/deliveries/${encodeURIComponent(code)}`, { method: "DELETE" });
+export async function deleteDelivery(keys: SenditKeys, code: string): Promise<void> {
+  await authed(keys, `/deliveries/${encodeURIComponent(code)}`, { method: "DELETE" });
 }
 
-export async function getDelivery(code: string): Promise<{ status: string; raw: Record<string, unknown> }> {
-  const body = await authed(`/deliveries/${encodeURIComponent(code)}`);
+export async function getDelivery(keys: SenditKeys, code: string): Promise<{ status: string; raw: Record<string, unknown> }> {
+  const body = await authed(keys, `/deliveries/${encodeURIComponent(code)}`);
   const data = (body.data ?? {}) as Record<string, unknown>;
   return { status: typeof data.status === "string" ? data.status : "", raw: data };
 }
 
-export async function getLabels(codes: string[], thermal: boolean): Promise<string> {
-  const body = await authed("/deliveries/getlabels", { method: "POST", json: { codesToPrint: codes.join(","), printFormat: thermal ? 1 : 0 } });
+export async function getLabels(keys: SenditKeys, codes: string[], thermal: boolean): Promise<string> {
+  const body = await authed(keys, "/deliveries/getlabels", { method: "POST", json: { codesToPrint: codes.join(","), printFormat: thermal ? 1 : 0 } });
   const url = (body.data as { fileUrl?: unknown } | undefined)?.fileUrl;
   if (typeof url !== "string" || !url.startsWith("https://")) throw new SenditError("SENDIT_UNAVAILABLE", "no label file returned");
   return url;
 }
 
-export async function requestPickup(input: { districtId: number; name: string; phone: string; address: string; note: string; codes: string[] }): Promise<string> {
-  const body = await authed("/pickups", {
+export async function requestPickup(keys: SenditKeys, input: { districtId: number; name: string; phone: string; address: string; note: string; codes: string[] }): Promise<string> {
+  const body = await authed(keys, "/pickups", {
     method: "POST",
     json: { district_id: input.districtId, name: input.name, phone: input.phone, address: input.address, note: input.note || "-", deliveries: input.codes.join(",") }
   });
@@ -157,8 +155,8 @@ export async function requestPickup(input: { districtId: number; name: string; p
 
 export type SenditInvoiceSummary = { code: string; status: string; amountCents: number; date: string };
 
-export async function listInvoices(page = 1): Promise<{ invoices: SenditInvoiceSummary[]; lastPage: number }> {
-  const body = await authed(`/invoices?page=${Math.max(1, Math.floor(page))}`);
+export async function listInvoices(keys: SenditKeys, page = 1): Promise<{ invoices: SenditInvoiceSummary[]; lastPage: number }> {
+  const body = await authed(keys, `/invoices?page=${Math.max(1, Math.floor(page))}`);
   const invoices = (Array.isArray(body.data) ? body.data : [])
     .map((row) => row as Record<string, unknown>)
     .map((row) => ({ code: String(row.code ?? ""), status: String(row.status ?? ""), amountCents: madToCents(row.amount), date: String(row.date ?? "").slice(0, 10) }))
@@ -166,8 +164,8 @@ export async function listInvoices(page = 1): Promise<{ invoices: SenditInvoiceS
   return { invoices, lastPage: Number(body.last_page) || 1 };
 }
 
-export async function getInvoice(code: string): Promise<SenditInvoiceSummary & { items: unknown }> {
-  const body = await authed(`/invoices/${encodeURIComponent(code)}`);
+export async function getInvoice(keys: SenditKeys, code: string): Promise<SenditInvoiceSummary & { items: unknown }> {
+  const body = await authed(keys, `/invoices/${encodeURIComponent(code)}`);
   const data = (body.data ?? {}) as Record<string, unknown>;
   return { code: String(data.code ?? code), status: String(data.status ?? ""), amountCents: madToCents(data.amount), date: String(data.date ?? "").slice(0, 10), items: data.items };
 }

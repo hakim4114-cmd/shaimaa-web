@@ -7,6 +7,7 @@ import { mapDatabaseError, type AppErrorCode } from "@/lib/data/errors";
 import { getSenditProvider } from "@/lib/data/shipping";
 import { SenditError, getInvoice, listInvoices, type SenditInvoiceSummary } from "@/lib/shipping/sendit";
 import { previewInvoice, readInvoiceLines, type InvoicePreview, type KnownParcel } from "@/lib/shipping/sendit-core";
+import { loadSenditKeys } from "@/lib/shipping/sendit-keys";
 import type { Json } from "@/lib/supabase/database.types";
 
 export type CashResult<T = undefined> = { ok?: true; data?: T; error?: AppErrorCode; detail?: string };
@@ -20,8 +21,10 @@ export async function loadSenditInvoices(page = 1): Promise<CashResult<{ invoice
   if (!can.seeMoney) return { error: "FORBIDDEN" };
   const provider = await getSenditProvider(supabase, organizationId);
   if (!provider) return { error: "SENDIT_NOT_ENABLED" };
+  const keys = await loadSenditKeys(organizationId);
+  if (!keys) return { error: "SENDIT_NOT_CONFIGURED" };
   try {
-    const { invoices, lastPage } = await listInvoices(page);
+    const { invoices, lastPage } = await listInvoices(keys, page);
     const { data } = await supabase
       .from("cod_remittances")
       .select("reference")
@@ -40,7 +43,9 @@ async function buildPreview(code: string) {
   if (!can.seeMoney) return { error: "FORBIDDEN" as const };
   const provider = await getSenditProvider(supabase, organizationId);
   if (!provider) return { error: "SENDIT_NOT_ENABLED" as const };
-  const invoice = await getInvoice(code);
+  const keys = await loadSenditKeys(organizationId);
+  if (!keys) return { error: "SENDIT_NOT_CONFIGURED" as const };
+  const invoice = await getInvoice(keys, code);
   const lines = readInvoiceLines(invoice.items);
   const codes = lines.filter((l) => l.type === "delivery").map((l) => l.code);
   const { data } = await supabase

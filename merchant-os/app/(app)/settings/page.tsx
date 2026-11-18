@@ -11,7 +11,6 @@ import { AssistantLinks } from "@/components/shipping/assistant-links";
 import { StoreConnections, type StoreRow } from "@/components/stores/store-connections";
 import { getI18n } from "@/lib/i18n/server";
 import { formatMoroccanPhone } from "@/lib/phone";
-import { senditKeys } from "@/lib/shipping/sendit";
 
 export async function generateMetadata() {
   const { t } = await getI18n();
@@ -53,7 +52,7 @@ export default async function SettingsPage() {
         <CardHeader title="Sendit" description={ts.senditDescription} />
         <CardBody>
           <SenditSettingsForm
-            keysConfigured={Boolean(senditKeys())}
+            keysConfigured={provider?.credentialsSet ?? false}
             webhookUrl={provider ? `${origin}/api/webhooks/sendit/${provider.id}` : null}
             initial={{
               active: provider?.isActive ?? true,
