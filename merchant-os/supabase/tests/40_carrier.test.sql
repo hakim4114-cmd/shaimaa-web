@@ -102,6 +102,20 @@ select tests.eq(public.apply_carrier_event(:'sendit', 'DHNOPE', 'DELIVERED', 'de
 select tests.eq((select count(*)::int from public.carrier_events where provider_id = :'sendit'), 8, 'every distinct received event is logged once');
 select tests.expect_error($$delete from public.carrier_events$$, 'IMMUTABLE');
 
+-- Delivery included in the price: new orders default to a delivery fee of 0
+reset role;
+set local role authenticated;
+select tests.login(:'owner');
+insert into public.shipping_rates (organization_id, city_id, customer_fee_cents) select :'org', id, 3500 from public.cities where organization_id is null order by id limit 1;
+select id as rate_city from public.cities where organization_id is null order by id limit 1 \gset
+select (public.create_order(:'org', jsonb_build_object('customer', jsonb_build_object('full_name', 'Fee A', 'phone', '+212611000011', 'address', 'x'), 'city_id', :'rate_city', 'items', jsonb_build_array(jsonb_build_object('variant_id', :'v1', 'quantity', 1))))).shipping_fee_cents as fee_extra \gset
+select tests.eq(:'fee_extra'::bigint, 3500::bigint, 'customer pays delivery: the city fee is applied');
+update public.organizations set delivery_included = true where id = :'org';
+select (public.create_order(:'org', jsonb_build_object('customer', jsonb_build_object('full_name', 'Fee B', 'phone', '+212611000012', 'address', 'x'), 'city_id', :'rate_city', 'items', jsonb_build_array(jsonb_build_object('variant_id', :'v1', 'quantity', 1))))).shipping_fee_cents as fee_included \gset
+select tests.eq(:'fee_included'::bigint, 0::bigint, 'delivery included: the default fee is 0');
+select (public.create_order(:'org', jsonb_build_object('customer', jsonb_build_object('full_name', 'Fee C', 'phone', '+212611000013', 'address', 'x'), 'city_id', :'rate_city', 'shipping_fee_cents', 2000, 'items', jsonb_build_array(jsonb_build_object('variant_id', :'v1', 'quantity', 1))))).shipping_fee_cents as fee_typed \gset
+select tests.eq(:'fee_typed'::bigint, 2000::bigint, 'a fee typed on the order still wins');
+
 -- Parcel cancelled before pickup: the order goes back to preparing and can be shipped again
 reset role;
 set local role authenticated;

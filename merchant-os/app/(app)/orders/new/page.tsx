@@ -24,12 +24,15 @@ export default async function NewOrderPage() {
     defaultShippingFees(supabase, organizationId),
     listCampaigns(supabase, organizationId)
   ]);
+  const { data: org } = await supabase.from("organizations").select("delivery_included").eq("id", organizationId).maybeSingle();
+  const deliveryIncluded = org?.delivery_included ?? false;
   const today = businessDay(new Date());
   const activeCampaigns = campaigns.filter((c) => !c.endsOn || c.endsOn >= today).map((c) => ({ id: c.id, name: c.name }));
   return (
     <div className="mx-auto flex w-full max-w-3xl flex-col gap-6">
       <PageHeader title={t.orders.newTitle} description={t.orders.newDescription} />
       <OrderForm
+        deliveryIncluded={deliveryIncluded}
         mode="create"
         cities={cities}
         variants={variants}

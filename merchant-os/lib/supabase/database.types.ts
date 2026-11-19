@@ -1361,6 +1361,7 @@ export type Database = {
           country: string
           created_at: string
           currency: string
+          delivery_included: boolean
           id: string
           name: string
           order_prefix: string
@@ -1372,6 +1373,7 @@ export type Database = {
           country?: string
           created_at?: string
           currency?: string
+          delivery_included?: boolean
           id?: string
           name: string
           order_prefix?: string
@@ -1383,6 +1385,7 @@ export type Database = {
           country?: string
           created_at?: string
           currency?: string
+          delivery_included?: boolean
           id?: string
           name?: string
           order_prefix?: string
@@ -2394,6 +2397,7 @@ export type Database = {
           country: string
           created_at: string
           currency: string
+          delivery_included: boolean
           id: string
           name: string
           order_prefix: string
