@@ -102,4 +102,17 @@ select tests.eq(public.apply_carrier_event(:'sendit', 'DHNOPE', 'DELIVERED', 'de
 select tests.eq((select count(*)::int from public.carrier_events where provider_id = :'sendit'), 8, 'every distinct received event is logged once');
 select tests.expect_error($$delete from public.carrier_events$$, 'IMMUTABLE');
 
+-- Parcel cancelled before pickup: the order goes back to preparing and can be shipped again
+reset role;
+set local role authenticated;
+select tests.login(:'owner');
+select tests.new_confirmed_order(:'org', :'v1', '+212611000003') as o3 \gset
+select id as s3 from public.register_carrier_shipment(:'o3', :'sendit', 'DHTEST003', 3000) \gset
+select tests.eq((select status::text from public.orders where id = :'o3'), 'ready_to_ship', 'parcel created: ready to ship');
+select public.update_shipment_status(:'s3', 'cancelled', 'Deleted at Sendit');
+select tests.eq((select status::text from public.orders where id = :'o3'), 'preparing', 'a parcel cancelled before pickup sends the order back to preparing');
+select tests.eq((select stock_state::text from public.orders where id = :'o3'), 'reserved', 'stock stays reserved for the order');
+select id as s4 from public.register_carrier_shipment(:'o3', :'sendit', 'DHTEST004', 3000) \gset
+select tests.eq((select status::text from public.orders where id = :'o3'), 'ready_to_ship', 'the order can be shipped again');
+
 rollback;

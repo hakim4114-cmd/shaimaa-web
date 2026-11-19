@@ -9,6 +9,7 @@ import { getSenditProvider } from "@/lib/data/shipping";
 import { normalizeMoroccanPhone } from "@/lib/phone";
 import {
   SenditError,
+  deleteDelivery,
   getDelivery,
   getLabels,
   pickupCities,
@@ -211,6 +212,37 @@ export async function refreshSenditShipment(shipmentId: string): Promise<Shippin
   } catch (error) {
     return fromError(error);
   }
+}
+
+/**
+ * Cancels a Sendit parcel that was not picked up yet: deletes it at Sendit
+ * (already deleted there is fine), then cancels it here; the order goes back
+ * to "preparing" and can be shipped again.
+ */
+export async function cancelSenditParcel(shipmentId: string): Promise<ShippingResult> {
+  if (!z.string().uuid().safeParse(shipmentId).success) return { error: "NOT_FOUND" };
+  const { supabase, organizationId, can } = await requireOrganization();
+  if (!can.prepareOrders) return { error: "FORBIDDEN" };
+  const { data: shipment } = await supabase
+    .from("shipments")
+    .select("id, order_id, status, tracking_number")
+    .eq("organization_id", organizationId)
+    .eq("id", shipmentId)
+    .maybeSingle();
+  if (!shipment?.tracking_number) return { error: "NOT_FOUND" };
+  if (shipment.status !== "pending") return { error: "SHIPMENT_CLOSED" };
+  const keys = await loadSenditKeys(organizationId);
+  if (!keys) return { error: "SENDIT_NOT_CONFIGURED" };
+  try {
+    await deleteDelivery(keys, shipment.tracking_number);
+  } catch (error) {
+    const gone = error instanceof SenditError && error.code === "SENDIT_REJECTED" && /non trouv|not found|introuvable/i.test(error.detail ?? "");
+    if (!gone) return fromError(error);
+  }
+  const { error } = await supabase.rpc("update_shipment_status", { p_shipment_id: shipment.id, p_status: "cancelled", p_note: "Cancelled before pickup (Sendit)" });
+  if (error) return { error: mapDatabaseError(error) };
+  revalidateShipping(shipment.order_id);
+  return { ok: true };
 }
 
 /** Requests one pickup for every Sendit parcel still waiting at the merchant's. */
