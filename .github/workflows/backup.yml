@@ -6,7 +6,8 @@ name: Database backup
 #                       (Session pooler, URI form, with the database password filled in)
 #   BACKUP_PASSPHRASE   a long passphrase you keep somewhere safe; without it the
 #                       backup cannot be opened
-# Until both exist the job only prints a notice. Restore steps: merchant-os/docs/BACKUPS.md.
+# A missing secret fails the job (red), so a green run always means a backup was taken.
+# Restore steps: merchant-os/docs/BACKUPS.md.
 
 on:
   schedule:
@@ -28,11 +29,17 @@ jobs:
           PASSPHRASE: ${{ secrets.BACKUP_PASSPHRASE }}
         run: |
           if [ -z "$DB_URL" ] || [ -z "$PASSPHRASE" ]; then
-            echo "::notice::Backup skipped: add SUPABASE_DB_URL and BACKUP_PASSPHRASE as repository secrets."
-            echo "ready=false" >> "$GITHUB_OUTPUT"
-          else
-            echo "ready=true" >> "$GITHUB_OUTPUT"
+            echo "::error::No backup taken: add SUPABASE_DB_URL and BACKUP_PASSPHRASE as repository secrets."
+            exit 1
           fi
+          # The project ref is not secret: print it so the log shows which database is backed up.
+          ref=$(printf '%s' "$DB_URL" | sed -n 's#^postgres[a-z]*://postgres\.\([a-z0-9]*\):.*#\1#p')
+          echo "Supabase project: ${ref:-unknown}"
+          if [ "$ref" != "zgybhazfcwqvsvgmjnim" ]; then
+            echo "::error::SUPABASE_DB_URL does not point to the Merchant OS project (zgybhazfcwqvsvgmjnim)."
+            exit 1
+          fi
+          echo "ready=true" >> "$GITHUB_OUTPUT"
 
       - name: Install PostgreSQL 17 client
         if: steps.check.outputs.ready == 'true'
@@ -54,7 +61,7 @@ jobs:
           stamp=$(date -u +%Y-%m-%d)
           # Application data (public, app) and accounts (auth). Custom format: restore with pg_restore.
           /usr/lib/postgresql/17/bin/pg_dump "$DB_URL" --format=custom --no-owner --no-privileges \
-            --schema=public --schema=app --schema=auth --file=db.dump
+            --schema=public --schema=app --schema=auth --strict-names --file=db.dump
           gpg --batch --yes --pinentry-mode loopback --passphrase "$PASSPHRASE" \
             --symmetric --cipher-algo AES256 --output "merchant-os-$stamp.dump.gpg" db.dump
           shred -u db.dump
