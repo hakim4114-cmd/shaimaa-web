@@ -52,7 +52,7 @@ const fr: Dictionary = {
     sectionsEssential: "L'essentiel",
     sectionsAll: "Toutes les rubriques",
     notificationsAllClear: "Rien ne demande votre attention pour l'instant.",
-    alerts: { obligationsOverdue: "Dettes en retard", obligationsSoon: "Dettes à payer sous 7 jours", callsDue: "Appels à passer", deliveryProblems: "Problèmes de livraison", returnsWaiting: "Retours à recevoir", lowStock: "Produits en stock bas", storeOrders: "Commandes boutique à corriger", waitingToShip: "Confirmées depuis plus de 24 h, pas encore expédiées" }
+    alerts: { obligationsOverdue: "Dettes en retard", obligationsSoon: "Dettes à payer sous 7 jours", callsDue: "Appels à passer", deliveryProblems: "Problèmes de livraison", returnsWaiting: "Retours à recevoir", lowStock: "Produits en stock bas", storeOrders: "Commandes boutique à corriger", waitingToShip: "Confirmées depuis plus de 24 h, pas encore expédiées", problems: "Problèmes à vérifier" }
   },
   commandCenter: {
     title: "Tableau de bord",
@@ -988,6 +988,7 @@ const fr: Dictionary = {
       invalid_order: "La commande est incomplète ou trop grande. Créez-la à la main."
     }
   },
+  problems: { title: "Problèmes", description: "Échecs survenus en arrière-plan : messages du transporteur ou de la boutique refusés, colis non envoyés automatiquement. Corrigez la cause puis marquez comme traité.", empty: "Aucun problème", emptyHint: "Tout ce qui tourne en arrière-plan a fonctionné.", resolve: "Traité", times: "{count} fois", footer: "Le message technique est conservé tel quel pour aider à trouver la cause.", sources: { sendit_webhook: "Mise à jour Sendit", store_webhook: "Commande boutique", auto_ship: "Envoi automatique", sendit_api: "Sendit", other: "Autre" } },
   assistant: {
     title: "Claude (lecture seule)",
     description: "Posez vos questions à Claude sur vos chiffres : bénéfice, commandes, stock, campagnes, encaissements. Claude lit via un lien privé ; il ne peut rien modifier.",

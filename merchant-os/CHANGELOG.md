@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.11.0 — Problems log and daily backups (2026-11-19)
+
+### Added
+- **Problems log** (`/problems`, in the bell for owners and admins): rejected Sendit status updates, rejected or unreadable store orders, and parcels Sendit refused during automatic sending are recorded with a counter and a hint, until marked as handled.
+- **Daily encrypted database backup** (`.github/workflows/backup.yml`): `pg_dump` of the application and accounts, AES-256 encrypted with your passphrase, kept 30 days. It starts working once the two secrets are added; setup and restore steps in `docs/BACKUPS.md`.
+
 ## 1.10.0 — Review follow-ups (2026-11-19)
 
 ### Changed

@@ -137,6 +137,14 @@ export async function autoShipOrder(orderId: string): Promise<AutoShipResult> {
   if (result.status === "failed" || (result.status === "skipped" && result.reason !== "not_allowed")) {
     const reason = result.status === "failed" ? `${result.error}${result.detail ? ` (${result.detail})` : ""}` : result.reason;
     await ctx.supabase.rpc("add_order_note", { p_order_id: orderId, p_note: `Sendit auto: not sent — ${reason}`.slice(0, 1000) });
+    if (result.status === "failed") {
+      await ctx.supabase.rpc("report_my_system_event", {
+        p_organization_id: ctx.organizationId,
+        p_source: "auto_ship",
+        p_message: `Automatic sending to Sendit failed: ${reason}`.slice(0, 300),
+        p_order_id: orderId
+      });
+    }
   }
   if (result.status !== "off") {
     revalidateOrders(orderId);
