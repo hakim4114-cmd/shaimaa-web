@@ -612,6 +612,7 @@ const en = {
     cancelParcel: "Cancel the parcel",
     cancelParcelHint: "Deletes the parcel at Sendit (if it is still there) and cancels it here. Only before pickup. The order goes back to “Preparing” and can be shipped again.",
     parcelCancelled: "Parcel cancelled; the order is back in preparation.",
+    parcelGone: "Sendit no longer has this parcel (it was deleted there). Use “Cancel the parcel” to cancel it here too and ship the order again.",
     autoShip: "Send to Sendit automatically when an order is confirmed",
     autoShipHint: "Only when the city's Sendit district is certain: the one you chose last time for that city, or the only district of that city. Otherwise the order waits for you to choose, as today.",
     autoShipped: "Sent to Sendit automatically: {code} ({district}).",

@@ -615,6 +615,7 @@ const fr: Dictionary = {
     cancelParcel: "Annuler le colis",
     cancelParcelHint: "Supprime le colis chez Sendit (s'il y est encore) et l'annule ici. Seulement avant le ramassage. La commande revient en « Préparation » et peut être réexpédiée.",
     parcelCancelled: "Colis annulé ; la commande est revenue en préparation.",
+    parcelGone: "Sendit n'a plus ce colis (il y a été supprimé). Utilisez « Annuler le colis » pour l'annuler ici aussi et réexpédier la commande.",
     autoShip: "Envoyer à Sendit automatiquement quand une commande est confirmée",
     autoShipHint: "Seulement quand le quartier Sendit de la ville est certain : celui choisi la dernière fois pour cette ville, ou le seul quartier de la ville. Sinon la commande attend votre choix, comme aujourd'hui.",
     autoShipped: "Envoyée à Sendit automatiquement : {code} ({district}).",

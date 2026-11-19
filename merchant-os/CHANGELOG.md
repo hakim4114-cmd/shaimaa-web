@@ -5,6 +5,7 @@
 ### Fixed
 - Sendit status updates were all rejected: Sendit's signature matches none of the documented ways with the account keys. An update is now used as a signal only: the app reads the parcel's real status from Sendit with your keys and applies that. Nothing a third party sends can change a status by itself.
 - Label printing confirmed working with a real parcel.
+- Refreshing a parcel that was deleted at Sendit now says so and points to “Cancel the parcel”, instead of showing “Page non trouvée”.
 
 ## 1.11.2 — Cancel a parcel before pickup (2026-11-19)
 

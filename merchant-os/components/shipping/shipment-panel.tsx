@@ -25,6 +25,10 @@ type Failure = { code: AppErrorCode; detail?: string };
 function ErrorLine({ error }: { error: Failure | null }) {
   const { t } = useI18n();
   if (!error) return null;
+  // Sendit answers "Page non trouvée" (404) for a parcel deleted on its side.
+  if (error.code === "SENDIT_REJECTED" && /non trouv|not found|introuvable/i.test(error.detail ?? "")) {
+    return <FormAlert>{t.shipping.parcelGone}</FormAlert>;
+  }
   return (
     <FormAlert>
       {t.errors[error.code]}
