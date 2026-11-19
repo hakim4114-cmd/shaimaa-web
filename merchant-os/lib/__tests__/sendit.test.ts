@@ -1,6 +1,6 @@
 import { createHmac } from "node:crypto";
 import { describe, expect, it } from "vitest";
-import { buildDeliveryPayload, madToCents, pickDistrictForCity, mapSenditStatus, readSenditSettings, senditStatuses, toSenditPhone, verifySenditSignature } from "@/lib/shipping/sendit-core";
+import { buildDeliveryPayload, madToCents, matchCityId, pickDistrictForCity, senditCityFees, mapSenditStatus, readSenditSettings, senditStatuses, toSenditPhone, verifySenditSignature } from "@/lib/shipping/sendit-core";
 
 describe("Sendit status mapping", () => {
   it("covers every documented status", () => {
@@ -169,5 +169,32 @@ describe("Sendit signature case", () => {
     const sig = createHmac("sha256", "key-123456").update(body).digest("hex").toUpperCase();
     expect(verifySenditSignature(body, sig, ["key-123456"])).toBe(true);
     expect(verifySenditSignature(body, sig, ["other-key"])).toBe(false);
+  });
+});
+
+
+describe("Sendit city fees", () => {
+  it("takes the main district fee, else the lowest", () => {
+    const fees = senditCityFees([
+      { name: "Casablanca - Maarif", city: "Casablanca", feeCents: 3500 },
+      { name: "Casablanca", city: "Casablanca", feeCents: 3000 },
+      { name: "Tiflet - Centre", city: "Tiflet", feeCents: 4500 },
+      { name: "Tiflet - Hay", city: "Tiflet", feeCents: 4000 },
+      { name: "Nowhere", city: "Nowhere", feeCents: 0 }
+    ]);
+    expect(fees).toEqual([
+      { city: "Casablanca", feeCents: 3000 },
+      { city: "Tiflet", feeCents: 4000 }
+    ]);
+  });
+  it("matches our cities by name, Arabic name or alias", () => {
+    const cities = [
+      { id: 1, nameFr: "Kénitra", nameAr: "القنيطرة", aliases: ["knitra"] },
+      { id: 2, nameFr: "Casablanca", nameAr: "الدار البيضاء", aliases: ["casa"] }
+    ];
+    expect(matchCityId("Kenitra", cities)).toBe(1);
+    expect(matchCityId("knitra", cities)).toBe(1);
+    expect(matchCityId("الدار البيضاء", cities)).toBe(2);
+    expect(matchCityId("Rabat", cities)).toBeNull();
   });
 });

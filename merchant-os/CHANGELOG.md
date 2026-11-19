@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.12.0 — Delivery fees imported from Sendit (2026-11-19)
+
+### Added
+- **Import from Sendit** (Settings → Shipping fee per city): reads Sendit's price list for your pickup city (all pages of `GET /districts`). Each city's Sendit fee is recorded as its Sendit cost (used for profit). You choose the customer fee: same as Sendit for cities without one, same as Sendit everywhere, or leave customer fees untouched; optionally plus a fixed amount.
+- Sendit cities missing from the city list can be added as your own cities, so any city can be chosen on an order.
+- One fee per Sendit city: the district named like the city (its main area), otherwise its lowest district fee.
+
 ## 1.11.3 — Sendit status updates applied safely (2026-11-19)
 
 ### Fixed

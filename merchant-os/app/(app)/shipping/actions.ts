@@ -4,12 +4,13 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { requireOrganization } from "@/lib/data/context";
 import { mapDatabaseError, type AppErrorCode } from "@/lib/data/errors";
-import { getOrder } from "@/lib/data/orders";
+import { getOrder, listCities } from "@/lib/data/orders";
 import { getSenditProvider } from "@/lib/data/shipping";
 import { normalizeMoroccanPhone } from "@/lib/phone";
 import {
   SenditError,
   deleteDelivery,
+  listDistricts,
   getDelivery,
   getLabels,
   pickupCities,
@@ -17,7 +18,7 @@ import {
   searchDistricts,
   type SenditDistrict
 } from "@/lib/shipping/sendit";
-import { mapSenditStatus, toSenditPhone, type ShipmentStatus } from "@/lib/shipping/sendit-core";
+import { matchCityId, senditCityFees, mapSenditStatus, toSenditPhone, type ShipmentStatus } from "@/lib/shipping/sendit-core";
 import type { Json } from "@/lib/supabase/database.types";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { loadSenditKeys } from "@/lib/shipping/sendit-keys";
@@ -340,4 +341,100 @@ export async function saveShippingRates(input: z.infer<typeof ratesInput>): Prom
   revalidatePath("/settings");
   revalidatePath("/orders/new");
   return { ok: true, data: { saved: upserts.length } };
+}
+
+
+const importInput = z.object({
+  // keep: only record Sendit's cost; fill_empty: set the customer fee where none is set; overwrite: set it everywhere.
+  customerFee: z.enum(["keep", "fill_empty", "overwrite"]),
+  extraMad: z.number().min(0).max(500).default(0),
+  // Add the Sendit cities missing from the city list as this organization's own cities.
+  addMissing: z.boolean().default(true)
+});
+
+/**
+ * Imports Sendit's fee per city (for this pickup city): stored as the Sendit
+ * cost of each city, and optionally as the fee charged to the customer.
+ */
+export async function importSenditRates(
+  input: z.infer<typeof importInput>
+): Promise<ShippingResult<{ matched: number; customerFeesSet: number; unmatched: string[]; senditCities: number }>> {
+  const parsed = importInput.safeParse(input);
+  if (!parsed.success) return { error: "INVALID_INPUT" };
+  const { customerFee, extraMad, addMissing } = parsed.data;
+  const { supabase, organizationId, can } = await requireOrganization();
+  if (!can.overrideBlocklist) return { error: "FORBIDDEN" };
+  const provider = await getSenditProvider(supabase, organizationId);
+  if (!provider) return { error: "SENDIT_NOT_ENABLED" };
+  const keys = await loadSenditKeys(organizationId);
+  if (!keys) return { error: "SENDIT_NOT_CONFIGURED" };
+
+  const districts: SenditDistrict[] = [];
+  try {
+    let page = 1;
+    let last = 1;
+    do {
+      const result = await listDistricts(keys, page, provider.settings.pickupDistrictId);
+      districts.push(...result.districts);
+      last = result.lastPage;
+      page += 1;
+      if (result.districts.length === 0) break;
+    } while (page <= last && page <= 80);
+  } catch (error) {
+    return fromError(error);
+  }
+
+  let cities = await listCities(supabase);
+  const fees = senditCityFees(districts);
+  if (addMissing) {
+    const seen = new Set<string>();
+    const missing = fees
+      .filter((row) => matchCityId(row.city, cities) === null)
+      .map((row) => row.city.trim().slice(0, 80))
+      .filter((name) => name.length >= 2 && !seen.has(name.toLowerCase()) && seen.add(name.toLowerCase()));
+    for (let i = 0; i < missing.length; i += 200) {
+      const chunk = missing.slice(i, i + 200).map((name) => ({ organization_id: organizationId, name_fr: name, name_ar: name, region: "", aliases: [] }));
+      const { error } = await supabase.from("cities").insert(chunk);
+      if (error) return { error: mapDatabaseError(error) };
+    }
+    if (missing.length) cities = await listCities(supabase);
+  }
+  const matched = new Map<number, number>();
+  const unmatched: string[] = [];
+  for (const row of fees) {
+    const cityId = matchCityId(row.city, cities);
+    if (cityId === null) unmatched.push(row.city);
+    else if (!matched.has(cityId)) matched.set(cityId, row.feeCents);
+  }
+
+  const { data: existing } = await supabase
+    .from("shipping_rates")
+    .select("id, city_id, provider_id")
+    .eq("organization_id", organizationId)
+    .or(`provider_id.is.null,provider_id.eq.${provider.id}`);
+  const providerRow = new Map((existing ?? []).filter((r) => r.provider_id === provider.id).map((r) => [r.city_id, r.id]));
+  const defaultRow = new Map((existing ?? []).filter((r) => r.provider_id === null).map((r) => [r.city_id, r.id]));
+  const extra = Math.round(extraMad * 100);
+  let customerFeesSet = 0;
+
+  for (const [cityId, cents] of matched) {
+    const costId = providerRow.get(cityId);
+    const { error } = costId
+      ? await supabase.from("shipping_rates").update({ carrier_cost_cents: cents }).eq("id", costId)
+      : await supabase.from("shipping_rates").insert({ organization_id: organizationId, provider_id: provider.id, city_id: cityId, customer_fee_cents: 0, carrier_cost_cents: cents });
+    if (error) return { error: mapDatabaseError(error) };
+
+    if (customerFee === "keep") continue;
+    const feeId = defaultRow.get(cityId);
+    if (feeId && customerFee === "fill_empty") continue;
+    const { error: feeError } = feeId
+      ? await supabase.from("shipping_rates").update({ customer_fee_cents: cents + extra }).eq("id", feeId)
+      : await supabase.from("shipping_rates").insert({ organization_id: organizationId, city_id: cityId, customer_fee_cents: cents + extra });
+    if (feeError) return { error: mapDatabaseError(feeError) };
+    customerFeesSet += 1;
+  }
+
+  revalidatePath("/settings");
+  revalidatePath("/orders/new");
+  return { ok: true, data: { matched: matched.size, customerFeesSet, unmatched: unmatched.slice(0, 30), senditCities: fees.length } };
 }
