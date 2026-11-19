@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.11.3 — Sendit status updates applied safely (2026-11-19)
+
+### Fixed
+- Sendit status updates were all rejected: Sendit's signature matches none of the documented ways with the account keys. An update is now used as a signal only: the app reads the parcel's real status from Sendit with your keys and applies that. Nothing a third party sends can change a status by itself.
+- Label printing confirmed working with a real parcel.
+
 ## 1.11.2 — Cancel a parcel before pickup (2026-11-19)
 
 ### Added

@@ -47,7 +47,7 @@ Chosen by the owner on 2026-11-17 (account with API access). Sources: the Sendit
 - **Labels**: `POST /deliveries/getlabels` returns a signed PDF URL (10×10 thermal or A4). It is opened directly and never stored.
 - **Pickup**: `POST /pickups` with every parcel still `PENDING`, using the pickup details from Settings (owner's choice: Kénitra).
 - **Webhook**: `POST /api/webhooks/sendit/{providerId}`.
-  - Signature: `X-Sendit-Signature` is an HMAC-SHA256 of the raw body, using the API key chosen for the webhook. The guide does not say which key or which encoding, so that organization's secret and public keys (looked up from the provider id in the URL) are tried in hex and base64 with constant-time comparison. Confirm and narrow this after the first real event.
+  - Signature: the guide says `X-Sendit-Signature` is an HMAC-SHA256 of the raw body with "the API key chosen for the webhook". On 2026-11-19 the first real events (lower-case hex) matched no HMAC of the body with the account's public or secret key, nor 116 other combinations tested in SQL against the stored keys. So: a matching signature is applied as received; **any other call is treated as a hint only** — the parcel must belong to the organization, and its real status is read from `GET /deliveries/{code}` with the organization's keys before anything changes. A forged call can at most trigger that read. Rejected payloads were kept in the problems log for this analysis.
   - Valid events go to `apply_carrier_event` (service role only). It is idempotent per tracking code, status and `lastActionAt`, and every event is logged in `carrier_events`.
   - The server needs `SUPABASE_SERVICE_ROLE_KEY` for this route only.
 - **Status mapping** (`lib/shipping/sendit-core.ts`):
