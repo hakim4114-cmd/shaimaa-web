@@ -139,9 +139,19 @@ export async function getDelivery(keys: SenditKeys, code: string): Promise<{ sta
 
 export async function getLabels(keys: SenditKeys, codes: string[], thermal: boolean): Promise<string> {
   const body = await authed(keys, "/deliveries/getlabels", { method: "POST", json: { codesToPrint: codes.join(","), printFormat: thermal ? 1 : 0 } });
-  const url = (body.data as { fileUrl?: unknown } | undefined)?.fileUrl;
-  if (typeof url !== "string" || !url.startsWith("https://")) throw new SenditError("SENDIT_UNAVAILABLE", "no label file returned");
-  return url;
+  const data = body.data;
+  const record = data && typeof data === "object" ? (data as Record<string, unknown>) : {};
+  const found = [typeof data === "string" ? data : null, record.fileUrl, record.file_url, record.url, record.link, record.file, body.fileUrl, body.url].find(
+    (v): v is string => typeof v === "string" && v.trim() !== ""
+  );
+  if (!found) {
+    // Say what came back, so the cause can be found (no secrets in this response).
+    const shape = `keys: ${Object.keys(body).join(",")}${Object.keys(record).length ? ` / data: ${Object.keys(record).join(",")}` : ""}${typeof body.message === "string" ? ` — ${body.message}` : ""}`;
+    throw new SenditError("SENDIT_UNAVAILABLE", `no label file returned (${shape})`.slice(0, 300));
+  }
+  const url = found.trim();
+  if (/^https?:\/\//i.test(url)) return url.replace(/^http:\/\//i, "https://");
+  return `https://app.sendit.ma${url.startsWith("/") ? "" : "/"}${url}`;
 }
 
 export async function requestPickup(keys: SenditKeys, input: { districtId: number; name: string; phone: string; address: string; note: string; codes: string[] }): Promise<string> {

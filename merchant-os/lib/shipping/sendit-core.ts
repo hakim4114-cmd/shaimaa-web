@@ -63,15 +63,19 @@ export function mapSenditStatus(status: string): ShipmentStatus | null {
  * base64, always with a constant-time comparison.
  */
 export function verifySenditSignature(rawBody: string, signature: string | null, keys: (string | undefined)[]): boolean {
-  const provided = signature?.trim().replace(/^sha256=/i, "") ?? "";
-  if (!provided) return false;
+  const raw = signature?.trim().replace(/^sha256=/i, "") ?? "";
+  if (!raw) return false;
+  // Hex may come in either case; base64 is case-sensitive.
+  const candidates = /^[0-9a-f]{64}$/i.test(raw) ? [raw.toLowerCase()] : [raw];
   for (const key of keys) {
     if (!key) continue;
     const digest = createHmac("sha256", key).update(rawBody, "utf8").digest();
     for (const expected of [digest.toString("hex"), digest.toString("base64")]) {
-      const a = Buffer.from(expected);
-      const b = Buffer.from(provided);
-      if (a.length === b.length && timingSafeEqual(a, b)) return true;
+      for (const provided of candidates) {
+        const a = Buffer.from(expected);
+        const b = Buffer.from(provided);
+        if (a.length === b.length && timingSafeEqual(a, b)) return true;
+      }
     }
   }
   return false;

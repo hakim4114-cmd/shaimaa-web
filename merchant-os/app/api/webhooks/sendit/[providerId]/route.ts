@@ -26,8 +26,13 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
     const admin = createSupabaseAdminClient();
     const { data: provider } = admin ? await admin.from("shipping_providers").select("organization_id").eq("id", providerId).maybeSingle() : { data: null };
     if (admin && provider) {
+      // Kept to work out Sendit's signing scheme (the guide does not say which key or encoding).
+      // The status payload has no customer data; the signature is a MAC, not a secret.
       await reportSystemEvent(admin, provider.organization_id, "sendit_webhook", "Sendit event rejected: invalid signature", {
         signature_header: signature ? "present" : "missing",
+        signature: signature?.slice(0, 200) ?? null,
+        body: raw.slice(0, 4000),
+        content_type: request.headers.get("content-type"),
         hint: "Check that the webhook in Sendit uses the same API keys as Settings → Sendit."
       });
     }

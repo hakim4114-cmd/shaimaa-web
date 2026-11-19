@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.11.1 — Fixes from the first real Sendit parcel (2026-11-19)
+
+### Fixed
+- Printing labels: the Sendit response is read more tolerantly (other field names, relative or http links); when no file comes back, the error says what Sendit answered.
+- Sendit webhook: an upper-case hex signature is accepted. A rejected event now keeps its payload and signature in the problems log (status payloads carry no customer data), to work out Sendit's signing scheme without exposing keys.
+
 ## 1.11.0 — Problems log and daily backups (2026-11-19)
 
 ### Added

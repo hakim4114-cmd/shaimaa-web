@@ -162,3 +162,12 @@ describe("pickDistrictForCity", () => {
     expect(pickDistrictForCity("Rabat", list)).toBeNull();
   });
 });
+
+describe("Sendit signature case", () => {
+  it("accepts an upper-case hex signature", () => {
+    const body = '{"code":"DH1","newStatus":"DELIVERED"}';
+    const sig = createHmac("sha256", "key-123456").update(body).digest("hex").toUpperCase();
+    expect(verifySenditSignature(body, sig, ["key-123456"])).toBe(true);
+    expect(verifySenditSignature(body, sig, ["other-key"])).toBe(false);
+  });
+});
