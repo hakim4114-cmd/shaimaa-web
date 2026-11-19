@@ -52,7 +52,7 @@ const ar: Dictionary = {
     sectionsEssential: "الأساسية",
     sectionsAll: "كل الأقسام",
     notificationsAllClear: "والو كيتسناك دابا.",
-    alerts: { obligationsOverdue: "التزامات فات الوقت ديالها", obligationsSoon: "التزامات حالّة فـ 7 أيام", callsDue: "مكالمات خاصك تديرها", deliveryProblems: "مشاكل التوصيل", returnsWaiting: "مرتجعات للاستلام", lowStock: "منتجات المخزون ديالها ناقص", storeOrders: "طلبات المتجر خاصها تصحيح", waitingToShip: "مؤكدة من أكثر من 24 ساعة وباقي ما تصيفطاتش" }
+    alerts: { obligationsOverdue: "التزامات فات الوقت ديالها", obligationsSoon: "التزامات حالّة فـ 7 أيام", callsDue: "مكالمات خاصك تديرها", deliveryProblems: "مشاكل التوصيل", returnsWaiting: "مرتجعات للاستلام", lowStock: "منتجات المخزون ديالها ناقص", storeOrders: "طلبات المتجر خاصها تصحيح", waitingToShip: "مؤكدة من أكثر من 24 ساعة وباقي ما تصيفطاتش", problems: "مشاكل خاصك تشوفها" }
   },
   commandCenter: {
     title: "لوحة القيادة",
@@ -987,6 +987,7 @@ const ar: Dictionary = {
       invalid_order: "الطلب ناقص ولا كبير بزاف. خلقو يدويا."
     }
   },
+  problems: { title: "المشاكل", description: "أخطاء وقعو فالخلفية: رسائل من Sendit ولا من المتجر ترفضو، ولا طرود ما تصيفطوش أوتوماتيكيا. صلح السبب ومن بعد علّم أنها تعالجات.", empty: "حتى مشكل", emptyHint: "كلشي اللي خدام فالخلفية دوز مزيان.", resolve: "تعالج", times: "{count} مرات", footer: "الرسالة التقنية كتبقى كيف وصلات، باش تعاون فمعرفة السبب.", sources: { sendit_webhook: "تحديث من Sendit", store_webhook: "طلب من المتجر", auto_ship: "الإرسال الأوتوماتيكي", sendit_api: "Sendit", other: "أخرى" } },
   assistant: {
     title: "Claude (قراءة فقط)",
     description: "سول Claude على الأرقام ديالك: الربح، الطلبات، المخزون، الحملات، التحصيلات. Claude كيقرا عبر رابط خاص، وما يقدر يبدّل حتى حاجة.",

@@ -4,7 +4,7 @@ import type { requireOrganization } from "./context";
 
 type Ctx = Awaited<ReturnType<typeof requireOrganization>>;
 
-export type AlertKey = "obligationsOverdue" | "obligationsSoon" | "callsDue" | "deliveryProblems" | "returnsWaiting" | "lowStock" | "storeOrders" | "waitingToShip";
+export type AlertKey = "obligationsOverdue" | "obligationsSoon" | "callsDue" | "deliveryProblems" | "returnsWaiting" | "lowStock" | "storeOrders" | "waitingToShip" | "problems";
 export type Alert = { key: AlertKey; count: number; href: string; tone: "danger" | "warning" | "info" };
 
 function addDays(day: string, n: number) {
@@ -29,13 +29,15 @@ export async function getAlerts({ supabase, organizationId, can }: Ctx): Promise
     // Confirmed more than 24 hours ago and still no parcel (auto-send skipped or failed, or forgotten).
     can.prepareOrders
       ? supabase.from("orders").select("id", head).eq("organization_id", organizationId).in("status", ["confirmed", "preparing"]).lt("confirmed_at", new Date(Date.now() - 86400000).toISOString())
-      : null
+      : null,
+    can.overrideBlocklist ? supabase.from("system_events").select("id", head).eq("organization_id", organizationId).is("resolved_at", null) : null
   ]);
   const count = (q: (typeof queries)[number]) => (q && "count" in q ? (q.count ?? 0) : 0);
   const low = Number(queries[6]?.data ?? 0);
   const alerts: Alert[] = [
     { key: "obligationsOverdue", count: count(queries[0]), href: "/pay", tone: "danger" },
     { key: "obligationsSoon", count: count(queries[1]), href: "/pay", tone: "warning" },
+    { key: "problems", count: count(queries[8]), href: "/problems", tone: "danger" },
     { key: "storeOrders", count: count(queries[5]), href: "/orders/inbox", tone: "danger" },
     { key: "callsDue", count: count(queries[2]), href: "/orders?view=to_call", tone: "info" },
     { key: "waitingToShip", count: count(queries[7]), href: "/orders?view=confirmed", tone: "warning" },

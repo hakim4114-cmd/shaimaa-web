@@ -2137,6 +2137,63 @@ export type Database = {
           },
         ]
       }
+      system_events: {
+        Row: {
+          created_at: string
+          details: Json
+          id: string
+          last_seen_at: string
+          message: string
+          occurrences: number
+          order_id: string | null
+          organization_id: string
+          resolved_at: string | null
+          resolved_by: string | null
+          source: string
+        }
+        Insert: {
+          created_at?: string
+          details?: Json
+          id?: string
+          last_seen_at?: string
+          message: string
+          occurrences?: number
+          order_id?: string | null
+          organization_id: string
+          resolved_at?: string | null
+          resolved_by?: string | null
+          source: string
+        }
+        Update: {
+          created_at?: string
+          details?: Json
+          id?: string
+          last_seen_at?: string
+          message?: string
+          occurrences?: number
+          order_id?: string | null
+          organization_id?: string
+          resolved_at?: string | null
+          resolved_by?: string | null
+          source?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "system_events_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "system_events_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -2729,10 +2786,31 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      report_my_system_event: {
+        Args: {
+          p_details?: Json
+          p_message: string
+          p_order_id?: string
+          p_organization_id: string
+          p_source: string
+        }
+        Returns: string
+      }
       report_summary: {
         Args: { p_from: string; p_organization_id: string; p_to: string }
         Returns: Json
       }
+      report_system_event: {
+        Args: {
+          p_details?: Json
+          p_message: string
+          p_order_id?: string
+          p_organization_id: string
+          p_source: string
+        }
+        Returns: string
+      }
+      resolve_system_event: { Args: { p_event_id: string }; Returns: undefined }
       retry_store_order: {
         Args: { p_external_order_id: string }
         Returns: {

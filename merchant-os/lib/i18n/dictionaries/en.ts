@@ -50,7 +50,7 @@ const en = {
     sectionsEssential: "Essentials",
     sectionsAll: "All sections",
     notificationsAllClear: "Nothing needs your attention right now.",
-    alerts: { obligationsOverdue: "Obligations overdue", obligationsSoon: "Obligations due within 7 days", callsDue: "Calls to make", deliveryProblems: "Delivery problems", returnsWaiting: "Returns to receive", lowStock: "Products low in stock", storeOrders: "Store orders to fix", waitingToShip: "Confirmed over 24 h ago, not shipped yet" }
+    alerts: { obligationsOverdue: "Obligations overdue", obligationsSoon: "Obligations due within 7 days", callsDue: "Calls to make", deliveryProblems: "Delivery problems", returnsWaiting: "Returns to receive", lowStock: "Products low in stock", storeOrders: "Store orders to fix", waitingToShip: "Confirmed over 24 h ago, not shipped yet", problems: "Problems to check" }
   },
   commandCenter: {
     title: "Command center",
@@ -985,6 +985,7 @@ const en = {
       invalid_order: "The order is incomplete or too large. Create it by hand."
     }
   },
+  problems: { title: "Problems", description: "Failures that happened in the background: carrier or store messages rejected, parcels that could not be sent automatically. Fix the cause, then mark as handled.", empty: "No problem", emptyHint: "Everything that ran in the background worked.", resolve: "Handled", times: "{count} times", footer: "The technical message is kept as received, to help find the cause.", sources: { sendit_webhook: "Sendit status update", store_webhook: "Online store order", auto_ship: "Automatic sending", sendit_api: "Sendit", other: "Other" } },
   assistant: {
     title: "Claude (read-only)",
     description: "Ask Claude about your numbers: profit, orders, stock, campaigns, cash. Claude reads through a private link; it cannot change anything.",
