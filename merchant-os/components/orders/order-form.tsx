@@ -51,7 +51,8 @@ export function OrderForm({
   variants,
   fees,
   canOverrideBlocklist,
-  campaigns = []
+  campaigns = [],
+  deliveryIncluded = false
 }: {
   mode: "create" | "edit";
   orderId?: string;
@@ -61,6 +62,8 @@ export function OrderForm({
   fees: Record<number, number>;
   canOverrideBlocklist: boolean;
   campaigns?: { id: string; name: string }[];
+  /** Organization default: the product price already includes delivery. */
+  deliveryIncluded?: boolean;
 }) {
   const { t, locale } = useI18n();
   const to = t.orders;
@@ -84,6 +87,8 @@ export function OrderForm({
   const newKey = () => `line-${lineCounter.current++}`;
   const [shippingFee, setShippingFee] = useState(initial.shippingFee);
   const [shippingTouched, setShippingTouched] = useState(mode === "edit");
+  // Delivery included in the price (fee 0) or paid by the customer; the default comes from Settings.
+  const [included, setIncluded] = useState(mode === "edit" ? deliveryIncluded && initial.shippingFee.trim() === "0" : deliveryIncluded);
   const [discount, setDiscount] = useState(initial.discount);
   const [source, setSource] = useState<OrderSource>(initial.source);
   const [notes, setNotes] = useState(initial.notes);
@@ -130,7 +135,7 @@ export function OrderForm({
   const rateCents = cityId !== null ? fees[cityId] : undefined;
 
   // The shipping fee follows the city's rate until the user types their own.
-  const effectiveShipping = shippingTouched ? shippingFee : rateCents !== undefined ? centsToInput(rateCents) : "";
+  const effectiveShipping = included ? "0" : shippingTouched ? shippingFee : rateCents !== undefined ? centsToInput(rateCents) : "";
 
   const subtotal = lines.reduce((sum, line) => sum + (variantById.get(line.variantId)?.priceCents ?? 0) * line.quantity, 0);
   const shippingCents = parseMoneyToCents(effectiveShipping) ?? 0;
@@ -367,23 +372,45 @@ export function OrderForm({
       <Card>
         <CardHeader title={to.sectionPayment} />
         <CardBody className="grid gap-4 sm:grid-cols-2">
-          <Field
-            label={to.shippingFee}
-            htmlFor={`${id}-shipping`}
-            hint={cityId !== null && rateCents === undefined && !shippingTouched ? to.noRate : to.shippingFeeHint}
-          >
-            <Input
-              id={`${id}-shipping`}
-              dir="ltr"
-              inputMode="decimal"
-              value={effectiveShipping}
-              placeholder="0"
-              onChange={(e) => {
-                setShippingTouched(true);
-                setShippingFee(e.target.value);
-              }}
-            />
-          </Field>
+          <div className="flex flex-wrap items-center gap-2 text-sm sm:col-span-2" role="radiogroup" aria-label={to.deliveryMode}>
+            <span className="text-muted-foreground">{to.deliveryMode}</span>
+            {([false, true] as const).map((value) => (
+              <button
+                key={String(value)}
+                type="button"
+                role="radio"
+                aria-checked={included === value}
+                onClick={() => setIncluded(value)}
+                className={cn(
+                  "min-h-9 rounded-full border px-3 text-sm font-medium transition-colors",
+                  included === value ? "border-accent bg-accent-soft text-accent-soft-foreground" : "border-border bg-surface text-foreground hover:bg-surface-hover"
+                )}
+              >
+                {value ? to.deliveryIncluded : to.deliveryPaid}
+              </button>
+            ))}
+          </div>
+          {included ? (
+            <p className="text-sm text-muted-foreground sm:col-span-1">{to.deliveryIncludedHint}</p>
+          ) : (
+            <Field
+              label={to.shippingFee}
+              htmlFor={`${id}-shipping`}
+              hint={cityId !== null && rateCents === undefined && !shippingTouched ? to.noRate : to.shippingFeeHint}
+            >
+              <Input
+                id={`${id}-shipping`}
+                dir="ltr"
+                inputMode="decimal"
+                value={effectiveShipping}
+                placeholder="0"
+                onChange={(e) => {
+                  setShippingTouched(true);
+                  setShippingFee(e.target.value);
+                }}
+              />
+            </Field>
+          )}
           <Field label={to.discount} htmlFor={`${id}-discount`}>
             <Input id={`${id}-discount`} dir="ltr" inputMode="decimal" value={discount} placeholder="0" onChange={(e) => setDiscount(e.target.value)} />
           </Field>

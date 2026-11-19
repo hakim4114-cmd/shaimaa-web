@@ -28,7 +28,13 @@ export default async function EditOrderPage({ params }: { params: Promise<{ id: 
   if (!order) notFound();
   if (order.status !== "new" && order.status !== "confirmation_pending") redirect(`/orders/${id}`);
 
-  const [cities, sellable, fees] = await Promise.all([listCities(supabase), listSellableVariants(supabase, organizationId), defaultShippingFees(supabase, organizationId)]);
+  const [cities, sellable, fees, org] = await Promise.all([
+    listCities(supabase),
+    listSellableVariants(supabase, organizationId),
+    defaultShippingFees(supabase, organizationId),
+    supabase.from("organizations").select("delivery_included").eq("id", organizationId).maybeSingle()
+  ]);
+  const deliveryIncluded = org.data?.delivery_included ?? false;
   // Lines whose variant is no longer on sale stay visible so they are not dropped silently.
   const known = new Set(sellable.map((v) => v.id));
   const variants = [
@@ -49,6 +55,7 @@ export default async function EditOrderPage({ params }: { params: Promise<{ id: 
     <div className="mx-auto flex w-full max-w-3xl flex-col gap-6">
       <PageHeader title={interpolate(t.orders.editTitle, { number: order.orderNumber })} description={t.orders.editDescription} />
       <OrderForm
+        deliveryIncluded={deliveryIncluded}
         mode="edit"
         orderId={order.id}
         cities={cities}

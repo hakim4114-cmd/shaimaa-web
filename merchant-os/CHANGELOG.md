@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.13.0 — Delivery included in the price, or paid by the customer (2026-11-19)
+
+### Added
+- **Delivery pricing** (Settings → Shipping fee per city): the customer pays the city's delivery fee (as before), or delivery is included in the product price, so new orders get a delivery fee of 0.
+- On each order, a switch "Delivery: paid by the customer / included in the price" starts from that default and can be changed for one order.
+- The Sendit cost of each city still counts in profit either way; only what the customer pays changes.
+- Migration `20261119000500_delivery_included`: `organizations.delivery_included`; `app.default_shipping_fee` returns 0 when it is on. A fee typed on the order always wins.
+
 ## 1.12.0 — Delivery fees imported from Sendit (2026-11-19)
 
 ### Added

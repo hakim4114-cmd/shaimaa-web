@@ -7,6 +7,7 @@ import { requireOrganization } from "@/lib/data/context";
 import { getSenditProvider } from "@/lib/data/shipping";
 import { defaultShippingFees, listCities } from "@/lib/data/orders";
 import { ShippingRatesForm } from "@/components/shipping/shipping-rates-form";
+import { DeliveryPricingForm } from "@/components/shipping/delivery-pricing-form";
 import { SenditRatesImport } from "@/components/shipping/sendit-rates-import";
 import { AssistantLinks } from "@/components/shipping/assistant-links";
 import { StoreConnections, type StoreRow } from "@/components/stores/store-connections";
@@ -23,12 +24,13 @@ export default async function SettingsPage() {
   const ts = t.shipping;
   const { supabase, organizationId, can } = await requireOrganization();
   if (!can.overrideBlocklist) redirect("/");
-  const [provider, cities, fees, tokens, stores] = await Promise.all([
+  const [provider, cities, fees, tokens, stores, org] = await Promise.all([
     getSenditProvider(supabase, organizationId),
     listCities(supabase),
     defaultShippingFees(supabase, organizationId),
     supabase.from("assistant_tokens").select("id, name, created_at, last_used_at").eq("organization_id", organizationId).order("created_at", { ascending: false }),
-    supabase.from("stores").select("id, name, platform, is_active, last_order_at").eq("organization_id", organizationId).order("created_at")
+    supabase.from("stores").select("id, name, platform, is_active, last_order_at").eq("organization_id", organizationId).order("created_at"),
+    supabase.from("organizations").select("delivery_included").eq("id", organizationId).maybeSingle()
   ]);
 
   const h = await headers();
@@ -78,6 +80,7 @@ export default async function SettingsPage() {
       <Card>
         <CardHeader title={ts.ratesTitle} description={ts.ratesDescription} />
         <CardBody className="flex flex-col gap-4">
+          <DeliveryPricingForm included={org.data?.delivery_included ?? false} />
           {provider?.credentialsSet ? <SenditRatesImport /> : null}
           <ShippingRatesForm cities={cities.map((c) => ({ id: c.id, nameFr: c.nameFr, nameAr: c.nameAr }))} fees={fees} />
         </CardBody>

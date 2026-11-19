@@ -438,3 +438,15 @@ export async function importSenditRates(
   revalidatePath("/orders/new");
   return { ok: true, data: { matched: matched.size, customerFeesSet, unmatched: unmatched.slice(0, 30), senditCities: fees.length } };
 }
+
+
+/** Organization default: product prices include delivery (true) or the customer pays the city fee (false). */
+export async function saveDeliveryPricing(included: boolean): Promise<ShippingResult> {
+  const { supabase, organizationId, can } = await requireOrganization();
+  if (!can.overrideBlocklist) return { error: "FORBIDDEN" };
+  const { error } = await supabase.from("organizations").update({ delivery_included: Boolean(included) }).eq("id", organizationId);
+  if (error) return { error: mapDatabaseError(error) };
+  revalidatePath("/settings");
+  revalidatePath("/orders/new");
+  return { ok: true };
+}
