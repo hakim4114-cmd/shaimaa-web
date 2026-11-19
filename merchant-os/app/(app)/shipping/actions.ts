@@ -219,8 +219,10 @@ export async function refreshSenditShipment(shipmentId: string): Promise<Shippin
  * (already deleted there is fine), then cancels it here; the order goes back
  * to "preparing" and can be shipped again.
  */
-export async function cancelSenditParcel(shipmentId: string): Promise<ShippingResult> {
+export async function cancelSenditParcel(shipmentId: string, options: { cancelOrder?: boolean; reason?: string } = {}): Promise<ShippingResult> {
   if (!z.string().uuid().safeParse(shipmentId).success) return { error: "NOT_FOUND" };
+  const reason = String(options.reason ?? "").trim().slice(0, 1000);
+  if (options.cancelOrder && !reason) return { error: "NOTE_REQUIRED" };
   const { supabase, organizationId, can } = await requireOrganization();
   if (!can.prepareOrders) return { error: "FORBIDDEN" };
   const { data: shipment } = await supabase
@@ -241,6 +243,18 @@ export async function cancelSenditParcel(shipmentId: string): Promise<ShippingRe
   }
   const { error } = await supabase.rpc("update_shipment_status", { p_shipment_id: shipment.id, p_status: "cancelled", p_note: "Cancelled before pickup (Sendit)" });
   if (error) return { error: mapDatabaseError(error) };
+  if (options.cancelOrder) {
+    // The customer no longer wants it: cancel the order too, which releases the reserved stock.
+    if (!can.manageOrders) {
+      revalidateShipping(shipment.order_id);
+      return { error: "FORBIDDEN", detail: "parcel cancelled; the order needs an owner, admin or operator to cancel it" };
+    }
+    const { error: orderError } = await supabase.rpc("transition_order", { p_order_id: shipment.order_id, p_to: "cancelled", p_note: reason });
+    if (orderError) {
+      revalidateShipping(shipment.order_id);
+      return { error: mapDatabaseError(orderError) };
+    }
+  }
   revalidateShipping(shipment.order_id);
   return { ok: true };
 }

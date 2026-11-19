@@ -114,5 +114,11 @@ select tests.eq((select status::text from public.orders where id = :'o3'), 'prep
 select tests.eq((select stock_state::text from public.orders where id = :'o3'), 'reserved', 'stock stays reserved for the order');
 select id as s4 from public.register_carrier_shipment(:'o3', :'sendit', 'DHTEST004', 3000) \gset
 select tests.eq((select status::text from public.orders where id = :'o3'), 'ready_to_ship', 'the order can be shipped again');
+-- Customer cancelled: parcel cancelled, then the order, which releases the reserved unit
+select reserved as reserved_before from public.inventory_levels where variant_id = :'v1' \gset
+select public.update_shipment_status(:'s4', 'cancelled', 'Customer cancelled');
+select public.transition_order(:'o3', 'cancelled', 'Customer changed mind');
+select tests.eq((select row(status::text, stock_state::text)::text from public.orders where id = :'o3'), row('cancelled', 'released')::text, 'cancelling the order after its parcel releases the stock');
+select tests.eq((select reserved from public.inventory_levels where variant_id = :'v1'), :'reserved_before'::int - 1, 'the reserved unit is available again');
 
 rollback;
