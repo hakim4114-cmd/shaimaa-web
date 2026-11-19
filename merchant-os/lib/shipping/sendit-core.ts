@@ -267,3 +267,29 @@ export function previewInvoice(invoiceAmountCents: number, lines: SenditInvoiceL
   preview.impliedOtherCents = preview.deliveredGrossCents - preview.deliveredFeesCents - invoiceAmountCents;
   return preview;
 }
+
+
+/**
+ * One delivery fee per Sendit city: the district named like the city when
+ * there is one (the main area), otherwise the lowest fee of its districts.
+ */
+export function senditCityFees(districts: { name: string; city: string; feeCents: number }[]): { city: string; feeCents: number }[] {
+  const byCity = new Map<string, { city: string; main: number | null; min: number }>();
+  for (const d of districts) {
+    const key = foldPlace(d.city);
+    if (!key || !(d.feeCents > 0)) continue;
+    const entry = byCity.get(key) ?? { city: d.city, main: null, min: Number.POSITIVE_INFINITY };
+    if (foldPlace(d.name) === key) entry.main = d.feeCents;
+    entry.min = Math.min(entry.min, d.feeCents);
+    byCity.set(key, entry);
+  }
+  return [...byCity.values()].map((e) => ({ city: e.city, feeCents: e.main ?? e.min }));
+}
+
+/** Our city id for a carrier city name (French or Arabic name, or alias), or null. */
+export function matchCityId(name: string, cities: { id: number; nameFr: string; nameAr: string; aliases: string[] }[]): number | null {
+  const key = foldPlace(name);
+  if (!key) return null;
+  const found = cities.find((c) => [c.nameFr, c.nameAr, ...c.aliases].some((n) => foldPlace(n) === key));
+  return found?.id ?? null;
+}

@@ -7,6 +7,7 @@ import { requireOrganization } from "@/lib/data/context";
 import { getSenditProvider } from "@/lib/data/shipping";
 import { defaultShippingFees, listCities } from "@/lib/data/orders";
 import { ShippingRatesForm } from "@/components/shipping/shipping-rates-form";
+import { SenditRatesImport } from "@/components/shipping/sendit-rates-import";
 import { AssistantLinks } from "@/components/shipping/assistant-links";
 import { StoreConnections, type StoreRow } from "@/components/stores/store-connections";
 import { getI18n } from "@/lib/i18n/server";
@@ -76,7 +77,8 @@ export default async function SettingsPage() {
       </Card>
       <Card>
         <CardHeader title={ts.ratesTitle} description={ts.ratesDescription} />
-        <CardBody>
+        <CardBody className="flex flex-col gap-4">
+          {provider?.credentialsSet ? <SenditRatesImport /> : null}
           <ShippingRatesForm cities={cities.map((c) => ({ id: c.id, nameFr: c.nameFr, nameAr: c.nameAr }))} fees={fees} />
         </CardBody>
       </Card>

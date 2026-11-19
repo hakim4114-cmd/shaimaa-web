@@ -111,6 +111,16 @@ export async function searchDistricts(keys: SenditKeys, query: string, pickupDis
   return (Array.isArray(body.data) ? body.data : []).map((row) => toDistrict(row as Record<string, unknown>)).filter((d) => d.id);
 }
 
+/** One page of the Sendit city list, with fees for the given pickup city. */
+export async function listDistricts(keys: SenditKeys, page: number, pickupDistrictId: number | null): Promise<{ districts: SenditDistrict[]; lastPage: number }> {
+  const params = new URLSearchParams({ page: String(Math.max(1, Math.floor(page))) });
+  if (pickupDistrictId) params.set("pickup-district", String(pickupDistrictId));
+  const body = await authed(keys, `/districts?${params}`);
+  const districts = (Array.isArray(body.data) ? body.data : []).map((row) => toDistrict(row as Record<string, unknown>)).filter((d) => d.id);
+  const meta = body.meta && typeof body.meta === "object" ? (body.meta as Record<string, unknown>) : {};
+  return { districts, lastPage: Number(body.last_page ?? meta.last_page) || 1 };
+}
+
 export async function pickupCities(keys: SenditKeys): Promise<{ id: number; name: string; arabicName: string }[]> {
   const body = await authed(keys, "/districts/pickup-cities");
   return (Array.isArray(body.data) ? body.data : [])
