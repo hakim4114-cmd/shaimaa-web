@@ -1,10 +1,11 @@
 "use client";
 
-import { ExternalLink, Printer, RefreshCw, Search, Truck } from "lucide-react";
+import { ExternalLink, Printer, RefreshCw, Search, Truck, XCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useId, useState, useTransition } from "react";
 import { toast } from "sonner";
-import { refreshSenditShipment, searchSenditDistricts, senditLabels, shipWithSendit } from "@/app/(app)/shipping/actions";
+import { cancelSenditParcel, refreshSenditShipment, searchSenditDistricts, senditLabels, shipWithSendit } from "@/app/(app)/shipping/actions";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { FormAlert } from "@/components/auth/form-alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -116,13 +117,13 @@ export function ShipmentPanel({
             <ExternalLink className="size-4" aria-hidden /> {ts.proof}
           </a>
         ) : null}
-        {shipment.isSendit && shipment.trackingNumber && canShip ? <ParcelActions shipmentId={shipment.id} code={shipment.trackingNumber} /> : null}
+        {shipment.isSendit && shipment.trackingNumber && canShip ? <ParcelActions shipmentId={shipment.id} code={shipment.trackingNumber} cancellable={shipment.status === "pending"} /> : null}
       </CardBody>
     </Card>
   );
 }
 
-function ParcelActions({ shipmentId, code }: { shipmentId: string; code: string }) {
+function ParcelActions({ shipmentId, code, cancellable }: { shipmentId: string; code: string; cancellable: boolean }) {
   const { t } = useI18n();
   const ts = t.shipping;
   const router = useRouter();
@@ -174,6 +175,29 @@ function ParcelActions({ shipmentId, code }: { shipmentId: string; code: string 
         >
           <RefreshCw /> {ts.refresh}
         </Button>
+        {cancellable ? (
+          <ConfirmDialog
+            trigger={
+              <Button size="sm" variant="ghost" disabled={pending}>
+                <XCircle /> {ts.cancelParcel}
+              </Button>
+            }
+            title={ts.cancelParcel}
+            description={ts.cancelParcelHint}
+            confirmLabel={ts.cancelParcel}
+            cancelLabel={t.common.cancel}
+            onConfirm={async () => {
+              setError(null);
+              const result = await cancelSenditParcel(shipmentId);
+              if (result.error) {
+                setError({ code: result.error, detail: result.detail });
+                return;
+              }
+              toast.success(ts.parcelCancelled);
+              router.refresh();
+            }}
+          />
+        ) : null}
       </div>
     </div>
   );

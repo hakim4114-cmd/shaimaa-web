@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.11.2 — Cancel a parcel before pickup (2026-11-19)
+
+### Added
+- **Cancel the parcel** on a Sendit parcel not picked up yet: deletes it at Sendit (or accepts that it was already deleted there) and cancels it in the app. The order goes back to *Preparing*, stock stays reserved, and it can be shipped again. Found during the first real test: a parcel deleted at Sendit left the order "ready to ship" with nothing to ship, and the status refresh answered "Page non trouvée".
+
 ## 1.11.1 — Fixes from the first real Sendit parcel (2026-11-19)
 
 ### Fixed
