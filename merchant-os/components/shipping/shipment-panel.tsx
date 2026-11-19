@@ -5,13 +5,12 @@ import { useRouter } from "next/navigation";
 import { useEffect, useId, useState, useTransition } from "react";
 import { toast } from "sonner";
 import { cancelSenditParcel, refreshSenditShipment, searchSenditDistricts, senditLabels, shipWithSendit } from "@/app/(app)/shipping/actions";
-import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { FormAlert } from "@/components/auth/form-alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardBody, CardHeader } from "@/components/ui/card";
-import { Dialog, DialogContent, DialogDescription, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
+import { Input, Textarea } from "@/components/ui/input";
 import type { AppErrorCode } from "@/lib/data/errors";
 import type { ShipmentRow } from "@/lib/data/shipping";
 import { interpolate } from "@/lib/i18n/dictionaries";
@@ -25,6 +24,10 @@ type Failure = { code: AppErrorCode; detail?: string };
 function ErrorLine({ error }: { error: Failure | null }) {
   const { t } = useI18n();
   if (!error) return null;
+  // Sendit answers "Page non trouvée" (404) for a parcel deleted on its side.
+  if (error.code === "SENDIT_REJECTED" && /non trouv|not found|introuvable/i.test(error.detail ?? "")) {
+    return <FormAlert>{t.shipping.parcelGone}</FormAlert>;
+  }
   return (
     <FormAlert>
       {t.errors[error.code]}
@@ -176,30 +179,81 @@ function ParcelActions({ shipmentId, code, cancellable }: { shipmentId: string; 
           <RefreshCw /> {ts.refresh}
         </Button>
         {cancellable ? (
-          <ConfirmDialog
-            trigger={
-              <Button size="sm" variant="ghost" disabled={pending}>
-                <XCircle /> {ts.cancelParcel}
-              </Button>
+          <CancelParcelDialog
+            pending={pending}
+            onConfirm={(cancelOrder, reason) =>
+              startTransition(async () => {
+                setError(null);
+                const result = await cancelSenditParcel(shipmentId, { cancelOrder, reason });
+                if (result.error) {
+                  setError({ code: result.error, detail: result.detail });
+                  router.refresh();
+                  return;
+                }
+                toast.success(cancelOrder ? ts.parcelAndOrderCancelled : ts.parcelCancelled);
+                router.refresh();
+              })
             }
-            title={ts.cancelParcel}
-            description={ts.cancelParcelHint}
-            confirmLabel={ts.cancelParcel}
-            cancelLabel={t.common.cancel}
-            onConfirm={async () => {
-              setError(null);
-              const result = await cancelSenditParcel(shipmentId);
-              if (result.error) {
-                setError({ code: result.error, detail: result.detail });
-                return;
-              }
-              toast.success(ts.parcelCancelled);
-              router.refresh();
-            }}
           />
         ) : null}
       </div>
     </div>
+  );
+}
+
+/** Cancelling a parcel asks why: ship again (order back to preparing) or the customer cancelled (order cancelled, stock released). */
+function CancelParcelDialog({ pending, onConfirm }: { pending: boolean; onConfirm: (cancelOrder: boolean, reason: string) => void }) {
+  const { t } = useI18n();
+  const ts = t.shipping;
+  const id = useId();
+  const [open, setOpen] = useState(false);
+  const [mode, setMode] = useState<"reship" | "cancel_order">("reship");
+  const [reason, setReason] = useState("");
+  const ready = mode === "reship" || reason.trim().length > 0;
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
+        <Button size="sm" variant="ghost" disabled={pending}>
+          <XCircle /> {ts.cancelParcel}
+        </Button>
+      </DialogTrigger>
+      <DialogContent role="alertdialog" closeLabel={t.common.close}>
+        <DialogTitle>{ts.cancelParcel}</DialogTitle>
+        <DialogDescription>{ts.cancelParcelWhy}</DialogDescription>
+        <div className="mt-4 flex flex-col gap-3 text-sm" role="radiogroup" aria-label={ts.cancelParcelWhy}>
+          {(["reship", "cancel_order"] as const).map((value) => (
+            <label key={value} className="flex cursor-pointer items-start gap-2 rounded-md p-2 ring-1 ring-border has-[:checked]:ring-accent">
+              <input type="radio" name={`${id}-mode`} className="mt-1 accent-[var(--accent)]" checked={mode === value} onChange={() => setMode(value)} />
+              <span>
+                <span className="font-medium">{value === "reship" ? ts.cancelParcelReship : ts.cancelParcelOrder}</span>
+                <span className="block text-xs text-muted-foreground">{value === "reship" ? ts.cancelParcelReshipHint : ts.cancelParcelOrderHint}</span>
+              </span>
+            </label>
+          ))}
+          {mode === "cancel_order" ? (
+            <label className="flex flex-col gap-1">
+              <span className="font-medium">{t.orders.cancelReason}</span>
+              <Textarea value={reason} maxLength={1000} onChange={(e) => setReason(e.target.value)} />
+            </label>
+          ) : null}
+        </div>
+        <DialogFooter>
+          <Button variant="secondary" onClick={() => setOpen(false)}>
+            {t.common.cancel}
+          </Button>
+          <Button
+            variant="danger"
+            disabled={!ready || pending}
+            onClick={() => {
+              onConfirm(mode === "cancel_order", reason);
+              setOpen(false);
+            }}
+          >
+            {ts.cancelParcel}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }
 
