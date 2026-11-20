@@ -32,9 +32,10 @@ test.describe.serial("online store", () => {
     await signIn(page, owner);
     await page.goto("/settings");
     await page.getByRole("button", { name: st.add }).click();
-    await page.getByLabel(st.platform, { exact: true }).selectOption("shopify");
-    await page.getByLabel(st.name, { exact: true }).fill("E2E Shopify");
-    await page.getByLabel(st.shopifySecret, { exact: true }).fill(signingKey);
+    // The labels wrap their fields (and the select's options), so find the fields by role and name.
+    await page.getByRole("combobox", { name: st.platform }).selectOption("shopify");
+    await page.getByRole("textbox", { name: st.name, exact: true }).fill("E2E Shopify");
+    await page.getByRole("textbox", { name: st.shopifySecret }).fill(signingKey);
     await page.getByRole("button", { name: st.connect, exact: true }).click();
     await expect(page.getByRole("button", { name: st.done })).toBeVisible();
 
