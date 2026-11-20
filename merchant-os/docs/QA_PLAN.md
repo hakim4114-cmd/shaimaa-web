@@ -1,6 +1,6 @@
 # QA plan: end-to-end tests, responsive checks, security pass (Phases 6–7)
 
-Status: **proposed, 2026-11-20**. Nothing below is implemented yet.
+Status: **in progress**. Step 1 done (2026-11-20, PR #38); step 2 in progress.
 
 ## Why
 
@@ -13,7 +13,7 @@ Today Merchant OS has 116 unit tests (vitest), 18 SQL test files that run every 
 | Test database | **Local Supabase stack** (Supabase CLI: Postgres, Auth, PostgREST, Storage) started inside the GitHub Actions job | Production must never be touched: the ledgers are immutable, so test data could never be removed. A second hosted project is not needed: the free plan allows two active projects, and both slots are already used (Merchant OS, Mizan). |
 | Where the tests run | **CI on every pull request**, as a separate `e2e` job | The Docker registry is not reachable from the development container, so the stack cannot start there. CI runners have Docker. |
 | Browser engine | Playwright, Chromium | Already the project's choice for screenshots. WebKit and Firefox add CI time for little COD-merchant value; revisit before opening to other merchants. |
-| Sendit | **Mock server** started by the test runner; the client reads `SENDIT_API_BASE_URL` only when `NODE_ENV !== "production"` | Tests must never create real parcels. The production build ignores the variable, so it cannot be redirected. |
+| Sendit | **Mock server** started by the test runner; the client accepts `SENDIT_API_BASE_URL` only when it points to `127.0.0.1` or `localhost` | Tests must never create real parcels. The tests run a production build (`NODE_ENV` is always `production` there), so the guard is on the address: even if set by mistake on Vercel, it cannot send keys anywhere else. |
 | Test data | Created by a global setup through the Auth admin API and the app's own RPCs; the whole stack is thrown away after the job | Every run starts clean; no cleanup code to maintain. |
 | Sign-up | Enabled only in the local stack's `supabase/config.toml` | Production keeps `disable_signup = true`. The CLI config file does not affect the hosted project. |
 
@@ -24,7 +24,7 @@ Today Merchant OS has 116 unit tests (vitest), 18 SQL test files that run every 
 | J1 | **Access** | Sign in; wrong password shows a translated message; a page that needs sign-in redirects; sign out. A `finance` member cannot open Settings; a member of org B cannot see an order of org A (by URL). |
 | J2 | **Catalogue and stock** | Create a product with size and colour variants; receive stock; the stock page shows it. |
 | J3 | **Order to confirmation** | Create an order with the paste box; the duplicate-phone warning appears; log a call "confirmed"; stock becomes reserved; cancelling releases it. |
-| J4 | **Shipping (manual carrier)** | Ship a confirmed order; on-hand stock falls at pickup; mark it delivered; the amount appears as money to collect. |
+| J4 | **Shipping to delivery** | Merged into J5: the interface can only ship through Sendit (a manual carrier exists in the database but has no screens). Through the mock: on-hand stock falls at pickup; delivered; the amount appears as money to collect. |
 | J5 | **Shipping (Sendit, mocked)** | Save keys; auto-send on confirmation creates a parcel at the mock; print label; cancel the parcel before pickup ("reship" and "customer cancelled"); a forged webhook for an unknown parcel is ignored; a webhook for a real parcel is applied only after the API read. |
 | J6 | **Refusal and return** | A refused parcel becomes a return; receiving it puts the stock back. |
 | J7 | **Cash** | Record a carrier invoice; cash position and owner pay update. |
@@ -48,11 +48,16 @@ Every journey runs in Arabic (right to left). J1 and J3 also run in French.
 - Webhook endpoints: oversized body, bad JSON, wrong provider id, replay of the same event.
 - Response headers on the deployed site (CSP, frame options, referrer policy).
 
+## Findings so far
+
+- 2026-11-20: the app refused any Supabase URL that is not `https`, so it could not run against a local stack (sign-in showed "database not configured"). Fixed for `127.0.0.1`/`localhost` only; production unaffected.
+- 2026-11-20: no screen ships an order without Sendit. Decide before opening to other merchants whether a manual carrier (own courier, another company) needs screens.
+
 ## Delivery steps
 
 1. Infrastructure: `supabase/config.toml`, Playwright config, global setup (users, organizations), the Sendit mock, the `e2e` CI job. **Done when** an empty test signs in on CI.
-2. J1–J4.
-3. J5–J9.
+2. J1–J3 (J4 moved into J5).
+3. J4–J9, with the Sendit mock.
 4. Responsive matrix and accessibility check, then fixes for whatever they find.
 5. Security pass and fixes.
 

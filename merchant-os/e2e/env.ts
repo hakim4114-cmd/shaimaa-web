@@ -3,7 +3,14 @@ export const supabaseUrl = required("NEXT_PUBLIC_SUPABASE_URL");
 export const anonKey = required("NEXT_PUBLIC_SUPABASE_ANON_KEY");
 export const serviceRoleKey = required("SUPABASE_SERVICE_ROLE_KEY");
 
+export type TestUser = { email: string; password: string };
+
+/** Owner of the main test shop. */
 export const owner = { email: "owner@e2e.test", password: "e2e-Owner-pass-1", org: "E2E Shop", slug: "e2e-shop" };
+/** Finance member of the main test shop. */
+export const finance: TestUser = { email: "finance@e2e.test", password: "e2e-Finance-pass-1" };
+/** Owner of a second, unrelated shop (tenant isolation). */
+export const otherOwner = { email: "other@e2e.test", password: "e2e-Other-pass-1", org: "Other Shop", slug: "other-shop" };
 
 function required(name: string): string {
   const value = process.env[name];
