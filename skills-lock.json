@@ -25,14 +25,6 @@
       "computedHash": "d5619310b76bd204efd2f8b3832f72b5a2899712be0ab94d1b4b671271419c54",
       "installMode": "copy"
     },
-    "deploy-to-vercel": {
-      "source": "vercel-labs/agent-skills",
-      "commit": "5a37a6329fbad3666c3207392a6a7c0110e92efb",
-      "sourceType": "github",
-      "skillPath": "skills/deploy-to-vercel/SKILL.md",
-      "computedHash": "66b99dfa063b1c405155e9bffd99c04ca3e312e81b168d540b757bb194b7400a",
-      "installMode": "copy"
-    },
     "design": {
       "source": "nextlevelbuilder/ui-ux-pro-max-skill",
       "commit": "2de1134dc4d1cfe112934611ae5803ae17a1bd7e",
