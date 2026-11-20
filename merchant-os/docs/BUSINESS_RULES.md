@@ -148,6 +148,7 @@ Rules marked **[DB]** are enforced by migration `20261116000400_order_workflow.s
 ### Cities and shipping fees
 - A shared reference list of Moroccan cities (French and Arabic names, region, lower-case aliases such as "casa") is seeded; each organization can add its own (villages, neighbourhoods) **[DB]**. Free-text cities are still accepted so an order is never blocked, but only referenced cities count in per-city analytics.
 - `shipping_rates` holds, per city, the fee charged to the customer, the carrier's cost and the return fee; `provider_id` empty = the default rate **[DB]**. A new order with a `city_id` and no explicit fee takes the default rate's customer fee **[DB]**.
+- **Delivery pricing (1.13.0):** `organizations.delivery_included` chooses the default for new orders: off = the customer pays the city fee (above); on = delivery is included in the product price, so the default fee is 0 **[DB]**. A fee typed on the order always wins **[DB]**. Only owners and admins can change the setting (RLS `org_update`) **[DB]**. The carrier's cost (`shipping_cost_cents`) still counts in profit either way.
 
 ### Confirmation calls
 - Each call is an immutable record: outcome (`confirmed`, `cancelled`, `no_answer`, `busy`, `unreachable`, `wrong_number`, `call_back_requested`, `other`), note, call-back time, who called **[DB]**.

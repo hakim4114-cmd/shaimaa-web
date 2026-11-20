@@ -116,6 +116,18 @@ select tests.eq(:'fee_included'::bigint, 0::bigint, 'delivery included: the defa
 select (public.create_order(:'org', jsonb_build_object('customer', jsonb_build_object('full_name', 'Fee C', 'phone', '+212611000013', 'address', 'x'), 'city_id', :'rate_city', 'shipping_fee_cents', 2000, 'items', jsonb_build_array(jsonb_build_object('variant_id', :'v1', 'quantity', 1))))).shipping_fee_cents as fee_typed \gset
 select tests.eq(:'fee_typed'::bigint, 2000::bigint, 'a fee typed on the order still wins');
 
+-- Only owners and admins change the delivery pricing: RLS turns other updates into no-ops.
+select tests.login(:'viewer');
+update public.organizations set delivery_included = false where id = :'org';
+reset role;
+\set outsider '20000000-0000-0000-0000-0000000000f1'
+insert into auth.users (id) values (:'outsider');
+set local role authenticated;
+select tests.login(:'outsider');
+update public.organizations set delivery_included = false where id = :'org';
+select tests.login(:'owner');
+select tests.eq((select delivery_included from public.organizations where id = :'org'), true, 'a viewer or a non-member cannot change the delivery pricing');
+
 -- Parcel cancelled before pickup: the order goes back to preparing and can be shipped again
 reset role;
 set local role authenticated;
