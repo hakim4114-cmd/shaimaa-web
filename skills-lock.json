@@ -81,14 +81,6 @@
       "computedHash": "7e24d821d45b8f10773edd9f1a4be2fac90eedae4f8fc8e70e34e27e44d3f3c0",
       "installMode": "copy"
     },
-    "frontend-design": {
-      "source": "anthropics/skills",
-      "commit": "e4bb5d960d87126ff3b3a8af1a104b7db67560ba",
-      "sourceType": "github",
-      "skillPath": "skills/frontend-design/SKILL.md",
-      "computedHash": "83485963700bcf11d5bf78118facb301676b69d918fee2e45a95e7f1a2840f6c",
-      "installMode": "copy"
-    },
     "impeccable": {
       "source": "pbakaus/impeccable",
       "commit": "b49177d32788f2dc585c42831d845dacf1ebed2c",
@@ -151,14 +143,6 @@
       "sourceType": "github",
       "skillPath": ".claude/skills/ui-styling/SKILL.md",
       "computedHash": "a598d8ad69832a394d4040e4c94e4b9c7b8daf2b1fdca050929058f7b70bc816",
-      "installMode": "copy"
-    },
-    "ui-ux-pro-max": {
-      "source": "nextlevelbuilder/ui-ux-pro-max-skill",
-      "commit": "2de1134dc4d1cfe112934611ae5803ae17a1bd7e",
-      "sourceType": "github",
-      "skillPath": ".claude/skills/ui-ux-pro-max/SKILL.md",
-      "computedHash": "605686282fb6812d8e3f4b1a06c9fb8ba7be4d7395090f41f221a9ba5a3dbe6b",
       "installMode": "copy"
     },
     "using-git-worktrees": {
