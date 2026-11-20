@@ -28,18 +28,3 @@ enable_confirmations = false
 
 [storage]
 enabled = true
-
-[studio]
-enabled = false
-
-[inbucket]
-enabled = false
-
-[realtime]
-enabled = false
-
-[edge_runtime]
-enabled = false
-
-[analytics]
-enabled = false
