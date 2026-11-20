@@ -25,6 +25,7 @@ CI (`.github/workflows/ci.yml`) runs all of these on pushes to `main` and on PRs
 
 - TypeScript strict, `.tsx`; Next.js App Router; Tailwind 4.
 - Business rules live in PostgreSQL (`merchant-os/supabase/migrations`), as SECURITY DEFINER functions checking roles with `app.require_role`, with RLS on every table, money in bigint cents and immutable ledgers. Read `merchant-os/docs/BUSINESS_RULES.md` and `ARCHITECTURE.md` before changing workflows, stock or money logic, and add a SQL test in `merchant-os/supabase/tests` for every rule.
+- Schema changes are hand-written migration files in `merchant-os/supabase/migrations`, verified with `npm run db:test` against local PostgreSQL. There is no local Supabase stack (`config.toml`), so never run DDL or data changes on the Supabase project directly (MCP `execute_sql` / `apply_migration`, `supabase db query`, `supabase db push`) and never use `supabase db pull`, even when a skill says to; read-only queries are fine.
 - Secrets that the server needs per organization (carrier keys, store webhook secrets) go in service-role-only tables, never in the browser, files or environment variables shared by all organizations.
 - User-facing copy goes in all three dictionaries (`lib/i18n/dictionaries/ar.ts`, `fr.ts`, `en.ts`); Arabic is right-to-left.
 - Error codes are UPPER_SNAKE strings mapped in `lib/data/errors.ts`; users see translated messages, never the codes.
