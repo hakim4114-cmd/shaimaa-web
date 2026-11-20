@@ -69,7 +69,8 @@ test.describe.serial("order to confirmation", () => {
     await signIn(page, owner);
     await page.goto(`/orders/${orderId}`);
     await page.getByRole("button", { name: to.cancelOrder }).click();
-    const dialog = page.getByRole("dialog");
+    // Cancelling is destructive: the confirmation is an alert dialog.
+    const dialog = page.getByRole("alertdialog");
     await dialog.getByLabel(to.cancelReason, { exact: true }).fill("Test: the customer changed their mind");
     await dialog.getByRole("button", { name: to.confirmCancel }).click();
 
