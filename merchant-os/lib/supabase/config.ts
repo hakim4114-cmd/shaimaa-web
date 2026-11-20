@@ -7,7 +7,10 @@ export function getSupabasePublicConfig(): { url: string; anonKey: string } | nu
     return null;
   }
   try {
-    if (new URL(url).protocol !== "https:") {
+    // HTTPS only, except a Supabase stack on this machine (local development and end-to-end tests).
+    const parsed = new URL(url);
+    const local = parsed.hostname === "127.0.0.1" || parsed.hostname === "localhost";
+    if (parsed.protocol !== "https:" && !(local && parsed.protocol === "http:")) {
       return null;
     }
   } catch {
