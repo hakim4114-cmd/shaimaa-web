@@ -198,3 +198,16 @@ describe("Sendit city fees", () => {
     expect(matchCityId("Rabat", cities)).toBeNull();
   });
 });
+
+describe("senditBaseUrl", () => {
+  it("uses the real API unless a server on this machine is given", async () => {
+    const { senditBaseUrl } = await import("@/lib/shipping/sendit-core");
+    expect(senditBaseUrl(undefined)).toBe("https://app.sendit.ma/api/v1");
+    expect(senditBaseUrl("http://127.0.0.1:4010/api/v1/")).toBe("http://127.0.0.1:4010/api/v1");
+    expect(senditBaseUrl("http://localhost:4010/api/v1")).toBe("http://localhost:4010/api/v1");
+    expect(senditBaseUrl("https://evil.example/api/v1")).toBe("https://app.sendit.ma/api/v1");
+    expect(senditBaseUrl("http://127.0.0.1.evil.example/api")).toBe("https://app.sendit.ma/api/v1");
+    expect(senditBaseUrl("file:///etc/passwd")).toBe("https://app.sendit.ma/api/v1");
+    expect(senditBaseUrl("not a url")).toBe("https://app.sendit.ma/api/v1");
+  });
+});

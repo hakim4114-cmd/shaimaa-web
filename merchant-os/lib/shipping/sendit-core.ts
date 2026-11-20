@@ -293,3 +293,20 @@ export function matchCityId(name: string, cities: { id: number; nameFr: string; 
   const found = cities.find((c) => [c.nameFr, c.nameAr, ...c.aliases].some((n) => foldPlace(n) === key));
   return found?.id ?? null;
 }
+
+/**
+ * The real API, unless SENDIT_API_BASE_URL points to a server on this machine
+ * (the mock used by the end-to-end tests). Any other value is ignored, so a
+ * mistaken setting can never send an organization's keys elsewhere.
+ */
+export function senditBaseUrl(override: string | undefined): string {
+  const real = "https://app.sendit.ma/api/v1";
+  if (!override) return real;
+  try {
+    const url = new URL(override);
+    const local = url.hostname === "127.0.0.1" || url.hostname === "localhost";
+    return local && (url.protocol === "http:" || url.protocol === "https:") ? override.replace(/\/+$/, "") : real;
+  } catch {
+    return real;
+  }
+}
