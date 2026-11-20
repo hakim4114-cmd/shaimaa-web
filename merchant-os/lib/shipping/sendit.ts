@@ -1,11 +1,11 @@
 import "server-only";
-import { madToCents } from "./sendit-core";
+import { madToCents, senditBaseUrl } from "./sendit-core";
 
 // Sendit REST client. Each organization has its own Sendit account: callers
 // pass that organization's keys (lib/shipping/sendit-keys.ts reads them on the
 // server). The token from POST /login is cached in memory per account and
 // renewed on 401.
-const baseUrl = "https://app.sendit.ma/api/v1";
+const baseUrl = senditBaseUrl(process.env.SENDIT_API_BASE_URL);
 
 export type SenditErrorCode = "SENDIT_NOT_CONFIGURED" | "SENDIT_AUTH_FAILED" | "SENDIT_REJECTED" | "SENDIT_UNAVAILABLE";
 

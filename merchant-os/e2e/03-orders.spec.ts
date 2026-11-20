@@ -1,21 +1,13 @@
 import { expect, test } from "@playwright/test";
 import ar from "../lib/i18n/dictionaries/ar";
 import { signIn } from "./auth";
-import { customer, shirt } from "./data";
-import { adminClient, organizationId, stockOf } from "./db";
+import { customer } from "./data";
+import { adminClient, stockOf } from "./db";
+import { sizeMVariant } from "./orders";
 import { otherOwner, owner } from "./env";
 
 // J3: order entry, confirmation call, stock reservation, cancellation, tenant isolation.
 const to = ar.orders;
-
-async function sizeMVariant() {
-  const orgId = await organizationId(owner.slug);
-  const admin = adminClient();
-  const { data: product } = await admin.from("products").select("id").eq("organization_id", orgId).eq("name", shirt.name).maybeSingle();
-  if (!product) throw new Error("The catalogue journey (02) must run first: product missing.");
-  const { data: variant } = await admin.from("product_variants").select("id").eq("product_id", product.id).eq("title", "M").single();
-  return variant!.id as string;
-}
 
 test.describe.serial("order to confirmation", () => {
   let orderId = "";

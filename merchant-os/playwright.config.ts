@@ -3,6 +3,7 @@ import { defineConfig, devices } from "@playwright/test";
 // End-to-end tests against a production build and a local Supabase stack
 // (docs/QA_PLAN.md). Never point these at the hosted project.
 const baseURL = process.env.E2E_BASE_URL ?? "http://localhost:3000";
+const senditMock = `http://127.0.0.1:${process.env.SENDIT_MOCK_PORT ?? 4010}`;
 
 export default defineConfig({
   testDir: "./e2e",
@@ -23,7 +24,21 @@ export default defineConfig({
     screenshot: "only-on-failure"
   },
   projects: [{ name: "chromium", use: { ...devices["Desktop Chrome"] } }],
-  webServer: process.env.E2E_BASE_URL
-    ? undefined
-    : { command: "npm run start", url: baseURL, reuseExistingServer: !process.env.CI, timeout: 120_000, stdout: "pipe", stderr: "pipe" }
+  webServer: [
+    // Stand-in for the Sendit API: no test ever reaches the real one.
+    { command: "node e2e/sendit-mock.mjs", url: `${senditMock}/__control/health`, reuseExistingServer: !process.env.CI, stdout: "pipe" },
+    ...(process.env.E2E_BASE_URL
+      ? []
+      : [
+          {
+            command: "npm run start",
+            url: baseURL,
+            reuseExistingServer: !process.env.CI,
+            timeout: 120_000,
+            stdout: "pipe" as const,
+            stderr: "pipe" as const,
+            env: { SENDIT_API_BASE_URL: `${senditMock}/api/v1` }
+          }
+        ])
+  ]
 });
