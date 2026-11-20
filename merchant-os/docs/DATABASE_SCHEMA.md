@@ -23,7 +23,7 @@ Source of truth: `supabase/migrations/` (applied in filename order).
 ### Tenancy
 | Table | Purpose |
 | --- | --- |
-| `organizations` | A business (tenant). Slug, currency (MAD), timezone, order-number prefix. |
+| `organizations` | A business (tenant). Slug, currency (MAD), timezone, order-number prefix, `delivery_included` (default delivery pricing for new orders; owners and admins only). |
 | `organization_members` | User ↔ organization with a `member_role`. At least one owner is enforced. |
 | `organization_counters` | Gap-tolerant per-tenant sequences (order numbers). Not visible to API roles. |
 | `stores` | Sales storefronts of an organization (multi-store). |
