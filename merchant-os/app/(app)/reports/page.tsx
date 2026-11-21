@@ -39,7 +39,13 @@ export default async function ReportsPage({ searchParams }: { searchParams: Prom
   const month = parseMonth(params.month, today);
   const half = parseHalf(params.half);
   const period = reportPeriod(month, half);
-  const report = await getPeriodReport(ctx, period, today);
+  const [report, { data: tests }] = await Promise.all([
+    getPeriodReport(ctx, period, today),
+    ctx.supabase.rpc("campaign_loss_status", { p_organization_id: ctx.organizationId })
+  ]);
+  // Results of the last orders arrive 5–10 days after the order: a recent period is not final yet.
+  const settledDay = new Date(Date.parse(`${today}T12:00:00Z`) - 10 * 86400000).toISOString().slice(0, 10);
+  const incomplete = period.to > settledDay;
   const m = (c: number | null | undefined) => (c === null || c === undefined ? "—" : formatMoney(c, locale));
   const pct = (v: number | null | undefined) => (v === null || v === undefined ? "—" : `${Math.round(v * 100)}%`);
   const monthLabel = (value: string) => new Intl.DateTimeFormat(locale === "ar" ? "ar-MA" : locale, { month: "long", year: "numeric", timeZone: "UTC" }).format(new Date(`${value}-01T12:00:00Z`));
@@ -90,6 +96,32 @@ export default async function ReportsPage({ searchParams }: { searchParams: Prom
           </p>
         </CardBody>
       </Card>
+
+      {incomplete ? <p role="note" className="rounded-md bg-warning-soft p-3 text-sm text-warning">{tr.incomplete}</p> : null}
+
+      {(tests ?? []).length > 0 ? (
+        <Card className={cn("overflow-hidden", (tests ?? []).some((c) => c.over_cap) && "ring-2 ring-danger")}>
+          <CardHeader title={tr.testsTitle} description={tr.testsDescription} />
+          <CardBody>
+            <ul className="divide-y divide-border text-sm">
+              {(tests ?? []).map((c) => (
+                <li key={c.campaign_id} className="flex items-center justify-between gap-3 py-2">
+                  <span className="min-w-0 font-medium">{c.name}</span>
+                  <span className="flex shrink-0 items-center gap-3">
+                    <span className={cn("tabular font-semibold", c.profit_cents < 0 && "text-danger")}>{m(c.profit_cents)}</span>
+                    <span className="tabular text-xs text-muted-foreground">
+                      {tr.colCap}: −{m(c.loss_cap_cents)}
+                    </span>
+                    <Badge tone={c.over_cap ? "danger" : "neutral"} dot>
+                      {c.over_cap ? tr.stop : tr.ok}
+                    </Badge>
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </CardBody>
+        </Card>
+      ) : null}
 
       <Card>
         <CardHeader title={tr.summaryTitle} />

@@ -51,7 +51,7 @@ const en = {
     sectionsEssential: "Essentials",
     sectionsAll: "All sections",
     notificationsAllClear: "Nothing needs your attention right now.",
-    alerts: { obligationsOverdue: "Obligations overdue", obligationsSoon: "Obligations due within 7 days", callsDue: "Calls to make", deliveryProblems: "Delivery problems", returnsWaiting: "Returns to receive", lowStock: "Products low in stock", storeOrders: "Store orders to fix", waitingToShip: "Confirmed over 24 h ago, not shipped yet", problems: "Problems to check", capitalBelowFloor: "Capital below the floor: withdrawals blocked" }
+    alerts: { obligationsOverdue: "Obligations overdue", obligationsSoon: "Obligations due within 7 days", callsDue: "Calls to make", deliveryProblems: "Delivery problems", returnsWaiting: "Returns to receive", lowStock: "Products low in stock", storeOrders: "Store orders to fix", waitingToShip: "Confirmed over 24 h ago, not shipped yet", problems: "Problems to check", capitalBelowFloor: "Capital below the floor: withdrawals blocked", campaignLossCap: "A test reached its loss cap: stop it" }
   },
   commandCenter: {
     title: "Command center",
@@ -670,6 +670,9 @@ const en = {
     copy: "Copy"
   },
   money: {
+    lossCap: "Loss cap (MAD)",
+    lossCapHint: "When the loss after ads reaches this amount, the app tells you to stop.",
+    campaignPick: "Pick the campaign that brought this order, so ads are counted right.",
     financeTitle: "Finance",
     financeDescription: "Profit, cash and expenses, computed from your orders, payouts and expenses.",
     marketingTitle: "Marketing",
@@ -1077,6 +1080,13 @@ const en = {
     priceShort: "Price"
   },
   reports: {
+    testsTitle: "Tests (campaigns) and loss cap",
+    testsDescription: "Each campaign's result since it started, after ads. At the cap: stop the test.",
+    colResult: "Result since start",
+    colCap: "Cap",
+    stop: "Stop",
+    ok: "Running",
+    incomplete: "The period is not over or just ended: delivery results of the latest orders arrive within 5 to 10 days. Do not judge yet.",
     violationsTitle: "Money rules crossed",
     violationsDescription: "Every expense or withdrawal that crossed a rule, with the reason written.",
     colDate: "Date",
@@ -1165,7 +1175,8 @@ const en = {
       flags: {
         reserve: "takes cash below the reserve",
         ad_budget: "goes over this month's ad budget",
-        stock_cap: "stock purchase above the cap (share of free cash)"
+        stock_cap: "stock purchase above the cap (share of free cash)",
+        loss_cap: "the campaign reached its loss cap (losing test)"
       }
     },
     capitalTitle: "Capital protection",

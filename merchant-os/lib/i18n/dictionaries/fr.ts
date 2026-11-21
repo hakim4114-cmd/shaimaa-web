@@ -53,7 +53,7 @@ const fr: Dictionary = {
     sectionsEssential: "L'essentiel",
     sectionsAll: "Toutes les rubriques",
     notificationsAllClear: "Rien ne demande votre attention pour l'instant.",
-    alerts: { obligationsOverdue: "Dettes en retard", obligationsSoon: "Dettes à payer sous 7 jours", callsDue: "Appels à passer", deliveryProblems: "Problèmes de livraison", returnsWaiting: "Retours à recevoir", lowStock: "Produits en stock bas", storeOrders: "Commandes boutique à corriger", waitingToShip: "Confirmées depuis plus de 24 h, pas encore expédiées", problems: "Problèmes à vérifier", capitalBelowFloor: "Capital sous le plancher : retraits bloqués" }
+    alerts: { obligationsOverdue: "Dettes en retard", obligationsSoon: "Dettes à payer sous 7 jours", callsDue: "Appels à passer", deliveryProblems: "Problèmes de livraison", returnsWaiting: "Retours à recevoir", lowStock: "Produits en stock bas", storeOrders: "Commandes boutique à corriger", waitingToShip: "Confirmées depuis plus de 24 h, pas encore expédiées", problems: "Problèmes à vérifier", capitalBelowFloor: "Capital sous le plancher : retraits bloqués", campaignLossCap: "Un test a atteint son plafond de perte : arrêtez-le" }
   },
   commandCenter: {
     title: "Tableau de bord",
@@ -673,6 +673,9 @@ const fr: Dictionary = {
     copy: "Copier"
   },
   money: {
+    lossCap: "Plafond de perte (MAD)",
+    lossCapHint: "Quand la perte après pub atteint ce montant, l'app vous dit d'arrêter.",
+    campaignPick: "Choisissez la campagne qui a apporté cette commande, pour que la pub soit bien comptée.",
     financeTitle: "Finances",
     financeDescription: "Bénéfice, trésorerie et dépenses, calculés depuis vos commandes, versements et dépenses.",
     marketingTitle: "Marketing",
@@ -1080,6 +1083,13 @@ const fr: Dictionary = {
     priceShort: "Prix"
   },
   reports: {
+    testsTitle: "Tests (campagnes) et plafond de perte",
+    testsDescription: "Le résultat de chaque campagne depuis le début, après pub. Plafond atteint : arrêtez le test.",
+    colResult: "Résultat depuis le début",
+    colCap: "Plafond",
+    stop: "Arrêter",
+    ok: "En cours",
+    incomplete: "La période n'est pas finie ou vient de finir : les résultats de livraison des dernières commandes arrivent sous 5 à 10 jours. Ne jugez pas encore.",
     violationsTitle: "Règles financières dépassées",
     violationsDescription: "Chaque dépense ou retrait qui a dépassé une règle, avec la raison écrite.",
     colDate: "Date",
@@ -1168,7 +1178,8 @@ const fr: Dictionary = {
       flags: {
         reserve: "fait passer la caisse sous la réserve",
         ad_budget: "dépasse le budget publicité du mois",
-        stock_cap: "achat de stock au-dessus du plafond (part de la trésorerie libre)"
+        stock_cap: "achat de stock au-dessus du plafond (part de la trésorerie libre)",
+        loss_cap: "la campagne a atteint son plafond de perte (test perdant)"
       }
     },
     capitalTitle: "Protection du capital",

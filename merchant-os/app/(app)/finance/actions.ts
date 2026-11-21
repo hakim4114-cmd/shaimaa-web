@@ -82,7 +82,9 @@ export async function deleteExpense(id: string): Promise<MoneyResult> {
 const campaignInput = z.object({
   name: z.string().trim().min(1).max(160),
   platform: z.enum(marketingPlatforms as [string, ...string[]]),
-  startsOn: day.nullable()
+  startsOn: day.nullable(),
+  // Stop-loss for the test this campaign runs, in MAD (empty = the 600 MAD default).
+  lossCap: z.string().max(20).optional()
 });
 
 export async function createCampaign(input: z.infer<typeof campaignInput>): Promise<MoneyResult> {
@@ -94,7 +96,8 @@ export async function createCampaign(input: z.infer<typeof campaignInput>): Prom
     organization_id: organizationId,
     name: parsed.data.name,
     platform: parsed.data.platform as (typeof marketingPlatforms)[number],
-    starts_on: parsed.data.startsOn
+    starts_on: parsed.data.startsOn,
+    ...(parsed.data.lossCap && parseMoneyToCents(parsed.data.lossCap) !== null ? { loss_cap_cents: parseMoneyToCents(parsed.data.lossCap) as number } : {})
   });
   if (error) return { error: mapDatabaseError(error) };
   revalidatePath("/marketing");

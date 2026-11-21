@@ -4,7 +4,7 @@ import type { requireOrganization } from "./context";
 
 type Ctx = Awaited<ReturnType<typeof requireOrganization>>;
 
-export type AlertKey = "obligationsOverdue" | "obligationsSoon" | "callsDue" | "deliveryProblems" | "returnsWaiting" | "lowStock" | "storeOrders" | "waitingToShip" | "problems" | "capitalBelowFloor";
+export type AlertKey = "obligationsOverdue" | "obligationsSoon" | "callsDue" | "deliveryProblems" | "returnsWaiting" | "lowStock" | "storeOrders" | "waitingToShip" | "problems" | "capitalBelowFloor" | "campaignLossCap";
 export type Alert = { key: AlertKey; count: number; href: string; tone: "danger" | "warning" | "info" };
 
 function addDays(day: string, n: number) {
@@ -31,13 +31,15 @@ export async function getAlerts({ supabase, organizationId, can }: Ctx): Promise
       ? supabase.from("orders").select("id", head).eq("organization_id", organizationId).in("status", ["confirmed", "preparing"]).lt("confirmed_at", new Date(Date.now() - 86400000).toISOString())
       : null,
     can.overrideBlocklist ? supabase.from("system_events").select("id", head).eq("organization_id", organizationId).is("resolved_at", null) : null,
-    can.seeMoney ? supabase.rpc("capital_status", { p_organization_id: organizationId }) : null
+    can.seeMoney ? supabase.rpc("capital_status", { p_organization_id: organizationId }) : null,
+    can.seeMoney ? supabase.rpc("campaign_loss_status", { p_organization_id: organizationId }) : null
   ]);
   const count = (q: (typeof queries)[number]) => (q && "count" in q ? (q.count ?? 0) : 0);
   const low = Number(queries[6]?.data ?? 0);
   const capital = (queries[9]?.data ?? null) as { below_floor?: boolean } | null;
   const alerts: Alert[] = [
     { key: "capitalBelowFloor", count: capital?.below_floor ? 1 : 0, href: "/pay", tone: "danger" },
+    { key: "campaignLossCap", count: ((queries[10]?.data ?? []) as { over_cap: boolean }[]).filter((c) => c.over_cap).length, href: "/reports", tone: "danger" },
     { key: "obligationsOverdue", count: count(queries[0]), href: "/pay", tone: "danger" },
     { key: "obligationsSoon", count: count(queries[1]), href: "/pay", tone: "warning" },
     { key: "problems", count: count(queries[8]), href: "/problems", tone: "danger" },

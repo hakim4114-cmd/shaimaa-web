@@ -94,7 +94,8 @@ export function OrderForm({
   const [notes, setNotes] = useState(initial.notes);
   const [internalNotes, setInternalNotes] = useState(initial.internalNotes);
   const [allowBlocked, setAllowBlocked] = useState(false);
-  const [campaignId, setCampaignId] = useState(initial.campaignId ?? "");
+  // With a single running campaign, a new order is attributed to it by default (ads per product depend on it).
+  const [campaignId, setCampaignId] = useState(initial.campaignId ?? (mode === "create" && campaigns.length === 1 ? (campaigns[0]?.id ?? "") : ""));
   const [lookup, setLookup] = useState<LookupResult | null>(null);
   const lookedUp = useRef<string | null>(null);
 
@@ -287,7 +288,7 @@ export function OrderForm({
             </NativeSelect>
           </Field>
           {mode === "create" && campaigns.length > 0 ? (
-            <Field label={t.money.campaign} htmlFor={`${id}-campaign`} hint={t.money.attributionHint}>
+            <Field label={t.money.campaign} htmlFor={`${id}-campaign`} hint={campaignId ? t.money.attributionHint : t.money.campaignPick}>
               <NativeSelect id={`${id}-campaign`} value={campaignId} onChange={(e) => setCampaignId(e.target.value)}>
                 <option value="">{t.money.noCampaign}</option>
                 {campaigns.map((c) => (
