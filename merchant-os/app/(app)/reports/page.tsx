@@ -225,6 +225,32 @@ export default async function ReportsPage({ searchParams }: { searchParams: Prom
         </Card>
       </div>
 
+      <Card className={cn("overflow-hidden", report.violations.length > 0 && "ring-1 ring-danger")}>
+        <CardHeader title={tr.violationsTitle} description={tr.violationsDescription} />
+        <CardBody>
+          {report.violations.length === 0 ? (
+            <p className="text-sm text-muted-foreground">{tr.noViolations}</p>
+          ) : (
+            <ul className="divide-y divide-border text-sm">
+              {report.violations.map((v, index) => (
+                <li key={`${v.date}-${index}`} className="flex justify-between gap-3 py-2">
+                  <span className="min-w-0">
+                    <span className="font-medium">
+                      {v.kind === "withdrawal" ? tr.withdrawalOver : t.money.categories[v.category as keyof typeof t.money.categories] ?? v.category}
+                    </span>
+                    {v.flags.length ? <span className="block text-xs text-danger">{v.flags.map((f) => t.pay.guard.flags[f as keyof typeof t.pay.guard.flags] ?? f).join(" · ")}</span> : null}
+                    <span className="block text-xs text-muted-foreground">
+                      {v.date} · {v.reason}
+                    </span>
+                  </span>
+                  <span className="tabular shrink-0 font-medium">{m(v.amountCents)}</span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </CardBody>
+      </Card>
+
       <Card className="overflow-hidden">
         <CardHeader title={tr.campaignsTitle} />
         <CardBody>

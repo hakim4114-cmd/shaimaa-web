@@ -49,7 +49,8 @@ select id as org from public.create_organization('Pay Test', 'pay-test') \gset
 insert into public.organization_members (organization_id, user_id, role) values (:'org', :'finance', 'finance');
 
 select tests.eq(public.safe_withdrawal(:'org') ->> 'configured', 'false', 'nothing configured yet');
-insert into public.cash_settings (organization_id, opening_date, reserve_floor_cents, owner_fund_name) values (:'org', current_date - 10, 100000, 'Owner pay');
+-- The capital floor (guardrails, 99c) is off here: this file tests the pay limits alone.
+insert into public.cash_settings (organization_id, opening_date, reserve_floor_cents, owner_fund_name, capital_floor_pct) values (:'org', current_date - 10, 100000, 'Owner pay', 0);
 insert into public.cash_entries (organization_id, kind, amount_cents, entry_date, note) values (:'org', 'opening', 500000, current_date - 10, 'Start');
 insert into public.expenses (organization_id, category, amount_cents, incurred_on) values (:'org', 'packaging', 20000, current_date - 5);
 insert into public.payables (organization_id, counterparty, category, amount_cents, due_on) values (:'org', 'Supplier A', 'inventory_purchase', 150000, current_date + 7) returning id as pay1 \gset

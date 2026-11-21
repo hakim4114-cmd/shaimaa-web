@@ -53,7 +53,7 @@ const ar: Dictionary = {
     sectionsEssential: "الأساسية",
     sectionsAll: "كل الأقسام",
     notificationsAllClear: "والو كيتسناك دابا.",
-    alerts: { obligationsOverdue: "التزامات فات الوقت ديالها", obligationsSoon: "التزامات حالّة فـ 7 أيام", callsDue: "مكالمات خاصك تديرها", deliveryProblems: "مشاكل التوصيل", returnsWaiting: "مرتجعات للاستلام", lowStock: "منتجات المخزون ديالها ناقص", storeOrders: "طلبات المتجر خاصها تصحيح", waitingToShip: "مؤكدة من أكثر من 24 ساعة وباقي ما تصيفطاتش", problems: "مشاكل خاصك تشوفها" }
+    alerts: { obligationsOverdue: "التزامات فات الوقت ديالها", obligationsSoon: "التزامات حالّة فـ 7 أيام", callsDue: "مكالمات خاصك تديرها", deliveryProblems: "مشاكل التوصيل", returnsWaiting: "مرتجعات للاستلام", lowStock: "منتجات المخزون ديالها ناقص", storeOrders: "طلبات المتجر خاصها تصحيح", waitingToShip: "مؤكدة من أكثر من 24 ساعة وباقي ما تصيفطاتش", problems: "مشاكل خاصك تشوفها", capitalBelowFloor: "راس المال تحت خط الحماية: السحب موقوف" }
   },
   commandCenter: {
     title: "لوحة القيادة",
@@ -286,6 +286,9 @@ const ar: Dictionary = {
     write_off: "إخراج من المخزون",
   },
   errors: {
+    CAPITAL_BELOW_FLOOR: "السحب موقوف: قيمة المشروع (الصندوق + السلعة + فلوس التوصيل) نزلات تحت خط حماية راس المال. خاص المبيعات ترجعها فوق الخط أولا.",
+    RESERVE_PROTECTED: "هاد السحب كينزل الصندوق تحت الاحتياط. الاحتياط ما كيتسحبش.",
+    GUARD_REASON_REQUIRED: "هاد المصروف كيتجاوز قاعدة مالية. كتب السبب (10 حروف على الأقل) باش يتسجل ويتعلّم فالتقرير.",
     FORBIDDEN: "ليست لديك صلاحية القيام بهذا.",
     NOT_FOUND: "هذا العنصر لم يعد موجودًا.",
     SKU_TAKEN: "هذا الـ SKU مستعمل في متغير آخر.",
@@ -1075,6 +1078,15 @@ const ar: Dictionary = {
     priceShort: "الثمن"
   },
   reports: {
+    violationsTitle: "تجاوز القواعد المالية",
+    violationsDescription: "كل مصروف ولا سحب تجاوز قاعدة، مع السبب اللي تكتب.",
+    colDate: "التاريخ",
+    colKind: "النوع",
+    colAmount: "المبلغ",
+    colReason: "السبب",
+    withdrawalOver: "سحب فوق المبلغ الآمن",
+    sheetViolations: "التجاوزات",
+    noViolations: "ما كاين حتى تجاوز فهاد المدة.",
     title: "التقارير",
     description: "شنو كيتباع، شنو كيربح، وشنو نايم فالمخزون — شهريا ولا كل 15 يوم. تقدر تحملو Excel.",
     period: "المدة",
@@ -1146,6 +1158,36 @@ const ar: Dictionary = {
     current: "هاد المدة"
   },
   pay: {
+    guard: {
+      crossing: "هاد المصروف كيتجاوز قاعدة مالية:",
+      reasonLabel: "علاش؟ (إلزامي، 10 حروف على الأقل)",
+      recordAnyway: "سجل مع السبب",
+      flags: {
+        reserve: "كينزل الصندوق تحت الاحتياط",
+        ad_budget: "كيفوت ميزانية الإشهار ديال هاد الشهر",
+        stock_cap: "شراء سلعة فوق السقف (نسبة من الفلوس الحرة)"
+      }
+    },
+    capitalTitle: "حماية راس المال",
+    capitalDescription: "قيمة المشروع = الصندوق + السلعة بالتكلفة + الفلوس اللي عند شركة التوصيل. إلا نزلات تحت الخط، السحب كيتوقف كاملا.",
+    capital: "راس المال (اللي دخلتي)",
+    businessValue: "قيمة المشروع دابا",
+    floor: "خط الحماية ({pct}%)",
+    cash: "الصندوق",
+    stockValue: "السلعة بالتكلفة",
+    receivable: "عند شركة التوصيل",
+    statusOk: "فوق الخط: راس المال محمي",
+    statusBelow: "تحت الخط: السحب موقوف حتى ترجع القيمة فوق {floor}",
+    rulesTitle: "القواعد المالية",
+    rulesDescription: "كتحمي راس المال والاحتياط. تجاوزها كيحتاج سبب مكتوب، وكيبان فالتقرير.",
+    capitalFloorPct: "خط حماية راس المال (%)",
+    capitalFloorPctHint: "تحت هاد النسبة من راس المال، ما كاين حتى سحب.",
+    adBudget: "ميزانية الإشهار الشهرية (درهم)",
+    adBudgetHint: "كتخدم ملي يكون الشهر اللي فات بلا مداخيل.",
+    adBudgetPct: "الإشهار من المداخيل (%)",
+    adBudgetPctHint: "من المداخيل الموصلة ديال الشهر اللي فات.",
+    stockPct: "سقف شراء السلعة (%)",
+    stockPctHint: "من الفلوس الحرة، فكل شراء.",
     title: "الأجرة والسيولة",
     description: "شحال تقدر تسحب اليوم بلا ما تضر المشروع — محسوبة من اللي ربحتي، والفلوس اللي عندك بصح، واللي عليك.",
     safeTitle: "تقدر تسحب اليوم بأمان",

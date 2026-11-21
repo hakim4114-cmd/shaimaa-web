@@ -40,12 +40,18 @@ export default async function PayPage() {
   const tp = t.pay;
   const { supabase, organizationId, can } = await requireOrganization();
   if (!can.seeMoney) redirect("/");
-  const [{ data: safeRaw }, funds, { data: entries }, { data: payables }] = await Promise.all([
+  const [{ data: safeRaw }, funds, { data: entries }, { data: payables }, { data: capitalRaw }, { data: rules }] = await Promise.all([
     supabase.rpc("safe_withdrawal", { p_organization_id: organizationId }),
     getFundPlan(supabase, organizationId),
     supabase.from("cash_entries").select("id, kind, amount_cents, entry_date, note, over_limit").eq("organization_id", organizationId).order("entry_date", { ascending: false }).limit(50),
-    supabase.from("payables").select("id, counterparty, description, category, amount_cents, due_on, paid_on, recurrence").eq("organization_id", organizationId).order("due_on").limit(100)
+    supabase.from("payables").select("id, counterparty, description, category, amount_cents, due_on, paid_on, recurrence").eq("organization_id", organizationId).order("due_on").limit(100),
+    supabase.rpc("capital_status", { p_organization_id: organizationId }),
+    supabase.from("cash_settings").select("capital_floor_pct, ad_budget_cents, ad_budget_revenue_pct, stock_cash_pct").eq("organization_id", organizationId).maybeSingle()
   ]);
+  const capital = (capitalRaw ?? {}) as {
+    configured?: boolean; cash_cents?: number; capital_cents?: number; stock_value_cents?: number; receivable_cents?: number;
+    business_value_cents?: number; floor_pct?: number; floor_cents?: number; below_floor?: boolean;
+  };
   const s = (safeRaw ?? { configured: false }) as Safe;
   const today = businessDay(new Date());
   const m = (c: number | undefined) => formatMoney(c ?? 0, locale);
@@ -147,6 +153,25 @@ export default async function PayPage() {
         </Card>
       ) : null}
 
+      {capital.configured && (capital.capital_cents ?? 0) > 0 ? (
+        <Card className={cn("overflow-hidden", capital.below_floor && "ring-2 ring-danger")}>
+          <CardHeader title={tp.capitalTitle} description={tp.capitalDescription} />
+          <CardBody className="flex flex-col gap-3 text-sm">
+            <p role={capital.below_floor ? "alert" : undefined} className={cn("rounded-md p-3 font-semibold", capital.below_floor ? "bg-danger-soft text-danger" : "bg-success-soft text-success")}>
+              {capital.below_floor ? interpolate(tp.statusBelow, { floor: m(capital.floor_cents) }) : tp.statusOk}
+            </p>
+            <dl className="grid gap-2 sm:grid-cols-2">
+              <div className="flex justify-between gap-3"><dt className="text-muted-foreground">{tp.capital}</dt><dd className="tabular">{m(capital.capital_cents)}</dd></div>
+              <div className="flex justify-between gap-3"><dt className="text-muted-foreground">{interpolate(tp.floor, { pct: capital.floor_pct ?? 0 })}</dt><dd className="tabular">{m(capital.floor_cents)}</dd></div>
+              <div className="flex justify-between gap-3"><dt className="text-muted-foreground">{tp.cash}</dt><dd className="tabular">{m(capital.cash_cents)}</dd></div>
+              <div className="flex justify-between gap-3"><dt className="text-muted-foreground">{tp.stockValue}</dt><dd className="tabular">{m(capital.stock_value_cents)}</dd></div>
+              <div className="flex justify-between gap-3"><dt className="text-muted-foreground">{tp.receivable}</dt><dd className="tabular">{m(capital.receivable_cents)}</dd></div>
+              <div className="flex justify-between gap-3 border-t border-border pt-2 font-semibold"><dt>= {tp.businessValue}</dt><dd className={cn("tabular", capital.below_floor && "text-danger")}>{m(capital.business_value_cents)}</dd></div>
+            </dl>
+          </CardBody>
+        </Card>
+      ) : null}
+
       {s.configured && can.overrideBlocklist ? (
         <Card>
           <CardHeader title={tp.withdrawTitle} description={tp.withdrawDescription} />
@@ -213,7 +238,11 @@ export default async function PayPage() {
               funds={funds.map((f) => ({ name: f.name, percent: f.percent }))}
               initial={{
                 openingDate: s.opening_date ?? today,
-                reserveFloor: s.reserve_floor_cents !== undefined ? String(s.reserve_floor_cents / 100) : "0",
+                reserveFloor: s.reserve_floor_cents !== undefined ? String(s.reserve_floor_cents / 100) : "1500",
+                capitalFloorPct: String(rules?.capital_floor_pct ?? 80),
+                adBudget: String((rules?.ad_budget_cents ?? 200000) / 100),
+                adBudgetPct: String(rules?.ad_budget_revenue_pct ?? 30),
+                stockPct: String(rules?.stock_cash_pct ?? 50),
                 ownerFundName: s.owner_fund_name ?? funds.find((f) => /pay|أجرة|rémun/i.test(f.name))?.name ?? ""
               }}
             />

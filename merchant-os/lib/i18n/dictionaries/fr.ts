@@ -53,7 +53,7 @@ const fr: Dictionary = {
     sectionsEssential: "L'essentiel",
     sectionsAll: "Toutes les rubriques",
     notificationsAllClear: "Rien ne demande votre attention pour l'instant.",
-    alerts: { obligationsOverdue: "Dettes en retard", obligationsSoon: "Dettes à payer sous 7 jours", callsDue: "Appels à passer", deliveryProblems: "Problèmes de livraison", returnsWaiting: "Retours à recevoir", lowStock: "Produits en stock bas", storeOrders: "Commandes boutique à corriger", waitingToShip: "Confirmées depuis plus de 24 h, pas encore expédiées", problems: "Problèmes à vérifier" }
+    alerts: { obligationsOverdue: "Dettes en retard", obligationsSoon: "Dettes à payer sous 7 jours", callsDue: "Appels à passer", deliveryProblems: "Problèmes de livraison", returnsWaiting: "Retours à recevoir", lowStock: "Produits en stock bas", storeOrders: "Commandes boutique à corriger", waitingToShip: "Confirmées depuis plus de 24 h, pas encore expédiées", problems: "Problèmes à vérifier", capitalBelowFloor: "Capital sous le plancher : retraits bloqués" }
   },
   commandCenter: {
     title: "Tableau de bord",
@@ -287,6 +287,9 @@ const fr: Dictionary = {
     write_off: "Sorti du stock",
   },
   errors: {
+    CAPITAL_BELOW_FLOOR: "Retrait bloqué : la valeur de l'activité (caisse + stock + encours transporteur) est passée sous le plancher de protection du capital. Les ventes doivent d'abord la remonter.",
+    RESERVE_PROTECTED: "Ce retrait ferait passer la caisse sous la réserve. La réserve ne se retire pas.",
+    GUARD_REASON_REQUIRED: "Cette dépense dépasse une règle financière. Écrivez la raison (10 caractères minimum) : elle sera enregistrée et signalée dans le rapport.",
     FORBIDDEN: "Vous n'avez pas l'autorisation de faire cela.",
     NOT_FOUND: "Cet élément n'existe plus.",
     SKU_TAKEN: "Ce SKU est déjà utilisé par une autre variante.",
@@ -1076,6 +1079,15 @@ const fr: Dictionary = {
     priceShort: "Prix"
   },
   reports: {
+    violationsTitle: "Règles financières dépassées",
+    violationsDescription: "Chaque dépense ou retrait qui a dépassé une règle, avec la raison écrite.",
+    colDate: "Date",
+    colKind: "Type",
+    colAmount: "Montant",
+    colReason: "Raison",
+    withdrawalOver: "Retrait au-dessus du montant sûr",
+    sheetViolations: "Dépassements",
+    noViolations: "Aucun dépassement sur cette période.",
     title: "Rapports",
     description: "Ce qui se vend, ce qui rapporte et ce qui dort en stock — par mois ou par quinzaine. Téléchargeable en Excel.",
     period: "Période",
@@ -1147,6 +1159,36 @@ const fr: Dictionary = {
     current: "Cette période"
   },
   pay: {
+    guard: {
+      crossing: "Cette dépense dépasse une règle financière :",
+      reasonLabel: "Pourquoi ? (obligatoire, 10 caractères minimum)",
+      recordAnyway: "Enregistrer avec la raison",
+      flags: {
+        reserve: "fait passer la caisse sous la réserve",
+        ad_budget: "dépasse le budget publicité du mois",
+        stock_cap: "achat de stock au-dessus du plafond (part de la trésorerie libre)"
+      }
+    },
+    capitalTitle: "Protection du capital",
+    capitalDescription: "Valeur de l'activité = caisse + stock au coût + encours chez le transporteur. Sous le plancher, tout retrait est bloqué.",
+    capital: "Capital (apports)",
+    businessValue: "Valeur actuelle de l'activité",
+    floor: "Plancher ({pct} %)",
+    cash: "Caisse",
+    stockValue: "Stock au coût",
+    receivable: "Chez le transporteur",
+    statusOk: "Au-dessus du plancher : capital protégé",
+    statusBelow: "Sous le plancher : retraits bloqués jusqu'à repasser au-dessus de {floor}",
+    rulesTitle: "Règles financières",
+    rulesDescription: "Elles protègent le capital et la réserve. Les dépasser demande une raison écrite, visible dans le rapport.",
+    capitalFloorPct: "Plancher de protection du capital (%)",
+    capitalFloorPctHint: "Sous ce pourcentage du capital, aucun retrait.",
+    adBudget: "Budget publicité mensuel (MAD)",
+    adBudgetHint: "S'applique quand le mois précédent n'a pas de chiffre d'affaires.",
+    adBudgetPct: "Publicité en % du chiffre d'affaires",
+    adBudgetPctHint: "Du chiffre d'affaires livré du mois précédent.",
+    stockPct: "Plafond d'achat de stock (%)",
+    stockPctHint: "De la trésorerie libre, par achat.",
     title: "Rémunération & trésorerie",
     description: "Combien vous pouvez retirer aujourd'hui sans nuire à l'activité — calculé depuis ce que vous avez gagné, l'argent réellement disponible et ce que vous devez.",
     safeTitle: "Vous pouvez retirer sans risque aujourd'hui",

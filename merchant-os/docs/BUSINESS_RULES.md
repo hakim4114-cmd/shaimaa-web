@@ -261,6 +261,15 @@ nisab      = value of 85 g of gold on the calculation day (gold price entered by
 
 Also yearly: full evaluation (12-month trend of the nine indicators, best/worst products, decision log outcomes) and goals for next year (target values for chosen indicators, tracked on the weekly page).
 
+## Money guardrails (1.16.0)
+Defaults chosen by the owner on 2026-11-21; each can be changed in Pay and cash → Rules **[DB]**.
+- **Business value** = cash (same definition as the safe amount) + stock at cost + COD waiting at the carrier (orders awaiting remittance, gross). **Capital** = opening balance + money put in **[DB]**.
+- **Capital floor (80 %):** when the business value is below 80 % of the capital, no owner withdrawal is accepted, even with a reason (`CAPITAL_BELOW_FLOOR`); the bell and the pay page say so **[DB]**.
+- **Reserve:** no owner withdrawal may leave cash below the reserve (`RESERVE_PROTECTED`) **[DB]**. An expense that would needs a written reason of 10 characters or more and is flagged `reserve` **[DB]**.
+- **Ad budget per calendar month:** 30 % of last month's delivered revenue, or 2,000 MAD when last month had none. An ad expense that takes the month above it needs a reason and is flagged `ad_budget` **[DB]**. The app cannot stop the card: set the same limit in the ad platform.
+- **Stock cap:** one stock purchase above 50 % of free cash (cash − obligations due within 30 days − reserve) needs a reason and is flagged `stock_cap` **[DB]**.
+- Expenses are refused only for a missing reason, never for the amount: money spent outside the app must still be recorded. Paying a planned obligation is not checked **[DB]**. Every flagged expense and every withdrawal above the safe amount is listed in Reports → Money rules crossed, and in the Excel report.
+
 ## Taxes — draft specification (research 2026-11-16, NOT verified)
 
 Provided by the owner's research. Every value here must be checked against the official text (CGI, law 114.13, DGI/ae.gov.ma, CNSS) or an accountant before it is loaded into the app. Confidence labels are the owner's research labels, downgraded where the source is secondary.

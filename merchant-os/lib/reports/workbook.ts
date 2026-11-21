@@ -117,6 +117,23 @@ export function reportWorkbook(report: PeriodReport, t: Dictionary, rtl: boolean
       rows: report.campaigns.map((c) => ({ name: c.name ?? tr.noCampaign, spend: c.spendCents, orders: c.orders, confirmed: c.confirmed, delivered: c.delivered, refused: c.refused, revenue: c.deliveredRevenueCents }))
     },
     {
+      title: tr.sheetViolations,
+      subtitle,
+      rtl,
+      columns: [
+        { key: "date", header: tr.colDate, type: "date", width: 12 },
+        { key: "kind", header: tr.colKind, type: "text", width: 34 },
+        { key: "amount", header: tr.colAmount, type: "money" },
+        { key: "reason", header: tr.colReason, type: "text", width: 40 }
+      ],
+      rows: report.violations.map((v) => ({
+        date: v.date,
+        kind: v.kind === "withdrawal" ? tr.withdrawalOver : `${t.money.categories[v.category as keyof typeof t.money.categories] ?? v.category} — ${v.flags.map((f) => t.pay.guard.flags[f as keyof typeof t.pay.guard.flags] ?? f).join(", ")}`,
+        amount: v.amountCents,
+        reason: v.reason
+      }))
+    },
+    {
       title: tr.sheetSleeping,
       subtitle: interpolate(tr.sleepingDescription, { days: 30 }),
       rtl,

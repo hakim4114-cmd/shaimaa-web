@@ -16,8 +16,12 @@ export type PeriodReport = {
   cities: CityRow[];
   campaigns: CampaignRow[];
   sleeping: ReturnType<typeof idleStock>;
+  violations: Violation[];
   truncated: boolean;
 };
+
+/** An expense or withdrawal that crossed a money rule, with the reason written. */
+export type Violation = { date: string; kind: "expense" | "withdrawal"; category: string | null; flags: string[]; amountCents: number; reason: string };
 
 const maxOrders = 5000;
 
@@ -80,13 +84,34 @@ async function loadOrders(ctx: Ctx, period: ReportPeriod): Promise<{ orders: Rep
 export async function getPeriodReport(ctx: Ctx, period: ReportPeriod, today: string): Promise<PeriodReport> {
   const previous = previousPeriod(period);
   const { supabase, organizationId } = ctx;
-  const [{ orders, truncated }, summary, previousSummary, campaigns, { data: stockRows }] = await Promise.all([
+  const [{ orders, truncated }, summary, previousSummary, campaigns, { data: stockRows }, { data: flaggedExpenses }, { data: overWithdrawals }] = await Promise.all([
     loadOrders(ctx, period),
     getReport(supabase, organizationId, period.from, period.to),
     getReport(supabase, organizationId, previous.from, previous.to),
     getCampaignReport(supabase, organizationId, period.from, period.to),
-    supabase.rpc("stock_health", { p_organization_id: organizationId })
+    supabase.rpc("stock_health", { p_organization_id: organizationId }),
+    supabase
+      .from("expenses")
+      .select("incurred_on, category, amount_cents, guard_flags, guard_reason")
+      .eq("organization_id", organizationId)
+      .gte("incurred_on", period.from)
+      .lte("incurred_on", period.to)
+      .neq("guard_flags", [])
+      .order("incurred_on"),
+    supabase
+      .from("cash_entries")
+      .select("entry_date, amount_cents, note")
+      .eq("organization_id", organizationId)
+      .eq("kind", "owner_withdrawal")
+      .eq("over_limit", true)
+      .gte("entry_date", period.from)
+      .lte("entry_date", period.to)
+      .order("entry_date")
   ]);
+  const violations: Violation[] = [
+    ...(flaggedExpenses ?? []).map((e) => ({ date: e.incurred_on, kind: "expense" as const, category: e.category, flags: e.guard_flags, amountCents: e.amount_cents, reason: e.guard_reason })),
+    ...(overWithdrawals ?? []).map((w) => ({ date: w.entry_date, kind: "withdrawal" as const, category: null, flags: [], amountCents: -w.amount_cents, reason: w.note }))
+  ].sort((a, b) => a.date.localeCompare(b.date));
   const stockList = (stockRows ?? []).map((r) => ({
     variantId: r.variant_id,
     productName: r.product_name,
@@ -107,6 +132,7 @@ export async function getPeriodReport(ctx: Ctx, period: ReportPeriod, today: str
     cities: cities(orders),
     campaigns,
     sleeping: idleStock(stockList, sold),
+    violations,
     truncated
   };
 }

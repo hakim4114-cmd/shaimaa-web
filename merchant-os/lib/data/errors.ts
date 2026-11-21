@@ -4,6 +4,9 @@
 
 export const appErrorCodes = [
   "FORBIDDEN",
+  "CAPITAL_BELOW_FLOOR",
+  "RESERVE_PROTECTED",
+  "GUARD_REASON_REQUIRED",
   "NOT_FOUND",
   "SKU_TAKEN",
   "BARCODE_TAKEN",
@@ -112,7 +115,10 @@ const raised: Partial<Record<string, AppErrorCode>> = {
   SECRET_TOO_SHORT: "SECRET_TOO_SHORT",
   NOT_RETRYABLE: "NOT_RETRYABLE",
   KEYS_INCOMPLETE: "KEYS_INCOMPLETE",
-  NOT_FOUND: "NOT_FOUND"
+  NOT_FOUND: "NOT_FOUND",
+  CAPITAL_BELOW_FLOOR: "CAPITAL_BELOW_FLOOR",
+  RESERVE_PROTECTED: "RESERVE_PROTECTED",
+  GUARD_REASON_REQUIRED: "GUARD_REASON_REQUIRED"
 };
 
 export function mapDatabaseError(error: { code?: string; message?: string } | null | undefined): AppErrorCode {

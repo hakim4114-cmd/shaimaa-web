@@ -260,6 +260,10 @@ export type Database = {
       }
       cash_settings: {
         Row: {
+          ad_budget_cents: number
+          ad_budget_revenue_pct: number
+          capital_floor_pct: number
+          stock_cash_pct: number
           opening_date: string
           organization_id: string
           owner_fund_name: string
@@ -267,6 +271,10 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          ad_budget_cents?: number
+          ad_budget_revenue_pct?: number
+          capital_floor_pct?: number
+          stock_cash_pct?: number
           opening_date?: string
           organization_id: string
           owner_fund_name?: string
@@ -274,6 +282,10 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          ad_budget_cents?: number
+          ad_budget_revenue_pct?: number
+          capital_floor_pct?: number
+          stock_cash_pct?: number
           opening_date?: string
           organization_id?: string
           owner_fund_name?: string
@@ -524,6 +536,8 @@ export type Database = {
       }
       expenses: {
         Row: {
+          guard_flags: string[]
+          guard_reason: string
           amount_cents: number
           campaign_id: string | null
           category: Database["public"]["Enums"]["expense_category"]
@@ -537,6 +551,8 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          guard_flags?: string[]
+          guard_reason?: string
           amount_cents: number
           campaign_id?: string | null
           category: Database["public"]["Enums"]["expense_category"]
@@ -550,6 +566,8 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          guard_flags?: string[]
+          guard_reason?: string
           amount_cents?: number
           campaign_id?: string | null
           category?: Database["public"]["Enums"]["expense_category"]
@@ -2202,6 +2220,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      capital_status: {
+        Args: { p_organization_id: string }
+        Returns: Json
+      }
       add_order_note: {
         Args: { p_note: string; p_order_id: string }
         Returns: undefined

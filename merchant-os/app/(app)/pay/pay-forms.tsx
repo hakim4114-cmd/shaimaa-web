@@ -71,7 +71,9 @@ export function WithdrawForm({ safeCents, today }: { safeCents: number; today: s
   );
 }
 
-export function SettingsForm({ initial, funds }: { initial: { openingDate: string; reserveFloor: string; ownerFundName: string }; funds: { name: string; percent: number }[] }) {
+type Settings = { openingDate: string; reserveFloor: string; ownerFundName: string; capitalFloorPct: string; adBudget: string; adBudgetPct: string; stockPct: string };
+
+export function SettingsForm({ initial, funds }: { initial: Settings; funds: { name: string; percent: number }[] }) {
   const { t } = useI18n();
   const tp = t.pay;
   const id = useId();
@@ -97,6 +99,24 @@ export function SettingsForm({ initial, funds }: { initial: { openingDate: strin
             ))}
           </NativeSelect>
         </Field>
+      </div>
+      <div className="rounded-md border border-border p-3">
+        <p className="text-sm font-semibold">{tp.rulesTitle}</p>
+        <p className="mb-3 text-xs text-muted-foreground">{tp.rulesDescription}</p>
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          <Field label={tp.capitalFloorPct} htmlFor={`${id}-cf`} hint={tp.capitalFloorPctHint}>
+            <Input id={`${id}-cf`} dir="ltr" inputMode="numeric" value={v.capitalFloorPct} onChange={(e) => setV({ ...v, capitalFloorPct: e.target.value })} />
+          </Field>
+          <Field label={tp.adBudget} htmlFor={`${id}-ab`} hint={tp.adBudgetHint}>
+            <Input id={`${id}-ab`} dir="ltr" inputMode="decimal" value={v.adBudget} onChange={(e) => setV({ ...v, adBudget: e.target.value })} />
+          </Field>
+          <Field label={tp.adBudgetPct} htmlFor={`${id}-ap`} hint={tp.adBudgetPctHint}>
+            <Input id={`${id}-ap`} dir="ltr" inputMode="numeric" value={v.adBudgetPct} onChange={(e) => setV({ ...v, adBudgetPct: e.target.value })} />
+          </Field>
+          <Field label={tp.stockPct} htmlFor={`${id}-sp`} hint={tp.stockPctHint}>
+            <Input id={`${id}-sp`} dir="ltr" inputMode="numeric" value={v.stockPct} onChange={(e) => setV({ ...v, stockPct: e.target.value })} />
+          </Field>
+        </div>
       </div>
       <Button className="self-start" disabled={pending} onClick={() => run(() => saveCashSettings(v))}>
         {t.common.save}

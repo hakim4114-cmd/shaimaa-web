@@ -37,6 +37,9 @@ export function ExpenseForm({
   const [campaignId, setCampaignId] = useState(campaigns[0]?.id ?? "");
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<AppErrorCode | null>(null);
+  // Money rules this expense crosses (reserve, ad budget, stock cap): a written reason is required.
+  const [guardFlags, setGuardFlags] = useState<string[]>([]);
+  const [guardReason, setGuardReason] = useState("");
   // An open obligation with the same category and amount is probably this same money.
   const [match, setMatch] = useState<{ counterparty: string; dueOn: string } | null>(null);
   const [confirmedDifferent, setConfirmedDifferent] = useState(false);
@@ -57,11 +60,25 @@ export function ExpenseForm({
           }
           setMatch(null);
           setConfirmedDifferent(false);
-          const result = await addExpense({ category, amount, incurredOn, description, campaignId: category === "advertising" && campaignId ? campaignId : null });
+          const result = await addExpense({
+            category,
+            amount,
+            incurredOn,
+            description,
+            campaignId: category === "advertising" && campaignId ? campaignId : null,
+            guardReason: guardFlags.length ? guardReason : undefined
+          });
+          if (result.error === "GUARD_REASON_REQUIRED") {
+            setGuardFlags((result.detail ?? "").split(",").filter(Boolean));
+            if (guardFlags.length) setError(result.error);
+            return;
+          }
           if (result.error) {
             setError(result.error);
             return;
           }
+          setGuardFlags([]);
+          setGuardReason("");
           setAmount("");
           setDescription("");
           toast.success(tm.saved);
@@ -70,6 +87,19 @@ export function ExpenseForm({
       }}
     >
       {error ? <FormAlert>{t.errors[error]}</FormAlert> : null}
+      {guardFlags.length ? (
+        <div role="alert" className="flex flex-col gap-2 rounded-md bg-danger-soft p-3 text-sm text-danger">
+          <p className="font-semibold">{t.pay.guard.crossing}</p>
+          <ul className="list-inside list-disc">
+            {guardFlags.map((flag) => (
+              <li key={flag}>{t.pay.guard.flags[flag as keyof typeof t.pay.guard.flags] ?? flag}</li>
+            ))}
+          </ul>
+          <Field label={t.pay.guard.reasonLabel} htmlFor={`${id}-guard`}>
+            <Input id={`${id}-guard`} value={guardReason} maxLength={500} onChange={(e) => setGuardReason(e.target.value)} />
+          </Field>
+        </div>
+      ) : null}
       {match ? (
         <div className="flex flex-col gap-2 rounded-md bg-warning-soft p-3 text-sm text-warning">
           <p>{tm.duplicateWarning.replace("{who}", match.counterparty).replace("{date}", match.dueOn)}</p>
@@ -119,8 +149,8 @@ export function ExpenseForm({
           </Field>
         </div>
         <div className="flex items-end">
-          <Button type="submit" disabled={pending || !amount.trim()} className="w-full">
-            {pending ? t.common.loading : adsOnly ? tm.addSpend : tm.addExpense}
+          <Button type="submit" disabled={pending || !amount.trim() || (guardFlags.length > 0 && guardReason.trim().length < 10)} className="w-full">
+            {pending ? t.common.loading : guardFlags.length ? t.pay.guard.recordAnyway : adsOnly ? tm.addSpend : tm.addExpense}
           </Button>
         </div>
       </div>

@@ -16,14 +16,44 @@ const done = () => {
   return { ok: true as const };
 };
 
-export async function saveCashSettings(input: { openingDate: string; reserveFloor: string; ownerFundName: string }): Promise<PayResult> {
-  const parsed = z.object({ openingDate: day, reserveFloor: z.string().max(20), ownerFundName: z.string().trim().max(60) }).safeParse(input);
+const percent = z.coerce.number().int().min(0).max(100);
+
+export async function saveCashSettings(input: {
+  openingDate: string;
+  reserveFloor: string;
+  ownerFundName: string;
+  capitalFloorPct?: string;
+  adBudget?: string;
+  adBudgetPct?: string;
+  stockPct?: string;
+}): Promise<PayResult> {
+  const parsed = z
+    .object({
+      openingDate: day,
+      reserveFloor: z.string().max(20),
+      ownerFundName: z.string().trim().max(60),
+      capitalFloorPct: percent.optional(),
+      adBudget: z.string().max(20).optional(),
+      adBudgetPct: percent.optional(),
+      stockPct: percent.optional()
+    })
+    .safeParse(input);
   if (!parsed.success) return { error: "INVALID_INPUT" };
   const reserve = parsed.data.reserveFloor.trim() === "" ? 0 : parseMoneyToCents(parsed.data.reserveFloor);
   if (reserve === null) return { error: "AMOUNT_REQUIRED" };
   const { supabase, organizationId, can } = await requireOrganization();
   if (!can.overrideBlocklist) return { error: "FORBIDDEN" };
-  const values = { opening_date: parsed.data.openingDate, reserve_floor_cents: reserve, owner_fund_name: parsed.data.ownerFundName };
+  const adBudget = parsed.data.adBudget === undefined || parsed.data.adBudget.trim() === "" ? undefined : parseMoneyToCents(parsed.data.adBudget);
+  if (adBudget === null) return { error: "AMOUNT_REQUIRED" };
+  const values = {
+    opening_date: parsed.data.openingDate,
+    reserve_floor_cents: reserve,
+    owner_fund_name: parsed.data.ownerFundName,
+    ...(parsed.data.capitalFloorPct !== undefined ? { capital_floor_pct: parsed.data.capitalFloorPct } : {}),
+    ...(adBudget !== undefined ? { ad_budget_cents: adBudget } : {}),
+    ...(parsed.data.adBudgetPct !== undefined ? { ad_budget_revenue_pct: parsed.data.adBudgetPct } : {}),
+    ...(parsed.data.stockPct !== undefined ? { stock_cash_pct: parsed.data.stockPct } : {})
+  };
   const { data: existing } = await supabase.from("cash_settings").select("organization_id").eq("organization_id", organizationId).maybeSingle();
   const { error } = existing
     ? await supabase.from("cash_settings").update(values).eq("organization_id", organizationId)
