@@ -3,28 +3,11 @@ import { expect, test } from "@playwright/test";
 import ar from "../lib/i18n/dictionaries/ar";
 import { signIn } from "./auth";
 import { adminClient, organizationId } from "./db";
+import { shopifyOrder, shopifySigningKey as signingKey } from "./data";
 import { owner } from "./env";
 
 // J8: an online store (Shopify) sends an order; only correctly signed calls are accepted.
 const st = ar.stores;
-const signingKey = "e2e-shopify-signing-key-0123456789";
-
-function shopifyOrder(id: number, sku: string) {
-  return {
-    id,
-    name: `#${id}`,
-    currency: "MAD",
-    financial_status: "pending",
-    phone: null,
-    note: "E2E",
-    total_discounts: "0.00",
-    total_shipping_price_set: { shop_money: { amount: "0.00", currency_code: "MAD" } },
-    customer: { first_name: "Amal", last_name: "Test", phone: null },
-    shipping_address: { first_name: "Amal", last_name: "Test", address1: "Rue 7", address2: "", city: "Kénitra", phone: "06 55 66 77 88" },
-    line_items: [{ sku, title: "Chemise E2E", variant_title: "M", quantity: 1, price: "199.00" }]
-  };
-}
-
 test.describe.serial("online store", () => {
   let storeId = "";
 

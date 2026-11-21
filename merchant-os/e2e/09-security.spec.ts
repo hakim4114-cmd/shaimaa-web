@@ -2,6 +2,7 @@ import { createHmac } from "node:crypto";
 import { createClient } from "@supabase/supabase-js";
 import { expect, test } from "@playwright/test";
 import { adminClient, organizationId, userClient } from "./db";
+import { shopifyOrder, shopifySigningKey } from "./data";
 import { anonKey, finance, otherOwner, owner, supabaseUrl } from "./env";
 
 // Step 5: security checks through the real endpoints and the database API.
@@ -59,9 +60,9 @@ test.describe("store webhook", () => {
     expect((await request.post(`/api/webhooks/store/${store!.id}`, { headers: { "Content-Type": "application/json" }, data: "x".repeat(600_000) })).status()).toBe(413);
 
     // The order sent in 06 again, correctly signed: still one order.
-    const { data: existing } = await admin.from("external_orders").select("payload").eq("store_id", store!.id).eq("external_id", "7001").single();
-    const body = JSON.stringify(existing!.payload);
-    const signature = createHmac("sha256", "e2e-shopify-signing-key-0123456789").update(body, "utf8").digest("base64");
+    const { data: variant } = await admin.from("product_variants").select("sku, products!inner(name, organization_id)").eq("title", "M").eq("products.name", "Chemise E2E").eq("products.organization_id", orgId).single();
+    const body = JSON.stringify(shopifyOrder(7001, variant!.sku));
+    const signature = createHmac("sha256", shopifySigningKey).update(body, "utf8").digest("base64");
     const response = await request.post(`/api/webhooks/store/${store!.id}`, {
       headers: { "Content-Type": "application/json", "X-Shopify-Hmac-Sha256": signature, "X-Shopify-Topic": "orders/create" },
       data: body
