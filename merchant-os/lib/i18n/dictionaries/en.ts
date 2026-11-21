@@ -1184,7 +1184,8 @@ const en = {
         ad_budget: "goes over this month's ad budget",
         stock_cap: "stock purchase above the cap (share of free cash)",
         loss_cap: "the campaign reached its loss cap (losing test)",
-        no_campaign: "ad spend with no campaign: outside the loss cap and the product cost"
+        no_campaign: "ad spend with no campaign: outside the loss cap and the product cost",
+        below_floor: "ad spend while the business is below the capital floor: no new test"
       }
     },
     capitalTitle: "Capital protection",

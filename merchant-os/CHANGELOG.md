@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.18.1 — Ads below the floor, logo leads home (2026-11-21)
+
+### Changed
+- Below the capital floor, an ad expense (a new test) needs a written reason and is flagged `below_floor` in the rules crossed. Before, only owner withdrawals were blocked.
+- The logo, in the sidebar, the phone menu and the phone top bar, leads back to the command center.
+
 ## 1.18.0 — Rules scaled to the capital (2026-11-21)
 
 ### Changed
