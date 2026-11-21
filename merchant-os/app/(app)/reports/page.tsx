@@ -125,6 +125,7 @@ export default async function ReportsPage({ searchParams }: { searchParams: Prom
                     <TH className="text-end">{tr.colConfRate}</TH>
                     <TH className="text-end">{tr.colDelivRate}</TH>
                     <TH className="text-end">{tr.colRevenue}</TH>
+                    <TH className="text-end">{tr.colAds}</TH>
                     <TH className="text-end">{tr.colProfit}</TH>
                     <TH className="text-end">{tr.colMargin}</TH>
                     <TH className="text-end">{tr.colStock}</TH>
@@ -152,6 +153,7 @@ export default async function ReportsPage({ searchParams }: { searchParams: Prom
                       <TD className="tabular text-end">{pct(row.confirmationRate)}</TD>
                       <TD className="tabular text-end">{pct(row.deliveryRate)}</TD>
                       <TD className="tabular text-end">{m(row.revenueCents)}</TD>
+                      <TD className="tabular text-end">{m(row.adCostCents)}</TD>
                       <TD className={cn("tabular text-end font-medium", row.profitCents < 0 && "text-danger")}>{m(row.profitCents)}</TD>
                       <TD className="tabular text-end">{pct(row.margin)}</TD>
                       <TD className="tabular text-end">{row.onHand}</TD>

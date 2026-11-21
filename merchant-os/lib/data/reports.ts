@@ -33,7 +33,7 @@ async function loadOrders(ctx: Ctx, period: ReportPeriod): Promise<{ orders: Rep
   const { data } = await ctx.supabase
     .from("orders")
     .select(
-      "id, status, city, confirmed_at, created_at, subtotal_cents, discount_cents, shipping_fee_cents, items:order_items(variant_id, product_name, variant_title, sku, quantity, unit_price_cents, unit_cost_cents), shipments(status, shipping_cost_cents)"
+      "id, status, city, campaign_id, confirmed_at, created_at, subtotal_cents, discount_cents, shipping_fee_cents, items:order_items(variant_id, product_name, variant_title, sku, quantity, unit_price_cents, unit_cost_cents), shipments(status, shipping_cost_cents)"
     )
     .eq("organization_id", ctx.organizationId)
     .gte("created_at", fromTs)
@@ -42,7 +42,7 @@ async function loadOrders(ctx: Ctx, period: ReportPeriod): Promise<{ orders: Rep
     .limit(maxOrders)
     .overrideTypes<
       {
-        id: string; status: string; city: string; confirmed_at: string | null; created_at: string;
+        id: string; status: string; city: string; campaign_id: string | null; confirmed_at: string | null; created_at: string;
         subtotal_cents: number; discount_cents: number; shipping_fee_cents: number;
         items: { variant_id: string; product_name: string; variant_title: string; sku: string; quantity: number; unit_price_cents: number; unit_cost_cents: number | null }[];
         shipments: { status: string; shipping_cost_cents: number }[] | { status: string; shipping_cost_cents: number } | null;
@@ -61,6 +61,7 @@ async function loadOrders(ctx: Ctx, period: ReportPeriod): Promise<{ orders: Rep
         id: o.id,
         status: o.status,
         confirmed: o.confirmed_at !== null,
+        campaignId: o.campaign_id,
         city: o.city ?? "",
         subtotalCents: o.subtotal_cents,
         discountCents: o.discount_cents,
@@ -121,14 +122,15 @@ export async function getPeriodReport(ctx: Ctx, period: ReportPeriod, today: str
   }));
   const stock = new Map(stockList.map((s) => [s.variantId, s.info]));
   const days = Math.max(1, elapsedDays(period, today));
+  const adSpendByCampaign = new Map(campaigns.filter((c) => c.campaignId).map((c) => [c.campaignId as string, c.spendCents]));
   const sold = new Set(orders.flatMap((o) => o.items.map((i) => i.variantId)));
   return {
     period,
     previous,
     summary,
     previousSummary,
-    products: performance(orders, stock, { by: "product", days }),
-    variants: performance(orders, stock, { by: "variant", days }),
+    products: performance(orders, stock, { by: "product", days, adSpendByCampaign }),
+    variants: performance(orders, stock, { by: "variant", days, adSpendByCampaign }),
     cities: cities(orders),
     campaigns,
     sleeping: idleStock(stockList, sold),

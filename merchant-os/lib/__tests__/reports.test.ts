@@ -65,6 +65,15 @@ describe("product performance", () => {
     expect(shirt.costCents + belt.costCents).toBe(8000 + 3000 + 2100);
   });
 
+  it("judges profit after the campaign's ad spend", () => {
+    // 250 MAD, cost 150, carrier 19: 81 profit before ads. 10 orders from one campaign that spent 900 → 90 per order.
+    const orders = Array.from({ length: 10 }, (_, i) => order(`a${i}`, "delivered", [item("shirt-M", 1, 25000, 15000)], { campaignId: "c1" }));
+    const [row] = performance(orders, new Map(), { by: "product", days: 10, now, adSpendByCampaign: new Map([["c1", 90000]]) });
+    expect(row!.adCostCents).toBe(90000);
+    expect(row!.profitCents).toBe(10 * (25000 - 15000 - 1900) - 90000);
+    expect(row!.profitCents).toBeLessThan(0);
+  });
+
   it("flags unknown costs instead of counting them as zero silently", () => {
     const [row] = performance([order("o1", "delivered", [item("shirt-M", 1, 19900, null)])], new Map(), { by: "variant", days: 1, now });
     expect(row!.costMissing).toBe(true);
