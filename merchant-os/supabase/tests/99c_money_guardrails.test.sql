@@ -79,6 +79,9 @@ select tests.expect_error(format($$insert into public.expenses (organization_id,
 -- Capital floor: business value 2900 cash + 0 stock < 4800 → no withdrawal at all.
 select tests.eq((public.capital_status(:'org') ->> 'below_floor')::boolean, true, 'spending without sales took the shop below its floor');
 select tests.expect_error(format($$select public.record_owner_withdrawal(%L, 1000, current_date, 'Small amount, I promise')$$, :'org'), 'CAPITAL_BELOW_FLOOR');
+-- Below the floor, a new ad expense (a new test) needs a reason and is flagged below_floor.
+select tests.eq('below_floor' = any(app.expense_guard_flags(:'org', 'advertising', 100, current_date)), true, 'ad spend below the floor: flagged below_floor');
+select tests.eq('below_floor' = any(app.expense_guard_flags(:'org', 'packaging', 100, current_date)), false, 'other spending is not flagged below_floor');
 
 -- Stock at cost counts in the business value: 25 shirts at 80 MAD bring it back above the floor.
 select public.save_product(:'org', jsonb_build_object('name', 'Guard Shirt', 'status', 'active', 'options', '[]'::jsonb,

@@ -1187,7 +1187,8 @@ const fr: Dictionary = {
         ad_budget: "dépasse le budget publicité du mois",
         stock_cap: "achat de stock au-dessus du plafond (part de la trésorerie libre)",
         loss_cap: "la campagne a atteint son plafond de perte (test perdant)",
-        no_campaign: "pub sans campagne : hors plafond de perte et hors coût produit"
+        no_campaign: "pub sans campagne : hors plafond de perte et hors coût produit",
+        below_floor: "pub alors que le capital est sous le plancher : pas de nouveau test"
       }
     },
     capitalTitle: "Protection du capital",

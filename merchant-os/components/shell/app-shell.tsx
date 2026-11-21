@@ -1,6 +1,7 @@
 "use client";
 
 import { ChevronsLeft, Menu, Search } from "lucide-react";
+import Link from "next/link";
 import { useMemo, useState, type ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
@@ -54,14 +55,19 @@ export function AppShell({
           collapsed ? "w-16" : "w-60"
         )}
       >
-        <div className={cn("flex h-14 items-center gap-2.5 px-4", collapsed && "justify-center px-0")}>
+        {/* The logo always leads back to the command center. */}
+        <Link
+          href="/"
+          aria-label={t.nav.commandCenter}
+          className={cn("flex h-14 items-center gap-2.5 px-4 outline-none transition-opacity hover:opacity-80 focus-visible:ring-2 focus-visible:ring-ring", collapsed && "justify-center px-0")}
+        >
           <BrandMark />
           {collapsed ? null : (
             <span dir="ltr" className="truncate font-brand text-[15px] font-extrabold tracking-tight">
               {t.app.name}
             </span>
           )}
-        </div>
+        </Link>
         <div className="flex-1 overflow-y-auto">
           <SidebarNav groups={groups} collapsed={collapsed} />
         </div>
@@ -90,11 +96,13 @@ export function AppShell({
           closeLabel={t.nav.closeMenu}
           variant="sheet"
         >
-          <DialogTitle className="flex h-14 items-center gap-2.5 px-4 text-sidebar-foreground">
-            <BrandMark />
-            <span dir="ltr" className="font-brand text-[15px] font-extrabold tracking-tight">
-              {t.app.name}
-            </span>
+          <DialogTitle className="flex h-14 items-center px-4 text-sidebar-foreground">
+            <Link href="/" aria-label={t.nav.commandCenter} onClick={() => setMobileOpen(false)} className="flex items-center gap-2.5 rounded-md outline-none focus-visible:ring-2 focus-visible:ring-ring">
+              <BrandMark />
+              <span dir="ltr" className="font-brand text-[15px] font-extrabold tracking-tight">
+                {t.app.name}
+              </span>
+            </Link>
           </DialogTitle>
           <SidebarNav groups={groups} onNavigate={() => setMobileOpen(false)} />
         </DialogContent>
@@ -105,6 +113,9 @@ export function AppShell({
           <Button variant="ghost" size="icon" className="lg:hidden" onClick={() => setMobileOpen(true)} aria-label={t.nav.openMenu}>
             <Menu />
           </Button>
+          <Link href="/" aria-label={t.nav.commandCenter} className="shrink-0 rounded-md outline-none focus-visible:ring-2 focus-visible:ring-ring lg:hidden">
+            <BrandMark />
+          </Link>
           <button
             type="button"
             onClick={() => setSearchOpen(true)}
