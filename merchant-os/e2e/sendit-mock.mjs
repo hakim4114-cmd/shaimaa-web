@@ -10,6 +10,8 @@ const district = { id: 42, name: "Kénitra", ville: "Kénitra", arabic_name: "ا
 
 /** code -> { code, status, payload } */
 const deliveries = new Map();
+/** code -> { code, status, amount, date, items } — COD payout invoices, added by the tests. */
+const invoices = new Map();
 let counter = 0;
 
 function send(res, status, body) {
@@ -42,6 +44,12 @@ const server = createServer(async (req, res) => {
     return send(res, 200, { data: parcel });
   }
 
+  if (path === "/__control/invoices" && req.method === "POST") {
+    const invoice = await readJson(req);
+    invoices.set(invoice.code, invoice);
+    return send(res, 200, { data: invoice });
+  }
+
   if (!path.startsWith("/api/v1/")) return send(res, 404, { success: false, message: "Page non trouvée" });
   const route = path.slice("/api/v1".length);
 
@@ -56,6 +64,16 @@ const server = createServer(async (req, res) => {
 
   if (route === "/districts/pickup-cities") return send(res, 200, { success: true, data: [{ id: district.id, name: district.name, arabic_name: district.arabic_name }] });
   if (route === "/districts") return send(res, 200, { success: true, data: [district], last_page: 1 });
+
+  if (route === "/invoices") {
+    const list = [...invoices.values()].map((invoice) => ({ code: invoice.code, status: invoice.status, amount: invoice.amount, date: invoice.date }));
+    return send(res, 200, { success: true, data: list, last_page: 1 });
+  }
+  const invoiceRoute = route.match(/^\/invoices\/([^/]+)$/);
+  if (invoiceRoute) {
+    const invoice = invoices.get(decodeURIComponent(invoiceRoute[1]));
+    return invoice ? send(res, 200, { success: true, data: invoice }) : send(res, 404, { success: false, message: "Page non trouvée" });
+  }
 
   if (route === "/deliveries" && req.method === "POST") {
     const payload = await readJson(req);
