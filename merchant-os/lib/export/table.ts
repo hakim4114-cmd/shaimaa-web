@@ -50,35 +50,44 @@ export function toCsv(table: ExportTable): string {
 }
 
 export async function toXlsx(table: ExportTable): Promise<Buffer> {
+  return toXlsxBook([table]);
+}
+
+/** Several tables as the sheets of one workbook (sheet names come from the titles). */
+export async function toXlsxBook(tables: ExportTable[]): Promise<Buffer> {
   const { default: ExcelJS } = await import("exceljs");
   const book = new ExcelJS.Workbook();
   book.creator = "Merchant OS";
-  const sheet = book.addWorksheet(table.title.slice(0, 31).replace(/[\\/*?:[\]]/g, " "), {
-    views: [{ state: "frozen", ySplit: 1, rightToLeft: table.rtl }]
-  });
-  sheet.columns = table.columns.map((c) => ({
-    header: c.header,
-    key: c.key,
-    width: c.width ?? (c.type === "text" ? 24 : 14),
-    style:
-      c.type === "money"
-        ? { numFmt: '#,##0.00 "MAD"' }
-        : c.type === "percent"
-          ? { numFmt: "0%" }
-          : c.type === "datetime"
-            ? { numFmt: "yyyy-mm-dd hh:mm" }
-            : {}
-  }));
-  sheet.getRow(1).font = { bold: true };
-  for (const row of table.rows) {
-    const values: Record<string, unknown> = {};
-    for (const c of table.columns) {
-      const v = cellValue(c.type, row[c.key]);
-      values[c.key] = typeof v === "string" && /^[=+\-@]/.test(v) ? `'${v}` : v;
+  const used = new Set<string>();
+  for (const table of tables) {
+    let name = table.title.slice(0, 31).replace(/[\\/*?:[\]]/g, " ").trim() || "Sheet";
+    for (let i = 2; used.has(name); i += 1) name = `${name.slice(0, 28)} ${i}`;
+    used.add(name);
+    const sheet = book.addWorksheet(name, { views: [{ state: "frozen", ySplit: 1, rightToLeft: table.rtl }] });
+    sheet.columns = table.columns.map((c) => ({
+      header: c.header,
+      key: c.key,
+      width: c.width ?? (c.type === "text" ? 24 : 14),
+      style:
+        c.type === "money"
+          ? { numFmt: '#,##0.00 "MAD"' }
+          : c.type === "percent"
+            ? { numFmt: "0%" }
+            : c.type === "datetime"
+              ? { numFmt: "yyyy-mm-dd hh:mm" }
+              : {}
+    }));
+    sheet.getRow(1).font = { bold: true };
+    for (const row of table.rows) {
+      const values: Record<string, unknown> = {};
+      for (const c of table.columns) {
+        const v = cellValue(c.type, row[c.key]);
+        values[c.key] = typeof v === "string" && /^[=+\-@]/.test(v) ? `'${v}` : v;
+      }
+      sheet.addRow(values);
     }
-    sheet.addRow(values);
+    if (table.columns.length) sheet.autoFilter = { from: { row: 1, column: 1 }, to: { row: 1, column: table.columns.length } };
   }
-  sheet.autoFilter = { from: { row: 1, column: 1 }, to: { row: 1, column: table.columns.length } };
   const buffer = await book.xlsx.writeBuffer();
   return Buffer.from(buffer);
 }

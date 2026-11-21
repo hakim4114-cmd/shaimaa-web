@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.15.0 — Reports: products, cities, sleeping stock, Excel (2026-11-21)
+
+### Added
+- **Reports** page (menu: Money): a month or one of its halves (1–15, 16–end), compared with the period before.
+- Product performance from the orders created in the period: orders, confirmation and delivery rates, revenue after discount, costs (pieces delivered and carrier for delivered and refused parcels), gross profit, margin, stock, days of stock left, and a verdict — winning, watch, losing, too early (fewer than 20 orders), sleeping (in stock, no sale for 30 days).
+- Cities by delivery rate, sleeping stock with its value, campaigns.
+- **Download** the whole report as one Excel file (summary, products, variants, cities, campaigns, sleeping stock).
+- Computed on the server from existing tables: no database change.
+
 ## 1.14.0 — Owner pay page you can read (2026-11-21)
 
 ### Changed
