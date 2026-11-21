@@ -145,14 +145,6 @@
       "computedHash": "2782702b2cf69ace085ed30d067b6f8bfd2d777ad51770fc5bdae9cb5c1b5c04",
       "installMode": "copy"
     },
-    "ui-styling": {
-      "source": "nextlevelbuilder/ui-ux-pro-max-skill",
-      "commit": "2de1134dc4d1cfe112934611ae5803ae17a1bd7e",
-      "sourceType": "github",
-      "skillPath": ".claude/skills/ui-styling/SKILL.md",
-      "computedHash": "a598d8ad69832a394d4040e4c94e4b9c7b8daf2b1fdca050929058f7b70bc816",
-      "installMode": "copy"
-    },
     "using-git-worktrees": {
       "source": "obra/superpowers",
       "commit": "22f0b463e7a5e579904dd6211a520321035526f7",
@@ -167,14 +159,6 @@
       "sourceType": "github",
       "skillPath": "skills/using-superpowers/SKILL.md",
       "computedHash": "6a9104fac7e16c3cec2bc118943aefd331cac35b4cfabd427cea4dc16337c6a5",
-      "installMode": "copy"
-    },
-    "vercel-cli-with-tokens": {
-      "source": "vercel-labs/agent-skills",
-      "commit": "5a37a6329fbad3666c3207392a6a7c0110e92efb",
-      "sourceType": "github",
-      "skillPath": "skills/vercel-cli-with-tokens/SKILL.md",
-      "computedHash": "a294080c5464284c5ed06bde9e5bf0fb16981958600f4ae829eaab5d7f17d29a",
       "installMode": "copy"
     },
     "vercel-composition-patterns": {
@@ -215,14 +199,6 @@
       "sourceType": "github",
       "skillPath": "skills/web-design-guidelines/SKILL.md",
       "computedHash": "5994e4cfd86144903d2ba750f862b9e36af15e3297aac983679e347b99f6cb71",
-      "installMode": "copy"
-    },
-    "writing-guidelines": {
-      "source": "vercel-labs/agent-skills",
-      "commit": "5a37a6329fbad3666c3207392a6a7c0110e92efb",
-      "sourceType": "github",
-      "skillPath": "skills/writing-guidelines/SKILL.md",
-      "computedHash": "fe1390adbe2f7ba68d5fb85d3b14a1d55e71ce04cff5c175245c550d1c3a6f7e",
       "installMode": "copy"
     },
     "writing-plans": {
