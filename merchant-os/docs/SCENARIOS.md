@@ -16,6 +16,7 @@ Legend: **OK** handled by the app · **FIXED** gap found in this review and fixe
 | A6 | A campaign ended, then the ads restarted | The ended campaign leaves the tests list 30 days after its end | **RULE**: end a campaign only when its ads are off for good |
 | A7 | Ad budget in the first month | No last month to compare with | **OK**: the fixed amount applies |
 | A8 | A profitable month followed by a big budget | Budget = 30 % of revenue only after a month profitable after ads | **OK** 1.17.0 |
+| A9 | The app checks the cap on spend recorded every 2–3 days | The loss is seen late; spend can run past the cap meanwhile | **RULE**: set the limits in Meta itself: a lifetime budget per campaign equal to its loss cap, and an account spending limit equal to the monthly ad budget. Meta stops the spend; the app does the accounting |
 
 ## Orders and attribution
 
@@ -47,6 +48,8 @@ Legend: **OK** handled by the app · **FIXED** gap found in this review and fixe
 | D1 | Rules set before the money arrives | — | **OK**: nothing is guarded until the opening balance and the start date are set (Pay page checklist) |
 | D7 | Another amount of capital (3,000 or 300,000) | Fixed defaults (2,000 ads, 600 cap) fit only one amount | **FIXED** 1.18.0: reserve, ad budget and loss cap are shares of the capital; they grow when money is put in |
 | D8 | A campaign created before any capital is entered | It had a 600 MAD cap and the no-campaign rule while nothing else was guarded | **FIXED** 1.18.0: the cap is 10 % of the capital, so zero until money is entered. The no-campaign rule still applies once a campaign runs |
+| D9 | A new test started while the business is below the capital floor | Two losing tests at 10 % each put a 6,000 MAD shop exactly at the 80 % floor; a third goes below it with no objection (only withdrawals are blocked) | **OPEN**: an ad expense below the floor should need a reason. Until then **RULE**: below the floor, no new test |
+| D10 | Shares are taken on the money put in, not on what is left | After losses the ad budget and the cap stay the same; money added raises the cap at once | **RULE**: never put money in to rescue a losing test |
 | D2 | Personal spending paid from the business cash | Cash in the app is higher than in reality | **RULE**: record it as an owner withdrawal |
 | D3 | Stock bought on credit | — | **OK**: unpaid obligations are subtracted from the business value |
 | D4 | An expense recorded twice, or with a wrong amount | — | **OK**: delete it and record it again (it passes the guard again) |
