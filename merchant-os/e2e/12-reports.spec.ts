@@ -27,8 +27,12 @@ test("the owner sees product performance and downloads the report", async ({ pag
 });
 
 test("the report file is refused to someone without money access", async ({ page, request }) => {
-  const anonymous = await request.get("/api/reports");
-  expect(anonymous.ok()).toBe(false);
+  // Without a session the request is sent to the sign-in page, never given the file.
+  const anonymous = await request.get("/api/reports", { maxRedirects: 0 });
+  expect(anonymous.status()).toBeGreaterThanOrEqual(300);
+  expect(anonymous.status()).toBeLessThan(400);
+  expect(anonymous.headers()["location"]).toContain("/sign-in");
+  expect(anonymous.headers()["content-type"] ?? "").not.toContain("spreadsheetml");
   await signIn(page, finance);
   const response = await page.request.get("/api/reports");
   // Finance members may see money: the file is served.
