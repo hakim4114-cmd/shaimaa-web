@@ -53,7 +53,7 @@ const fr: Dictionary = {
     sectionsEssential: "L'essentiel",
     sectionsAll: "Toutes les rubriques",
     notificationsAllClear: "Rien ne demande votre attention pour l'instant.",
-    alerts: { obligationsOverdue: "Dettes en retard", obligationsSoon: "Dettes à payer sous 7 jours", callsDue: "Appels à passer", deliveryProblems: "Problèmes de livraison", returnsWaiting: "Retours à recevoir", lowStock: "Produits en stock bas", storeOrders: "Commandes boutique à corriger", waitingToShip: "Confirmées depuis plus de 24 h, pas encore expédiées", problems: "Problèmes à vérifier", capitalBelowFloor: "Capital sous le plancher : retraits bloqués", campaignLossCap: "Un test a atteint son plafond de perte : arrêtez-le" }
+    alerts: { obligationsOverdue: "Dettes en retard", obligationsSoon: "Dettes à payer sous 7 jours", callsDue: "Appels à passer", deliveryProblems: "Problèmes de livraison", returnsWaiting: "Retours à recevoir", lowStock: "Produits en stock bas", storeOrders: "Commandes boutique à corriger", waitingToShip: "Confirmées depuis plus de 24 h, pas encore expédiées", problems: "Problèmes à vérifier", capitalBelowFloor: "Capital sous le plancher : retraits bloqués", campaignLossCap: "Un test a atteint son plafond de perte : pause pub, voir Rapports" }
   },
   commandCenter: {
     title: "Tableau de bord",
@@ -1089,6 +1089,11 @@ const fr: Dictionary = {
     colCap: "Plafond",
     stop: "Arrêter",
     ok: "En cours",
+    wait: "Pause pub, attendre",
+    judge: "20 commandes : à juger",
+    testOrders: "{count}/{target} commandes",
+    testPending: "{count} commandes en route (jusqu'à {value} si toutes livrées).",
+    testWaitHint: "Plafond dépassé, mais {count} commandes sont encore en route (jusqu'à {value} si toutes livrées). Mettez la pub en pause et attendez les résultats avant de juger.",
     incomplete: "La période n'est pas finie ou vient de finir : les résultats de livraison des dernières commandes arrivent sous 5 à 10 jours. Ne jugez pas encore.",
     violationsTitle: "Règles financières dépassées",
     violationsDescription: "Chaque dépense ou retrait qui a dépassé une règle, avec la raison écrite.",

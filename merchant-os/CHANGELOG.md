@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.17.1 — Reading a test correctly (2026-11-21)
+
+### Changed
+- Reports → tests: each test shows its orders out of 20 and says "judge it" at 20 orders. A test ends at whichever comes first, 20 orders or the loss cap.
+- Past the cap with orders still on the way, a test says "pause ads and wait" instead of "stop", when those orders, if delivered, could bring it back above the cap (ads are counted when paid, revenue only when delivered). It shows how many orders are pending and how much they could bring back.
+- The bell now says to pause the test's ads and check Reports.
+
 ## 1.17.0 — Loss cap per test, ad budget tied to profit (2026-11-21)
 
 ### Added

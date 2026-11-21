@@ -51,7 +51,7 @@ const en = {
     sectionsEssential: "Essentials",
     sectionsAll: "All sections",
     notificationsAllClear: "Nothing needs your attention right now.",
-    alerts: { obligationsOverdue: "Obligations overdue", obligationsSoon: "Obligations due within 7 days", callsDue: "Calls to make", deliveryProblems: "Delivery problems", returnsWaiting: "Returns to receive", lowStock: "Products low in stock", storeOrders: "Store orders to fix", waitingToShip: "Confirmed over 24 h ago, not shipped yet", problems: "Problems to check", capitalBelowFloor: "Capital below the floor: withdrawals blocked", campaignLossCap: "A test reached its loss cap: stop it" }
+    alerts: { obligationsOverdue: "Obligations overdue", obligationsSoon: "Obligations due within 7 days", callsDue: "Calls to make", deliveryProblems: "Delivery problems", returnsWaiting: "Returns to receive", lowStock: "Products low in stock", storeOrders: "Store orders to fix", waitingToShip: "Confirmed over 24 h ago, not shipped yet", problems: "Problems to check", capitalBelowFloor: "Capital below the floor: withdrawals blocked", campaignLossCap: "A test reached its loss cap: pause its ads, see Reports" }
   },
   commandCenter: {
     title: "Command center",
@@ -1086,6 +1086,11 @@ const en = {
     colCap: "Cap",
     stop: "Stop",
     ok: "Running",
+    wait: "Pause ads, wait",
+    judge: "20 orders: judge it",
+    testOrders: "{count}/{target} orders",
+    testPending: "{count} orders on the way (up to {value} if all delivered).",
+    testWaitHint: "Past the cap, but {count} orders are still on the way (up to {value} if all delivered). Pause the ads now and wait for the results before judging.",
     incomplete: "The period is not over or just ended: delivery results of the latest orders arrive within 5 to 10 days. Do not judge yet.",
     violationsTitle: "Money rules crossed",
     violationsDescription: "Every expense or withdrawal that crossed a rule, with the reason written.",

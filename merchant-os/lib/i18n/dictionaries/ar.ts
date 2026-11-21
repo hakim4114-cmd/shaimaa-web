@@ -53,7 +53,7 @@ const ar: Dictionary = {
     sectionsEssential: "الأساسية",
     sectionsAll: "كل الأقسام",
     notificationsAllClear: "والو كيتسناك دابا.",
-    alerts: { obligationsOverdue: "التزامات فات الوقت ديالها", obligationsSoon: "التزامات حالّة فـ 7 أيام", callsDue: "مكالمات خاصك تديرها", deliveryProblems: "مشاكل التوصيل", returnsWaiting: "مرتجعات للاستلام", lowStock: "منتجات المخزون ديالها ناقص", storeOrders: "طلبات المتجر خاصها تصحيح", waitingToShip: "مؤكدة من أكثر من 24 ساعة وباقي ما تصيفطاتش", problems: "مشاكل خاصك تشوفها", capitalBelowFloor: "راس المال تحت خط الحماية: السحب موقوف", campaignLossCap: "تجربة وصلات سقف الخسارة: وقفها" }
+    alerts: { obligationsOverdue: "التزامات فات الوقت ديالها", obligationsSoon: "التزامات حالّة فـ 7 أيام", callsDue: "مكالمات خاصك تديرها", deliveryProblems: "مشاكل التوصيل", returnsWaiting: "مرتجعات للاستلام", lowStock: "منتجات المخزون ديالها ناقص", storeOrders: "طلبات المتجر خاصها تصحيح", waitingToShip: "مؤكدة من أكثر من 24 ساعة وباقي ما تصيفطاتش", problems: "مشاكل خاصك تشوفها", capitalBelowFloor: "راس المال تحت خط الحماية: السحب موقوف", campaignLossCap: "تجربة وصلات سقف الخسارة: حبس الإشهار ديالها وشوف التقارير" }
   },
   commandCenter: {
     title: "لوحة القيادة",
@@ -1088,6 +1088,11 @@ const ar: Dictionary = {
     colCap: "السقف",
     stop: "وقف",
     ok: "مستمرة",
+    wait: "حبس الإشهار وتسنّى",
+    judge: "وصلات 20 طلب: احكم",
+    testOrders: "{count}/{target} طلب",
+    testPending: "{count} طلب فالطريق (حتى {value} إلا توصلو كاملين).",
+    testWaitHint: "فات السقف، ولكن {count} طلب باقي فالطريق (حتى {value} إلا توصلو كاملين). حبس الإشهار دابا وتسنّى النتائج قبل ما تحكم.",
     incomplete: "المدة باقي ما سالاتش ولا ساليا قريب: نتائج التوصيل ديال الطلبات الأخيرة كتوصل من بعد 5–10 أيام. ما تحكمش دابا.",
     violationsTitle: "تجاوز القواعد المالية",
     violationsDescription: "كل مصروف ولا سحب تجاوز قاعدة، مع السبب اللي تكتب.",
