@@ -26,6 +26,9 @@ export async function saveCashSettings(input: {
   adBudget?: string;
   adBudgetPct?: string;
   stockPct?: string;
+  reservePct?: string;
+  adCapitalPct?: string;
+  lossCapPct?: string;
 }): Promise<PayResult> {
   const parsed = z
     .object({
@@ -35,7 +38,10 @@ export async function saveCashSettings(input: {
       capitalFloorPct: percent.optional(),
       adBudget: z.string().max(20).optional(),
       adBudgetPct: percent.optional(),
-      stockPct: percent.optional()
+      stockPct: percent.optional(),
+      reservePct: percent.optional(),
+      adCapitalPct: percent.optional(),
+      lossCapPct: percent.optional()
     })
     .safeParse(input);
   if (!parsed.success) return { error: "INVALID_INPUT" };
@@ -43,8 +49,9 @@ export async function saveCashSettings(input: {
   if (reserve === null) return { error: "AMOUNT_REQUIRED" };
   const { supabase, organizationId, can } = await requireOrganization();
   if (!can.overrideBlocklist) return { error: "FORBIDDEN" };
-  const adBudget = parsed.data.adBudget === undefined || parsed.data.adBudget.trim() === "" ? undefined : parseMoneyToCents(parsed.data.adBudget);
-  if (adBudget === null) return { error: "AMOUNT_REQUIRED" };
+  // Empty fixed budget = the share of the capital applies.
+  const adBudget = parsed.data.adBudget === undefined ? undefined : parsed.data.adBudget.trim() === "" ? null : parseMoneyToCents(parsed.data.adBudget);
+  if (parsed.data.adBudget !== undefined && parsed.data.adBudget.trim() !== "" && adBudget === null) return { error: "AMOUNT_REQUIRED" };
   const values = {
     opening_date: parsed.data.openingDate,
     reserve_floor_cents: reserve,
@@ -52,7 +59,10 @@ export async function saveCashSettings(input: {
     ...(parsed.data.capitalFloorPct !== undefined ? { capital_floor_pct: parsed.data.capitalFloorPct } : {}),
     ...(adBudget !== undefined ? { ad_budget_cents: adBudget } : {}),
     ...(parsed.data.adBudgetPct !== undefined ? { ad_budget_revenue_pct: parsed.data.adBudgetPct } : {}),
-    ...(parsed.data.stockPct !== undefined ? { stock_cash_pct: parsed.data.stockPct } : {})
+    ...(parsed.data.stockPct !== undefined ? { stock_cash_pct: parsed.data.stockPct } : {}),
+    ...(parsed.data.reservePct !== undefined ? { reserve_pct: parsed.data.reservePct } : {}),
+    ...(parsed.data.adCapitalPct !== undefined ? { ad_budget_capital_pct: parsed.data.adCapitalPct } : {}),
+    ...(parsed.data.lossCapPct !== undefined ? { loss_cap_pct: parsed.data.lossCapPct } : {})
   };
   const { data: existing } = await supabase.from("cash_settings").select("organization_id").eq("organization_id", organizationId).maybeSingle();
   const { error } = existing

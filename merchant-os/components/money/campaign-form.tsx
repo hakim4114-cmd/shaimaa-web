@@ -19,7 +19,7 @@ export function CampaignForm({ platforms, today }: { platforms: readonly Marketi
   const [name, setName] = useState("");
   const [platform, setPlatform] = useState<MarketingPlatform>("meta");
   const [startsOn, setStartsOn] = useState(today);
-  const [lossCap, setLossCap] = useState("600");
+  const [lossCap, setLossCap] = useState("");
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<AppErrorCode | null>(null);
   return (

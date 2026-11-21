@@ -46,11 +46,12 @@ export default async function PayPage() {
     supabase.from("cash_entries").select("id, kind, amount_cents, entry_date, note, over_limit").eq("organization_id", organizationId).order("entry_date", { ascending: false }).limit(50),
     supabase.from("payables").select("id, counterparty, description, category, amount_cents, due_on, paid_on, recurrence").eq("organization_id", organizationId).order("due_on").limit(100),
     supabase.rpc("capital_status", { p_organization_id: organizationId }),
-    supabase.from("cash_settings").select("capital_floor_pct, ad_budget_cents, ad_budget_revenue_pct, stock_cash_pct").eq("organization_id", organizationId).maybeSingle()
+    supabase.from("cash_settings").select("capital_floor_pct, ad_budget_cents, ad_budget_revenue_pct, stock_cash_pct, reserve_floor_cents, reserve_pct, ad_budget_capital_pct, loss_cap_pct").eq("organization_id", organizationId).maybeSingle()
   ]);
   const capital = (capitalRaw ?? {}) as {
     configured?: boolean; cash_cents?: number; capital_cents?: number; stock_value_cents?: number; receivable_cents?: number;
     business_value_cents?: number; floor_pct?: number; floor_cents?: number; below_floor?: boolean;
+    reserve_cents?: number; ad_budget_cents?: number; loss_cap_cents?: number;
   };
   const s = (safeRaw ?? { configured: false }) as Safe;
   const today = businessDay(new Date());
@@ -167,6 +168,10 @@ export default async function PayPage() {
               <div className="flex justify-between gap-3"><dt className="text-muted-foreground">{tp.stockValue}</dt><dd className="tabular">{m(capital.stock_value_cents)}</dd></div>
               <div className="flex justify-between gap-3"><dt className="text-muted-foreground">{tp.receivable}</dt><dd className="tabular">{m(capital.receivable_cents)}</dd></div>
               <div className="flex justify-between gap-3 border-t border-border pt-2 font-semibold"><dt>= {tp.businessValue}</dt><dd className={cn("tabular", capital.below_floor && "text-danger")}>{m(capital.business_value_cents)}</dd></div>
+              <div className="mt-2 border-t border-border pt-2 text-xs font-semibold text-muted-foreground">{tp.rulesToday}</div>
+              <div className="flex justify-between gap-3"><dt className="text-muted-foreground">{tp.todayReserve}</dt><dd className="tabular">{m(capital.reserve_cents)}</dd></div>
+              <div className="flex justify-between gap-3"><dt className="text-muted-foreground">{tp.todayAdBudget}</dt><dd className="tabular">{m(capital.ad_budget_cents)}</dd></div>
+              <div className="flex justify-between gap-3"><dt className="text-muted-foreground">{tp.todayLossCap}</dt><dd className="tabular">{m(capital.loss_cap_cents)}</dd></div>
             </dl>
           </CardBody>
         </Card>
@@ -238,9 +243,12 @@ export default async function PayPage() {
               funds={funds.map((f) => ({ name: f.name, percent: f.percent }))}
               initial={{
                 openingDate: s.opening_date ?? today,
-                reserveFloor: s.reserve_floor_cents !== undefined ? String(s.reserve_floor_cents / 100) : "1500",
+                reserveFloor: rules?.reserve_floor_cents ? String(rules.reserve_floor_cents / 100) : "",
                 capitalFloorPct: String(rules?.capital_floor_pct ?? 80),
-                adBudget: String((rules?.ad_budget_cents ?? 200000) / 100),
+                adBudget: rules?.ad_budget_cents != null ? String(rules.ad_budget_cents / 100) : "",
+                reservePct: String(rules?.reserve_pct ?? 25),
+                adCapitalPct: String(rules?.ad_budget_capital_pct ?? 15),
+                lossCapPct: String(rules?.loss_cap_pct ?? 10),
                 adBudgetPct: String(rules?.ad_budget_revenue_pct ?? 30),
                 stockPct: String(rules?.stock_cash_pct ?? 50),
                 ownerFundName: s.owner_fund_name ?? funds.find((f) => /pay|أجرة|rémun/i.test(f.name))?.name ?? ""

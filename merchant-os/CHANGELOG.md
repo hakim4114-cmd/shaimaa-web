@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.18.0 — Rules scaled to the capital (2026-11-21)
+
+### Changed
+- The money rules no longer depend on one amount of capital. Reserve = 25 % of the capital (or a fixed minimum if larger), ad budget = 15 % of the capital a month (unless a fixed amount is set), loss cap = 10 % of the capital per test (unless the campaign sets its own). They grow when money is put in, and are zero until capital is entered.
+- Pay and cash: three new percentages in the rules, and "what the rules give today" (reserve, this month's ad budget, the loss cap for a new test) in the capital card.
+- Campaigns that kept the old 600 MAD default and settings with the old 2,000 MAD budget now follow the rule.
+
 ## 1.17.2 — Scenario review fixes (2026-11-21)
 
 A review of real-life situations against the money and test rules (docs/SCENARIOS.md).

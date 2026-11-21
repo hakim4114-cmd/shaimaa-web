@@ -41,25 +41,30 @@ insert into public.expenses (organization_id, category, amount_cents, incurred_o
 select tests.eq((select guard_flags from public.expenses where organization_id = :'org' and amount_cents = 900000), '{}'::text[], 'no rules set: expenses are not guarded');
 delete from public.expenses where organization_id = :'org';
 
--- Capital 6000 MAD, reserve 1500, defaults: floor 80 %, ads 2000 a month (no revenue last month), stock 50 % of free cash.
-insert into public.cash_settings (organization_id, opening_date, reserve_floor_cents) values (:'org', current_date - 5, 150000);
+-- Capital 6000 MAD and the default rules, all shares of the capital: floor 80 %, reserve 25 % (1500),
+-- ads 15 % a month (900, no revenue last month), loss cap 10 % per test (600), stock 50 % of free cash.
+insert into public.cash_settings (organization_id, opening_date) values (:'org', current_date - 5);
 insert into public.cash_entries (organization_id, kind, amount_cents, entry_date) values (:'org', 'opening', 600000, current_date - 5);
 select tests.eq((public.capital_status(:'org') ->> 'capital_cents')::bigint, 600000::bigint, 'capital = money put in');
 select tests.eq((public.capital_status(:'org') ->> 'floor_cents')::bigint, 480000::bigint, 'floor = 80 % of the capital');
 select tests.eq((public.capital_status(:'org') ->> 'below_floor')::boolean, false, 'at the start the shop is above its floor');
+select tests.eq((public.capital_status(:'org') ->> 'reserve_cents')::bigint, 150000::bigint, 'reserve = 25 % of the capital');
+select tests.eq((public.capital_status(:'org') ->> 'ad_budget_cents')::bigint, 90000::bigint, 'ad budget = 15 % of the capital');
+select tests.eq((public.capital_status(:'org') ->> 'loss_cap_cents')::bigint, 60000::bigint, 'loss cap per test = 10 % of the capital');
 
 -- Nothing dated before the opening date (it would escape the cash count).
 select tests.expect_error(format($$insert into public.expenses (organization_id, category, amount_cents, incurred_on, guard_reason) values (%L, 'packaging', 1000, current_date - 30, 'old receipt found')$$, :'org'), 'BEFORE_OPENING_DATE');
 select tests.expect_error(format($$select public.record_owner_withdrawal(%L, 1000, current_date - 30, 'backdated withdrawal')$$, :'org'), 'BEFORE_OPENING_DATE');
 select tests.expect_error(format($$insert into public.cash_entries (organization_id, kind, amount_cents, entry_date) values (%L, 'capital_in', 1000, current_date - 30)$$, :'org'), 'BEFORE_OPENING_DATE');
 
--- Ad budget: 1500 then 600 more crosses 2000 → reason required, then flagged.
-insert into public.expenses (organization_id, category, amount_cents, incurred_on) values (:'org', 'advertising', 150000, current_date);
-select tests.expect_error(format($$insert into public.expenses (organization_id, category, amount_cents, incurred_on) values (%L, 'advertising', 60000, current_date)$$, :'org'), 'GUARD_REASON_REQUIRED');
-insert into public.expenses (organization_id, category, amount_cents, incurred_on, guard_reason) values (:'org', 'advertising', 60000, current_date, 'Ramadan push, agreed');
-select tests.eq((select guard_flags from public.expenses where organization_id = :'org' and amount_cents = 60000), '{ad_budget}'::text[], 'over the ad budget: allowed with a reason, flagged');
+-- Ad budget: 800 then 200 more crosses 900 → reason required, then flagged (and 1100 more, flagged too).
+insert into public.expenses (organization_id, category, amount_cents, incurred_on) values (:'org', 'advertising', 80000, current_date);
+select tests.expect_error(format($$insert into public.expenses (organization_id, category, amount_cents, incurred_on) values (%L, 'advertising', 20000, current_date)$$, :'org'), 'GUARD_REASON_REQUIRED');
+insert into public.expenses (organization_id, category, amount_cents, incurred_on, guard_reason) values (:'org', 'advertising', 20000, current_date, 'Ramadan push, agreed');
+select tests.eq((select guard_flags from public.expenses where organization_id = :'org' and amount_cents = 20000), '{ad_budget}'::text[], 'over the ad budget: allowed with a reason, flagged');
+insert into public.expenses (organization_id, category, amount_cents, incurred_on, guard_reason) values (:'org', 'advertising', 110000, current_date, 'Second push, agreed');
 -- A recorded expense cannot be edited to slip past the guard (delete and add it again instead).
-select tests.expect_error(format($$update public.expenses set amount_cents = 5000000 where organization_id = %L and amount_cents = 60000$$, :'org'), 'permission denied');
+select tests.expect_error(format($$update public.expenses set amount_cents = 5000000 where organization_id = %L and amount_cents = 20000$$, :'org'), 'permission denied');
 select tests.expect_error(format($$update public.expenses set guard_flags = '{}' where organization_id = %L$$, :'org'), 'permission denied');
 
 -- Stock cap: free cash = 6000 − 2100 − 1500 = 2400; half is 1200.
@@ -98,7 +103,7 @@ select tests.eq((select guard_flags from public.expenses where organization_id =
 
 -- Cumulative loss cap per campaign (default 600 MAD): 700 of ads with no sale crosses it.
 insert into public.marketing_campaigns (organization_id, name, platform) values (:'org', 'Wallet test', 'meta') returning id as camp \gset
-select tests.eq((select loss_cap_cents from public.marketing_campaigns where id = :'camp'), 60000::bigint, 'a campaign starts with a 600 MAD loss cap');
+select tests.eq((select loss_cap_cents from public.campaign_loss_status(:'org') where campaign_id = :'camp'), 60000::bigint, 'a new test gets 10 % of the capital as loss cap (600)');
 insert into public.expenses (organization_id, category, amount_cents, incurred_on, campaign_id, guard_reason) values (:'org', 'advertising', 70000, current_date, :'camp', 'First test week, agreed');
 select tests.eq((select over_cap from public.campaign_loss_status(:'org') where campaign_id = :'camp'), true, 'the campaign lost 700 after ads: over its cap');
 select tests.expect_error(format($$insert into public.expenses (organization_id, category, amount_cents, incurred_on, campaign_id) values (%L, 'advertising', 1000, current_date, %L)$$, :'org', :'camp'), 'GUARD_REASON_REQUIRED');
@@ -139,5 +144,13 @@ select tests.expect_error(format($$insert into public.expenses (organization_id,
 select tests.login(:'outsider');
 select tests.eq(app.expense_guard_flags(:'org', 'advertising', 99999999, current_date), '{}'::text[], 'no flags revealed to a non-member');
 select tests.expect_error(format($$select public.capital_status(%L)$$, :'org'), 'FORBIDDEN');
+
+select tests.login(:'owner');
+-- The rules follow the capital: 6000 more put in doubles the default loss cap; a campaign can set its own.
+insert into public.cash_entries (organization_id, kind, amount_cents, entry_date) values (:'org', 'capital_in', 600000, current_date);
+select tests.eq((select loss_cap_cents from public.campaign_loss_status(:'org') where campaign_id = :'camp2'), 120000::bigint, 'capital 12000: loss cap 1200');
+select tests.eq((public.capital_status(:'org') ->> 'reserve_cents')::bigint, 300000::bigint, 'capital 12000: reserve 3000');
+update public.marketing_campaigns set loss_cap_cents = 5000 where id = :'camp2';
+select tests.eq((select over_cap from public.campaign_loss_status(:'org') where campaign_id = :'camp2'), true, 'a campaign with its own 50 MAD cap: the 80 MAD loss is over it');
 
 rollback;
