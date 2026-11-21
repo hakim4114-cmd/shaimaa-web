@@ -51,7 +51,7 @@ const en = {
     sectionsEssential: "Essentials",
     sectionsAll: "All sections",
     notificationsAllClear: "Nothing needs your attention right now.",
-    alerts: { obligationsOverdue: "Obligations overdue", obligationsSoon: "Obligations due within 7 days", callsDue: "Calls to make", deliveryProblems: "Delivery problems", returnsWaiting: "Returns to receive", lowStock: "Products low in stock", storeOrders: "Store orders to fix", waitingToShip: "Confirmed over 24 h ago, not shipped yet", problems: "Problems to check" }
+    alerts: { obligationsOverdue: "Obligations overdue", obligationsSoon: "Obligations due within 7 days", callsDue: "Calls to make", deliveryProblems: "Delivery problems", returnsWaiting: "Returns to receive", lowStock: "Products low in stock", storeOrders: "Store orders to fix", waitingToShip: "Confirmed over 24 h ago, not shipped yet", problems: "Problems to check", capitalBelowFloor: "Capital below the floor: withdrawals blocked" }
   },
   commandCenter: {
     title: "Command center",
@@ -284,6 +284,9 @@ const en = {
     write_off: "Written off",
   },
   errors: {
+    CAPITAL_BELOW_FLOOR: "Withdrawal blocked: the business value (cash + stock + money at the carrier) is below the capital protection floor. Sales must bring it back above first.",
+    RESERVE_PROTECTED: "This withdrawal would take cash below the reserve. The reserve is never withdrawn.",
+    GUARD_REASON_REQUIRED: "This expense crosses a money rule. Write the reason (at least 10 characters): it is recorded and flagged in the report.",
     FORBIDDEN: "You don't have permission to do this.",
     NOT_FOUND: "This item no longer exists.",
     SKU_TAKEN: "This SKU is already used by another variant.",
@@ -1073,6 +1076,15 @@ const en = {
     priceShort: "Price"
   },
   reports: {
+    violationsTitle: "Money rules crossed",
+    violationsDescription: "Every expense or withdrawal that crossed a rule, with the reason written.",
+    colDate: "Date",
+    colKind: "Type",
+    colAmount: "Amount",
+    colReason: "Reason",
+    withdrawalOver: "Withdrawal above the safe amount",
+    sheetViolations: "Rules crossed",
+    noViolations: "No rule crossed in this period.",
     title: "Reports",
     description: "What sells, what earns and what sleeps in stock — monthly or every 15 days. Downloadable as Excel.",
     period: "Period",
@@ -1144,6 +1156,36 @@ const en = {
     current: "This period"
   },
   pay: {
+    guard: {
+      crossing: "This expense crosses a money rule:",
+      reasonLabel: "Why? (required, at least 10 characters)",
+      recordAnyway: "Record with the reason",
+      flags: {
+        reserve: "takes cash below the reserve",
+        ad_budget: "goes over this month's ad budget",
+        stock_cap: "stock purchase above the cap (share of free cash)"
+      }
+    },
+    capitalTitle: "Capital protection",
+    capitalDescription: "Business value = cash + stock at cost + money waiting at the carrier. Below the floor, every withdrawal is blocked.",
+    capital: "Capital (money put in)",
+    businessValue: "Business value now",
+    floor: "Floor ({pct}%)",
+    cash: "Cash",
+    stockValue: "Stock at cost",
+    receivable: "At the carrier",
+    statusOk: "Above the floor: capital protected",
+    statusBelow: "Below the floor: withdrawals blocked until the value is back above {floor}",
+    rulesTitle: "Money rules",
+    rulesDescription: "They protect the capital and the reserve. Crossing one needs a written reason and shows in the report.",
+    capitalFloorPct: "Capital protection floor (%)",
+    capitalFloorPctHint: "Below this share of the capital, no withdrawal at all.",
+    adBudget: "Monthly ad budget (MAD)",
+    adBudgetHint: "Used when last month had no revenue.",
+    adBudgetPct: "Ads as % of revenue",
+    adBudgetPctHint: "Of last month's delivered revenue.",
+    stockPct: "Stock purchase cap (%)",
+    stockPctHint: "Of free cash, per purchase.",
     title: "Owner pay & cash",
     description: "How much you can take out today without hurting the business — computed from what you earned, the cash you really have, and what you owe.",
     safeTitle: "You can safely withdraw today",

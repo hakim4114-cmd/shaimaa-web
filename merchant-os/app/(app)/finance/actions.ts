@@ -8,7 +8,7 @@ import { expenseCategories, marketingPlatforms } from "@/lib/data/money";
 import { businessDay } from "@/lib/datetime";
 import { parseMoneyToCents } from "@/lib/money";
 
-export type MoneyResult = { ok?: true; error?: AppErrorCode };
+export type MoneyResult = { ok?: true; error?: AppErrorCode; detail?: string };
 
 const day = z.string().regex(/^\d{4}-\d{2}-\d{2}$/);
 
@@ -17,7 +17,9 @@ const expenseInput = z.object({
   amount: z.string().max(20),
   incurredOn: day,
   description: z.string().trim().max(500),
-  campaignId: z.string().uuid().nullable()
+  campaignId: z.string().uuid().nullable(),
+  // Written reason when the expense crosses a money rule (docs/BUSINESS_RULES.md, "Money guardrails").
+  guardReason: z.string().trim().max(500).optional()
 });
 
 export async function addExpense(input: z.infer<typeof expenseInput>): Promise<MoneyResult> {
@@ -35,9 +37,10 @@ export async function addExpense(input: z.infer<typeof expenseInput>): Promise<M
     amount_cents: cents,
     incurred_on: value.incurredOn,
     description: value.description,
-    campaign_id: value.category === "advertising" ? value.campaignId : null
+    campaign_id: value.category === "advertising" ? value.campaignId : null,
+    guard_reason: value.guardReason ?? ""
   });
-  if (error) return { error: mapDatabaseError(error) };
+  if (error) return { error: mapDatabaseError(error), detail: error.details ?? undefined };
   revalidatePath("/finance");
   revalidatePath("/marketing");
   revalidatePath("/");

@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.16.0 — Money guardrails (2026-11-21)
+
+### Added
+- **Capital protection** on the pay page: capital put in, business value (cash + stock at cost + money at the carrier), the 80 % floor and the status. Below the floor, owner withdrawals are refused outright and the bell shows it.
+- **Reserve:** owner withdrawals can no longer go below it, even with a reason.
+- **Expenses that cross a rule** (below the reserve, over the monthly ad budget, a stock purchase over half the free cash) ask for a written reason before they are recorded, and are flagged.
+- **Reports → Money rules crossed** and an Excel sheet: every flagged expense and over-limit withdrawal with its reason.
+- Rules editable in Pay and cash → Rules (defaults: floor 80 %, ads 2,000 MAD or 30 % of last month's revenue, stock 50 %; reserve suggested 1,500 MAD).
+- Migration `20261121000100_money_guardrails`.
+
 ## 1.15.0 — Reports: products, cities, sleeping stock, Excel (2026-11-21)
 
 ### Added
