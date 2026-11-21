@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.16.2 — Product verdict after ads (2026-11-21)
+
+### Fixed
+- Reports: each campaign's ad spend is shared over the orders it brought (then over their lines by value), shown per product, and the profit and verdict are now **after ads**. A product with a good margin before ads but losing money on each order once ads are paid no longer shows as winning.
+- Orders without a campaign carry no ad cost: link every order to its campaign.
+
 ## 1.16.1 — Money guardrails: review fixes (2026-11-21)
 
 ### Fixed

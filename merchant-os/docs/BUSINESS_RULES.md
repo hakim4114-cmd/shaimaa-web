@@ -261,6 +261,10 @@ nisab      = value of 85 g of gold on the calculation day (gold price entered by
 
 Also yearly: full evaluation (12-month trend of the nine indicators, best/worst products, decision log outcomes) and goals for next year (target values for chosen indicators, tracked on the weekly page).
 
+## Product performance (reports, 1.15.0 / 1.16.2)
+- Profit per product = delivered revenue (after its share of the discount, plus its share of the delivery fee paid) − cost of delivered pieces − its share of the carrier cost of delivered and refused parcels − its share of the ad spend (a campaign's spend for the period over the orders it brought, then over their lines by value).
+- Verdict: winning when delivery ≥ 65 % and margin after ads ≥ 25 %; losing when profit after ads ≤ 0 or delivery < 50 %; too early under 20 orders; sleeping when in stock with no sale for 30 days.
+
 ## Money guardrails (1.16.0)
 Defaults chosen by the owner on 2026-11-21; each can be changed in Pay and cash → Rules **[DB]**.
 - **Business value** = cash (same definition as the safe amount) + stock at cost + COD waiting at the carrier (orders awaiting remittance, net of the carrier fee) − unpaid obligations (stock bought on credit is not value). **Capital** = opening balance + money put in, from the opening date like cash **[DB]**.

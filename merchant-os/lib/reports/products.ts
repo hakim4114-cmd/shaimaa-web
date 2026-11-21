@@ -9,7 +9,9 @@
 // - delivery rate = delivered ÷ (delivered + refused), outcomes only;
 // - revenue = delivered lines after their share of the order discount, plus their share of the delivery fee the customer paid;
 // - costs = unit cost of delivered pieces + share of the carrier cost of delivered and refused parcels;
-// - profit = revenue − costs (ads are per campaign, not per product).
+// - ad cost = each campaign's spend for the period shared over the orders it brought, then over
+//   their lines by value (orders without a campaign carry no ad cost: link campaigns to orders);
+// - profit = revenue − costs − ad cost. The verdict is judged on this profit, after ads.
 
 export type ReportOrder = {
   id: string;
@@ -20,6 +22,7 @@ export type ReportOrder = {
   discountCents: number;
   shippingFeeCents: number;
   carrierCostCents: number;
+  campaignId?: string | null;
   items: { variantId: string; productName: string; variantTitle: string; sku: string; quantity: number; unitPriceCents: number; unitCostCents: number | null }[];
 };
 
@@ -41,6 +44,7 @@ export type PerformanceRow = {
   unitsDelivered: number;
   revenueCents: number;
   costCents: number;
+  adCostCents: number;
   profitCents: number;
   costMissing: boolean;
   confirmationRate: number | null;
@@ -91,8 +95,21 @@ function idle(stock: StockInfo | undefined, now: number): number | null {
  * Rows per variant (`by: "variant"`) or per product (`by: "product"`).
  * `days` is the number of days lived in the period, for the days of stock left.
  */
-export function performance(orders: ReportOrder[], stock: Map<string, StockInfo>, options: { by: "variant" | "product"; days: number; now?: number }): PerformanceRow[] {
+export function performance(
+  orders: ReportOrder[],
+  stock: Map<string, StockInfo>,
+  options: { by: "variant" | "product"; days: number; now?: number; adSpendByCampaign?: Map<string, number> }
+): PerformanceRow[] {
   const now = options.now ?? Date.now();
+  // Ad cost per order: a campaign's spend shared over the orders it brought in the period.
+  const ordersPerCampaign = new Map<string, number>();
+  for (const order of orders) if (order.campaignId) ordersPerCampaign.set(order.campaignId, (ordersPerCampaign.get(order.campaignId) ?? 0) + 1);
+  const adPerOrder = (order: ReportOrder) => {
+    if (!order.campaignId || !options.adSpendByCampaign) return 0;
+    const spend = options.adSpendByCampaign.get(order.campaignId) ?? 0;
+    const count = ordersPerCampaign.get(order.campaignId) ?? 0;
+    return count > 0 ? spend / count : 0;
+  };
   const rows = new Map<string, Acc>();
   const variantsOf = new Map<string, Set<string>>();
 
@@ -110,7 +127,7 @@ export function performance(orders: ReportOrder[], stock: Map<string, StockInfo>
           variantTitle: options.by === "variant" ? item.variantTitle : "",
           sku: options.by === "variant" ? item.sku : "",
           ordersPlaced: 0, ordersConfirmed: 0, ordersDelivered: 0, ordersRefused: 0, ordersCancelled: 0,
-          unitsOrdered: 0, unitsDelivered: 0, revenueCents: 0, costCents: 0, profitCents: 0, costMissing: false,
+          unitsOrdered: 0, unitsDelivered: 0, revenueCents: 0, costCents: 0, adCostCents: 0, profitCents: 0, costMissing: false,
           orders: new Set(), confirmed: new Set(), delivered: new Set(), refused: new Set(), cancelled: new Set()
         };
         rows.set(key, acc);
@@ -132,6 +149,7 @@ export function performance(orders: ReportOrder[], stock: Map<string, StockInfo>
       }
       if (refused) acc.refused.add(order.id);
       if (delivered || refused) acc.costCents += share(line, order.subtotalCents, order.carrierCostCents);
+      acc.adCostCents += share(line, order.subtotalCents, adPerOrder(order));
     }
   }
 
@@ -142,7 +160,8 @@ export function performance(orders: ReportOrder[], stock: Map<string, StockInfo>
     const outcomes = delivered.size + refused.size;
     const revenue = Math.round(rest.revenueCents);
     const cost = Math.round(rest.costCents);
-    const profit = revenue - cost;
+    const ads = Math.round(rest.adCostCents);
+    const profit = revenue - cost - ads;
     let onHand = 0;
     let value: number | null = 0;
     let idleDays: number | null = null;
@@ -159,6 +178,7 @@ export function performance(orders: ReportOrder[], stock: Map<string, StockInfo>
       ...rest,
       revenueCents: revenue,
       costCents: cost,
+      adCostCents: ads,
       profitCents: profit,
       ordersPlaced: placed,
       ordersConfirmed: confirmed.size,
