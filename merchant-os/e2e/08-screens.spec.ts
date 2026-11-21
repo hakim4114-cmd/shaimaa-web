@@ -49,6 +49,11 @@ for (const viewport of viewports) {
     });
 
     test("main pages", async ({ page }) => {
+      // Anything the Content-Security-Policy blocks shows up as a console error.
+      const blocked: string[] = [];
+      page.on("console", (message) => {
+        if (message.type() === "error" && /Content Security Policy/i.test(message.text())) blocked.push(`${page.url()}: ${message.text()}`);
+      });
       const orderPath = await latestOrderPath();
       await signIn(page, owner);
       for (const path of pages) {
@@ -59,6 +64,7 @@ for (const viewport of viewports) {
         await expectNoSidewaysScroll(page, target);
         await page.screenshot({ path: test.info().outputPath(`${viewport.name}${target.replaceAll("/", "_") || "_home"}.png`), fullPage: true });
       }
+      expect(blocked, blocked.join("\n")).toEqual([]);
     });
 
     test("navigation is reachable", async ({ page }) => {

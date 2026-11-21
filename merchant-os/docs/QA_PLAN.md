@@ -51,6 +51,8 @@ Every journey runs in Arabic (right to left). J1 and J3 also run in French.
 ## Findings so far
 
 - 2026-11-20: the app refused any Supabase URL that is not `https`, so it could not run against a local stack (sign-in showed "database not configured"). Fixed for `127.0.0.1`/`localhost` only; production unaffected.
+- 2026-11-21: the deployed site sent no Content-Security-Policy. Added (scripts and frames from other sites refused; `'unsafe-inline'` kept for Next.js and the theme script, nonces are the next step); the screens journey fails on any CSP violation.
+- 2026-11-21: server actions reviewed for a session and role check; those without one in the action rely on the role check inside the database function (`close_return`, `add_order_note`, `record_carrier_invoice`) or a checked helper. No gap found.
 - 2026-11-20: no screen ships an order without Sendit. Decide before opening to other merchants whether a manual carrier (own courier, another company) needs screens.
 
 ## Delivery steps
