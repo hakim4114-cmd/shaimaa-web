@@ -1,10 +1,14 @@
+import { CheckCircle2, Circle } from "lucide-react";
+import Link from "next/link";
 import { redirect } from "next/navigation";
+import { buttonVariants } from "@/components/ui/button";
 import { Card, CardBody, CardHeader } from "@/components/ui/card";
 import { PageHeader } from "@/components/ui/page-header";
 import { requireOrganization } from "@/lib/data/context";
 import { expenseCategories } from "@/lib/data/money";
 import { getFundPlan } from "@/lib/data/routines";
 import { businessDay } from "@/lib/datetime";
+import { interpolate } from "@/lib/i18n/dictionaries";
 import { getI18n } from "@/lib/i18n/server";
 import { formatMoney } from "@/lib/money";
 import { cn } from "@/lib/utils";
@@ -28,6 +32,7 @@ type Safe = {
   pay_left_cents?: number;
   opening_date?: string;
   owner_fund_name?: string;
+  closed_months?: number;
 };
 
 export default async function PayPage() {
@@ -46,39 +51,101 @@ export default async function PayPage() {
   const m = (c: number | undefined) => formatMoney(c ?? 0, locale);
   const open = (payables ?? []).filter((p) => !p.paid_on);
 
+  // The three things the calculation needs, in the order the owner sets them up.
+  const opening = (entries ?? []).find((e) => e.kind === "opening");
+  const payFund = s.owner_fund_name ? funds.find((f) => f.name.trim().toLowerCase() === s.owner_fund_name!.trim().toLowerCase()) : undefined;
+  const steps = [
+    { title: tp.step1Title, done: Boolean(s.configured && opening), text: opening ? interpolate(tp.step1Done, { date: opening.entry_date }) : tp.step1Todo, close: false },
+    {
+      title: tp.step2Title,
+      done: Boolean(payFund && payFund.percent > 0),
+      text: payFund && payFund.percent > 0 ? interpolate(tp.step2Done, { percent: payFund.percent, fund: payFund.name }) : tp.step2Todo,
+      close: !(payFund && payFund.percent > 0)
+    },
+    {
+      title: tp.step3Title,
+      done: (s.closed_months ?? 0) > 0,
+      text: (s.closed_months ?? 0) > 0 ? interpolate(tp.step3Done, { count: s.closed_months ?? 0 }) : tp.step3Todo,
+      close: (s.closed_months ?? 0) === 0
+    }
+  ];
+  const allSet = steps.every((step) => step.done);
+  const reason = (s.reason ?? "ok") as keyof typeof tp.explain;
+  const explanation = interpolate(tp.explain[reason] ?? tp.explain.ok, {
+    payLeft: m(s.pay_left_cents),
+    free: m(s.free_cash_cents),
+    safe: m(s.safe_cents),
+    balance: m(s.cash_balance_cents),
+    due: m(s.obligations_30d_cents),
+    reserve: m(s.reserve_floor_cents),
+    earned: m(s.pay_earned_cents)
+  });
+  const line = (label: string, hint: string, cents: number | undefined, sign = "") => (
+    <div className="flex justify-between gap-3">
+      <dt>
+        <span className="text-foreground">{sign ? `${sign} ` : ""}{label}</span>
+        <span className="block text-xs text-muted-foreground">{hint}</span>
+      </dt>
+      <dd className="tabular shrink-0">{m(cents)}</dd>
+    </div>
+  );
+
   return (
     <div className="flex flex-col gap-6">
       <PageHeader title={tp.title} description={tp.description} />
+
+      {!allSet ? (
+        <Card>
+          <CardHeader title={tp.stepsTitle} description={tp.stepsDescription} />
+          <CardBody>
+            <ol className="flex flex-col gap-4">
+              {steps.map((step, index) => (
+                <li key={step.title} className="flex gap-3">
+                  {step.done ? <CheckCircle2 className="mt-0.5 size-5 shrink-0 text-success" aria-hidden /> : <Circle className="mt-0.5 size-5 shrink-0 text-muted-foreground" aria-hidden />}
+                  <div className="min-w-0 text-sm">
+                    <p className="font-medium">
+                      {index + 1}. {step.title}
+                      <span className="sr-only">{step.done ? " ✓" : ""}</span>
+                    </p>
+                    <p className="text-muted-foreground">{step.text}</p>
+                    {step.close ? (
+                      <Link href="/close" className={cn(buttonVariants({ variant: "secondary", size: "sm" }), "mt-2")}>
+                        {tp.openClose}
+                      </Link>
+                    ) : null}
+                  </div>
+                </li>
+              ))}
+            </ol>
+          </CardBody>
+        </Card>
+      ) : null}
 
       {s.configured ? (
         <Card className="overflow-hidden">
           <div className={cn("p-6", (s.safe_cents ?? 0) > 0 ? "bg-accent text-accent-foreground" : "bg-sidebar text-sidebar-foreground")}>
             <p className="text-sm opacity-85">{tp.safeTitle}</p>
             <p className="tabular mt-1 text-4xl font-bold">{m(s.safe_cents)}</p>
-            <p className="mt-2 text-sm opacity-90">{tp.reasons[(s.reason ?? "ok") as keyof typeof tp.reasons]}</p>
+            <p className="mt-2 max-w-prose text-sm opacity-90">{explanation}</p>
           </div>
           <CardBody className="grid gap-6 sm:grid-cols-2">
-            <dl className="grid gap-1.5 text-sm">
+            <dl className="grid content-start gap-2.5 text-sm">
               <dt className="font-semibold">{tp.side1}</dt>
-              <div className="flex justify-between gap-3"><dt className="text-muted-foreground">{tp.earned}</dt><dd className="tabular">{m(s.pay_earned_cents)}</dd></div>
-              <div className="flex justify-between gap-3"><dt className="text-muted-foreground">− {tp.withdrawn}</dt><dd className="tabular">{m(s.withdrawn_cents)}</dd></div>
-              <div className="flex justify-between gap-3 border-t border-border pt-1.5 font-medium"><dt>= {tp.payLeft}</dt><dd className="tabular">{m(s.pay_left_cents)}</dd></div>
+              {line(tp.earned, tp.earnedHint, s.pay_earned_cents)}
+              {line(tp.withdrawn, tp.withdrawnHint, s.withdrawn_cents, "−")}
+              <div className="flex justify-between gap-3 border-t border-border pt-2 font-semibold"><dt>= {tp.payLeft}</dt><dd className="tabular">{m(s.pay_left_cents)}</dd></div>
             </dl>
-            <dl className="grid gap-1.5 text-sm">
+            <dl className="grid content-start gap-2.5 text-sm">
               <dt className="font-semibold">{tp.side2}</dt>
-              <div className="flex justify-between gap-3"><dt className="text-muted-foreground">{tp.balance}</dt><dd className="tabular">{m(s.cash_balance_cents)}</dd></div>
-              <div className="flex justify-between gap-3"><dt className="text-muted-foreground">− {tp.obligations}</dt><dd className="tabular">{m(s.obligations_30d_cents)}</dd></div>
-              <div className="flex justify-between gap-3"><dt className="text-muted-foreground">− {tp.reserve}</dt><dd className="tabular">{m(s.reserve_floor_cents)}</dd></div>
-              <div className="flex justify-between gap-3 border-t border-border pt-1.5 font-medium"><dt>= {tp.freeCash}</dt><dd className={cn("tabular", (s.free_cash_cents ?? 0) < 0 && "text-danger")}>{m(s.free_cash_cents)}</dd></div>
+              {line(tp.balance, tp.balanceHint, s.cash_balance_cents)}
+              {line(tp.obligations, tp.obligationsHint, s.obligations_30d_cents, "−")}
+              {line(tp.reserve, tp.reserveHint, s.reserve_floor_cents, "−")}
+              <div className="flex justify-between gap-3 border-t border-border pt-2 font-semibold"><dt>= {tp.freeCash}</dt><dd className={cn("tabular", (s.free_cash_cents ?? 0) < 0 && "text-danger")}>{m(s.free_cash_cents)}</dd></div>
             </dl>
-            <p className="text-xs text-muted-foreground sm:col-span-2">{tp.rule}</p>
+            <p className="rounded-md bg-surface-muted p-3 text-sm sm:col-span-2">{tp.ruleShort}</p>
           </CardBody>
         </Card>
-      ) : (
-        <Card>
-          <CardHeader title={tp.setupTitle} description={tp.setupDescription} />
-        </Card>
-      )}
+      ) : null}
 
       {s.configured && can.overrideBlocklist ? (
         <Card>
@@ -143,7 +210,7 @@ export default async function PayPage() {
           <CardHeader title={tp.settingsTitle} description={tp.settingsDescription} />
           <CardBody>
             <SettingsForm
-              funds={funds.map((f) => f.name)}
+              funds={funds.map((f) => ({ name: f.name, percent: f.percent }))}
               initial={{
                 openingDate: s.opening_date ?? today,
                 reserveFloor: s.reserve_floor_cents !== undefined ? String(s.reserve_floor_cents / 100) : "0",

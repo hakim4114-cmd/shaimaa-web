@@ -71,7 +71,7 @@ export function WithdrawForm({ safeCents, today }: { safeCents: number; today: s
   );
 }
 
-export function SettingsForm({ initial, funds }: { initial: { openingDate: string; reserveFloor: string; ownerFundName: string }; funds: string[] }) {
+export function SettingsForm({ initial, funds }: { initial: { openingDate: string; reserveFloor: string; ownerFundName: string }; funds: { name: string; percent: number }[] }) {
   const { t } = useI18n();
   const tp = t.pay;
   const id = useId();
@@ -91,8 +91,8 @@ export function SettingsForm({ initial, funds }: { initial: { openingDate: strin
           <NativeSelect id={`${id}-f`} value={v.ownerFundName} onChange={(e) => setV({ ...v, ownerFundName: e.target.value })}>
             <option value="">—</option>
             {funds.map((f) => (
-              <option key={f} value={f}>
-                {f}
+              <option key={f.name} value={f.name}>
+                {f.name} ({f.percent}%)
               </option>
             ))}
           </NativeSelect>
