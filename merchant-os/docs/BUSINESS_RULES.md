@@ -263,10 +263,11 @@ Also yearly: full evaluation (12-month trend of the nine indicators, best/worst 
 
 ## Money guardrails (1.16.0)
 Defaults chosen by the owner on 2026-11-21; each can be changed in Pay and cash → Rules **[DB]**.
-- **Business value** = cash (same definition as the safe amount) + stock at cost + COD waiting at the carrier (orders awaiting remittance, gross). **Capital** = opening balance + money put in **[DB]**.
+- **Business value** = cash (same definition as the safe amount) + stock at cost + COD waiting at the carrier (orders awaiting remittance, net of the carrier fee) − unpaid obligations (stock bought on credit is not value). **Capital** = opening balance + money put in, from the opening date like cash **[DB]**.
+- No expense, cash entry or withdrawal may be dated before the opening date (`BEFORE_OPENING_DATE`): it would escape the cash count **[DB]**. A recorded expense cannot be edited (only its description); to correct one, delete it and record it again, which passes the guard **[DB]**.
 - **Capital floor (80 %):** when the business value is below 80 % of the capital, no owner withdrawal is accepted, even with a reason (`CAPITAL_BELOW_FLOOR`); the bell and the pay page say so **[DB]**.
 - **Reserve:** no owner withdrawal may leave cash below the reserve (`RESERVE_PROTECTED`) **[DB]**. An expense that would needs a written reason of 10 characters or more and is flagged `reserve` **[DB]**.
-- **Ad budget per calendar month:** 30 % of last month's delivered revenue, or 2,000 MAD when last month had none. An ad expense that takes the month above it needs a reason and is flagged `ad_budget` **[DB]**. The app cannot stop the card: set the same limit in the ad platform.
+- **Ad budget per calendar month:** the larger of 2,000 MAD and 30 % of last month's delivered revenue (returned orders excluded), so a weak month never gives less than the fixed amount. An ad expense that takes the month above it needs a reason and is flagged `ad_budget` **[DB]**. The app cannot stop the card: set the same limit in the ad platform.
 - **Stock cap:** one stock purchase above 50 % of free cash (cash − obligations due within 30 days − reserve) needs a reason and is flagged `stock_cap` **[DB]**.
 - Expenses are refused only for a missing reason, never for the amount: money spent outside the app must still be recorded. Paying a planned obligation is not checked **[DB]**. Every flagged expense and every withdrawal above the safe amount is listed in Reports → Money rules crossed, and in the Excel report.
 

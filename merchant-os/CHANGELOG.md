@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.16.1 — Money guardrails: review fixes (2026-11-21)
+
+### Fixed
+- Business value now subtracts unpaid obligations and counts carrier money net of the carrier fee; capital is counted from the opening date like cash.
+- Nothing can be dated before the opening date (expenses, cash entries, withdrawals): such entries escaped the cash count.
+- Recorded expenses can no longer be edited (only the description), so an amount cannot be raised after the check; delete and record again instead.
+- Ad budget is the larger of the fixed amount and 30 % of last month's revenue (a weak month used to give less than no revenue); returned orders are not revenue.
+- Migration `20261121000200_money_guardrails_fixes`.
+
 ## 1.16.0 — Money guardrails (2026-11-21)
 
 ### Added

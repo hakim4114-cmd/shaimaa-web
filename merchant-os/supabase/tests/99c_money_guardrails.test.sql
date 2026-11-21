@@ -48,11 +48,19 @@ select tests.eq((public.capital_status(:'org') ->> 'capital_cents')::bigint, 600
 select tests.eq((public.capital_status(:'org') ->> 'floor_cents')::bigint, 480000::bigint, 'floor = 80 % of the capital');
 select tests.eq((public.capital_status(:'org') ->> 'below_floor')::boolean, false, 'at the start the shop is above its floor');
 
+-- Nothing dated before the opening date (it would escape the cash count).
+select tests.expect_error(format($$insert into public.expenses (organization_id, category, amount_cents, incurred_on, guard_reason) values (%L, 'packaging', 1000, current_date - 30, 'old receipt found')$$, :'org'), 'BEFORE_OPENING_DATE');
+select tests.expect_error(format($$select public.record_owner_withdrawal(%L, 1000, current_date - 30, 'backdated withdrawal')$$, :'org'), 'BEFORE_OPENING_DATE');
+select tests.expect_error(format($$insert into public.cash_entries (organization_id, kind, amount_cents, entry_date) values (%L, 'capital_in', 1000, current_date - 30)$$, :'org'), 'BEFORE_OPENING_DATE');
+
 -- Ad budget: 1500 then 600 more crosses 2000 → reason required, then flagged.
 insert into public.expenses (organization_id, category, amount_cents, incurred_on) values (:'org', 'advertising', 150000, current_date);
 select tests.expect_error(format($$insert into public.expenses (organization_id, category, amount_cents, incurred_on) values (%L, 'advertising', 60000, current_date)$$, :'org'), 'GUARD_REASON_REQUIRED');
 insert into public.expenses (organization_id, category, amount_cents, incurred_on, guard_reason) values (:'org', 'advertising', 60000, current_date, 'Ramadan push, agreed');
 select tests.eq((select guard_flags from public.expenses where organization_id = :'org' and amount_cents = 60000), '{ad_budget}'::text[], 'over the ad budget: allowed with a reason, flagged');
+-- A recorded expense cannot be edited to slip past the guard (delete and add it again instead).
+select tests.expect_error(format($$update public.expenses set amount_cents = 5000000 where organization_id = %L and amount_cents = 60000$$, :'org'), 'permission denied');
+select tests.expect_error(format($$update public.expenses set guard_flags = '{}' where organization_id = %L$$, :'org'), 'permission denied');
 
 -- Stock cap: free cash = 6000 − 2100 − 1500 = 2400; half is 1200.
 select tests.expect_error(format($$insert into public.expenses (organization_id, category, amount_cents, incurred_on) values (%L, 'inventory_purchase', 130000, current_date)$$, :'org'), 'GUARD_REASON_REQUIRED');
@@ -75,6 +83,10 @@ select id as loc from public.inventory_locations where organization_id = :'org' 
 select public.adjust_inventory(:'variant', :'loc', 'receipt', 25, 'test');
 select tests.eq((public.capital_status(:'org') ->> 'stock_value_cents')::bigint, 200000::bigint, 'stock valued at cost');
 select tests.eq((public.capital_status(:'org') ->> 'below_floor')::boolean, false, 'cash + stock back above the floor');
+-- Stock bought on credit is not value: an unpaid obligation is subtracted.
+insert into public.payables (organization_id, counterparty, category, amount_cents, due_on) values (:'org', 'Supplier on credit', 'inventory_purchase', 50000, current_date + 60) returning id as credit \gset
+select tests.eq((public.capital_status(:'org') ->> 'below_floor')::boolean, true, 'unpaid obligations lower the business value');
+delete from public.payables where id = :'credit';
 
 -- Owner pay: never below the reserve, even with a reason (cash 2900, reserve 1500).
 select tests.expect_error(format($$select public.record_owner_withdrawal(%L, 150000, current_date, 'I really need this money now')$$, :'org'), 'RESERVE_PROTECTED');
