@@ -9,6 +9,8 @@ export type TestOrder = {
   discount_cents: number;
   shipping_fee_cents: number;
   items: { quantity: number; unit_cost_cents: number | null }[];
+  /** Carrier cost already known for its parcel(s); paid whether delivered or refused. */
+  carrier_cents?: number;
 };
 
 export type TestState = "running" | "wait" | "stop" | "judge";
@@ -16,7 +18,7 @@ export type TestState = "running" | "wait" | "stop" | "judge";
 export type TestRead = {
   orders: number;
   pending: number;
-  /** Best case if every pending order is delivered: revenue − cost of its pieces. */
+  /** Best case if every pending order is delivered: revenue − cost of its pieces − carrier. */
   pendingUpsideCents: number;
   state: TestState;
 };
@@ -31,7 +33,7 @@ export function readTest(test: { profit_cents: number; loss_cap_cents: number; o
   const pendingOrders = counted.filter((o) => (awaitingStatuses as readonly string[]).includes(o.status));
   const pendingUpsideCents = pendingOrders.reduce(
     (sum, o) =>
-      sum + o.subtotal_cents - o.discount_cents + o.shipping_fee_cents - o.items.reduce((s, i) => s + i.quantity * (i.unit_cost_cents ?? 0), 0),
+      sum + o.subtotal_cents - o.discount_cents + o.shipping_fee_cents - o.items.reduce((s, i) => s + i.quantity * (i.unit_cost_cents ?? 0), 0) - (o.carrier_cents ?? 0),
     0
   );
   let state: TestState = "running";

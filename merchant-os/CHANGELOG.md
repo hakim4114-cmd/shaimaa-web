@@ -1,5 +1,19 @@
 # Changelog
 
+## 1.17.2 — Scenario review fixes (2026-11-21)
+
+A review of real-life situations against the money and test rules (docs/SCENARIOS.md).
+
+### Fixed
+- An ad expense with no campaign, while a campaign runs, needs a written reason and is flagged `no_campaign`: it used to escape the loss cap and the ad cost per product.
+- A returned or refused piece that comes back damaged or missing now counts as a loss in the test's result.
+- The tests list shows how many lines were sold without a cost (the result looks better than it is).
+- "Pause ads and wait" now counts the carrier cost of the parcels still on the way.
+
+### Added
+- Bell: orders delivered over 7 days ago whose money is still at Sendit; a running campaign with no ad spend recorded for 3 days.
+- New order with a campaign picked by default: a hint to pick "no campaign" for customers who did not come from the ad.
+
 ## 1.17.1 — Reading a test correctly (2026-11-21)
 
 ### Changed

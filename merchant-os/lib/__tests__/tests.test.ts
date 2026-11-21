@@ -24,6 +24,13 @@ describe("readTest", () => {
     expect(r.pendingUpsideCents).toBe(24000);
     expect(r.state).toBe("wait");
   });
+  it("counts the carrier cost of pending parcels against the best case", () => {
+    const r = readTest({ profit_cents: -61000, loss_cap_cents: 60000, over_cap: true }, [{ ...order("shipped"), carrier_cents: 3500 }]);
+    expect(r.pendingUpsideCents).toBe(8500);
+    expect(r.state).toBe("wait");
+    const r2 = readTest({ profit_cents: -69000, loss_cap_cents: 60000, over_cap: true }, [{ ...order("shipped"), carrier_cents: 3500 }]);
+    expect(r2.state).toBe("stop");
+  });
   it("still says stop when even every pending delivery would not be enough", () => {
     expect(readTest({ profit_cents: -90000, loss_cap_cents: 60000, over_cap: true }, [order("shipped")]).state).toBe("stop");
   });

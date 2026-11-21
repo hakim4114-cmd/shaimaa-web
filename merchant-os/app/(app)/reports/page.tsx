@@ -48,7 +48,7 @@ export default async function ReportsPage({ searchParams }: { searchParams: Prom
   const { data: testOrderRows } = testIds.length
     ? await ctx.supabase
         .from("orders")
-        .select("campaign_id, status, subtotal_cents, discount_cents, shipping_fee_cents, order_items(quantity, unit_cost_cents)")
+        .select("campaign_id, status, subtotal_cents, discount_cents, shipping_fee_cents, order_items(quantity, unit_cost_cents), shipments(status, shipping_cost_cents)")
         .eq("organization_id", ctx.organizationId)
         .in("campaign_id", testIds)
     : { data: [] };
@@ -56,7 +56,11 @@ export default async function ReportsPage({ searchParams }: { searchParams: Prom
   for (const o of testOrderRows ?? []) {
     if (!o.campaign_id) continue;
     const list = ordersByTest.get(o.campaign_id) ?? [];
-    list.push({ ...o, items: o.order_items ?? [] });
+    list.push({
+      ...o,
+      items: o.order_items ?? [],
+      carrier_cents: (o.shipments ?? []).filter((s) => s.status !== "cancelled").reduce((sum, s) => sum + (s.shipping_cost_cents ?? 0), 0)
+    });
     ordersByTest.set(o.campaign_id, list);
   }
   const testRows = (tests ?? []).map((c) => ({ ...c, read: readTest(c, ordersByTest.get(c.campaign_id) ?? []) }));
@@ -140,6 +144,9 @@ export default async function ReportsPage({ searchParams }: { searchParams: Prom
                       </Badge>
                     </span>
                   </div>
+                  {c.missing_cost_items > 0 ? (
+                    <p className="text-xs text-warning">{interpolate(tr.testMissingCost, { count: c.missing_cost_items })}</p>
+                  ) : null}
                   {c.read.pending > 0 ? (
                     <p className="text-xs text-muted-foreground">
                       {interpolate(c.read.state === "wait" ? tr.testWaitHint : tr.testPending, { count: c.read.pending, value: m(c.read.pendingUpsideCents) })}

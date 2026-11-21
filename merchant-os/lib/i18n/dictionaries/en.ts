@@ -51,7 +51,7 @@ const en = {
     sectionsEssential: "Essentials",
     sectionsAll: "All sections",
     notificationsAllClear: "Nothing needs your attention right now.",
-    alerts: { obligationsOverdue: "Obligations overdue", obligationsSoon: "Obligations due within 7 days", callsDue: "Calls to make", deliveryProblems: "Delivery problems", returnsWaiting: "Returns to receive", lowStock: "Products low in stock", storeOrders: "Store orders to fix", waitingToShip: "Confirmed over 24 h ago, not shipped yet", problems: "Problems to check", capitalBelowFloor: "Capital below the floor: withdrawals blocked", campaignLossCap: "A test reached its loss cap: pause its ads, see Reports" }
+    alerts: { obligationsOverdue: "Obligations overdue", obligationsSoon: "Obligations due within 7 days", callsDue: "Calls to make", deliveryProblems: "Delivery problems", returnsWaiting: "Returns to receive", lowStock: "Products low in stock", storeOrders: "Store orders to fix", waitingToShip: "Confirmed over 24 h ago, not shipped yet", problems: "Problems to check", capitalBelowFloor: "Capital below the floor: withdrawals blocked", campaignLossCap: "A test reached its loss cap: pause its ads, see Reports", remittanceLate: "Delivered over 7 days ago, money still at Sendit", adSpendStale: "A running campaign has no ad spend recorded for 3 days: record it from Ads Manager" }
   },
   commandCenter: {
     title: "Command center",
@@ -673,6 +673,7 @@ const en = {
     lossCap: "Loss cap (MAD)",
     lossCapHint: "When the loss after ads reaches this amount, the app tells you to stop.",
     campaignPick: "Pick the campaign that brought this order, so ads are counted right.",
+    campaignOrganic: "If the customer did not come from the ad (word of mouth, returning customer), pick \"no campaign\" so the test does not look better than it is.",
     financeTitle: "Finance",
     financeDescription: "Profit, cash and expenses, computed from your orders, payouts and expenses.",
     marketingTitle: "Marketing",
@@ -1090,6 +1091,7 @@ const en = {
     judge: "20 orders: judge it",
     testOrders: "{count}/{target} orders",
     testPending: "{count} orders on the way (up to {value} if all delivered).",
+    testMissingCost: "{count} lines without a cost: the result looks better than it is. Add the cost to the product.",
     testWaitHint: "Past the cap, but {count} orders are still on the way (up to {value} if all delivered). Pause the ads now and wait for the results before judging.",
     incomplete: "The period is not over or just ended: delivery results of the latest orders arrive within 5 to 10 days. Do not judge yet.",
     violationsTitle: "Money rules crossed",
@@ -1181,7 +1183,8 @@ const en = {
         reserve: "takes cash below the reserve",
         ad_budget: "goes over this month's ad budget",
         stock_cap: "stock purchase above the cap (share of free cash)",
-        loss_cap: "the campaign reached its loss cap (losing test)"
+        loss_cap: "the campaign reached its loss cap (losing test)",
+        no_campaign: "ad spend with no campaign: outside the loss cap and the product cost"
       }
     },
     capitalTitle: "Capital protection",
