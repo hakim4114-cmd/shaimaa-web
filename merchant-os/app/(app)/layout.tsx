@@ -32,7 +32,8 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
         }
       : null;
 
-  const alerts = session && session.active ? await getAlerts(await requireOrganization()).catch(() => []) : [];
+  // Not awaited: the page shows at once and the bell fills in when its counts arrive.
+  const alerts = session && session.active ? requireOrganization().then(getAlerts).catch(() => []) : Promise.resolve([]);
 
   return (
     <AppShell showDevTools={isDevelopment} initialCollapsed={collapsed} essentialOnly={essentialOnly} account={account} alerts={alerts}>

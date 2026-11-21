@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.18.2 — Faster pages (2026-11-21)
+
+### Changed
+- The bell's counts no longer hold back every page: the page shows at once and the bell fills in when its counts arrive (they were the slowest reads, run on every page load).
+- Order page: the reads that depend only on the order run together in one round instead of three in a row.
+
 ## 1.18.1 — Ads below the floor, logo leads home (2026-11-21)
 
 ### Changed
