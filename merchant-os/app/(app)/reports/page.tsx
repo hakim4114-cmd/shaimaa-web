@@ -14,6 +14,7 @@ import { getI18n } from "@/lib/i18n/server";
 import { formatMoney } from "@/lib/money";
 import { parseHalf, parseMonth, recentMonths, reportPeriod, type Half } from "@/lib/reports/periods";
 import { minOrdersToJudge, sleepingDays, type Verdict } from "@/lib/reports/products";
+import { readTest, type TestOrder, type TestState } from "@/lib/reports/tests";
 import { cn } from "@/lib/utils";
 
 export async function generateMetadata() {
@@ -43,6 +44,28 @@ export default async function ReportsPage({ searchParams }: { searchParams: Prom
     getPeriodReport(ctx, period, today),
     ctx.supabase.rpc("campaign_loss_status", { p_organization_id: ctx.organizationId })
   ]);
+  const testIds = (tests ?? []).map((c) => c.campaign_id);
+  const { data: testOrderRows } = testIds.length
+    ? await ctx.supabase
+        .from("orders")
+        .select("campaign_id, status, subtotal_cents, discount_cents, shipping_fee_cents, order_items(quantity, unit_cost_cents), shipments(status, shipping_cost_cents)")
+        .eq("organization_id", ctx.organizationId)
+        .in("campaign_id", testIds)
+    : { data: [] };
+  const ordersByTest = new Map<string, TestOrder[]>();
+  for (const o of testOrderRows ?? []) {
+    if (!o.campaign_id) continue;
+    const list = ordersByTest.get(o.campaign_id) ?? [];
+    list.push({
+      ...o,
+      items: o.order_items ?? [],
+      carrier_cents: (o.shipments ?? []).filter((s) => s.status !== "cancelled").reduce((sum, s) => sum + (s.shipping_cost_cents ?? 0), 0)
+    });
+    ordersByTest.set(o.campaign_id, list);
+  }
+  const testRows = (tests ?? []).map((c) => ({ ...c, read: readTest(c, ordersByTest.get(c.campaign_id) ?? []) }));
+  const testTone: Record<TestState, "danger" | "warning" | "success" | "neutral"> = { stop: "danger", wait: "warning", judge: "success", running: "neutral" };
+  const testLabel: Record<TestState, string> = { stop: tr.stop, wait: tr.wait, judge: tr.judge, running: tr.ok };
   // Results of the last orders arrive 5–10 days after the order: a recent period is not final yet.
   const settledDay = new Date(Date.parse(`${today}T12:00:00Z`) - 10 * 86400000).toISOString().slice(0, 10);
   const incomplete = period.to > settledDay;
@@ -99,23 +122,36 @@ export default async function ReportsPage({ searchParams }: { searchParams: Prom
 
       {incomplete ? <p role="note" className="rounded-md bg-warning-soft p-3 text-sm text-warning">{tr.incomplete}</p> : null}
 
-      {(tests ?? []).length > 0 ? (
-        <Card className={cn("overflow-hidden", (tests ?? []).some((c) => c.over_cap) && "ring-2 ring-danger")}>
+      {testRows.length > 0 ? (
+        <Card className={cn("overflow-hidden", testRows.some((c) => c.read.state === "stop") && "ring-2 ring-danger")}>
           <CardHeader title={tr.testsTitle} description={tr.testsDescription} />
           <CardBody>
             <ul className="divide-y divide-border text-sm">
-              {(tests ?? []).map((c) => (
-                <li key={c.campaign_id} className="flex items-center justify-between gap-3 py-2">
-                  <span className="min-w-0 font-medium">{c.name}</span>
-                  <span className="flex shrink-0 items-center gap-3">
-                    <span className={cn("tabular font-semibold", c.profit_cents < 0 && "text-danger")}>{m(c.profit_cents)}</span>
-                    <span className="tabular text-xs text-muted-foreground">
-                      {tr.colCap}: −{m(c.loss_cap_cents)}
+              {testRows.map((c) => (
+                <li key={c.campaign_id} className="flex flex-col gap-1 py-2">
+                  <div className="flex flex-wrap items-center justify-between gap-3">
+                    <span className="min-w-0 font-medium">{c.name}</span>
+                    <span className="flex shrink-0 flex-wrap items-center gap-3">
+                      <span className={cn("tabular font-semibold", c.profit_cents < 0 && "text-danger")}>{m(c.profit_cents)}</span>
+                      <span className="tabular text-xs text-muted-foreground">
+                        {tr.colCap}: −{m(c.loss_cap_cents)}
+                      </span>
+                      <span className="tabular text-xs text-muted-foreground">
+                        {interpolate(tr.testOrders, { count: c.read.orders, target: minOrdersToJudge })}
+                      </span>
+                      <Badge tone={testTone[c.read.state]} dot>
+                        {testLabel[c.read.state]}
+                      </Badge>
                     </span>
-                    <Badge tone={c.over_cap ? "danger" : "neutral"} dot>
-                      {c.over_cap ? tr.stop : tr.ok}
-                    </Badge>
-                  </span>
+                  </div>
+                  {c.missing_cost_items > 0 ? (
+                    <p className="text-xs text-warning">{interpolate(tr.testMissingCost, { count: c.missing_cost_items })}</p>
+                  ) : null}
+                  {c.read.pending > 0 ? (
+                    <p className="text-xs text-muted-foreground">
+                      {interpolate(c.read.state === "wait" ? tr.testWaitHint : tr.testPending, { count: c.read.pending, value: m(c.read.pendingUpsideCents) })}
+                    </p>
+                  ) : null}
                 </li>
               ))}
             </ul>

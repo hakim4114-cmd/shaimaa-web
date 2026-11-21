@@ -288,7 +288,7 @@ export function OrderForm({
             </NativeSelect>
           </Field>
           {mode === "create" && campaigns.length > 0 ? (
-            <Field label={t.money.campaign} htmlFor={`${id}-campaign`} hint={campaignId ? t.money.attributionHint : t.money.campaignPick}>
+            <Field label={t.money.campaign} htmlFor={`${id}-campaign`} hint={!campaignId ? t.money.campaignPick : mode === "create" ? t.money.campaignOrganic : t.money.attributionHint}>
               <NativeSelect id={`${id}-campaign`} value={campaignId} onChange={(e) => setCampaignId(e.target.value)}>
                 <option value="">{t.money.noCampaign}</option>
                 {campaigns.map((c) => (

@@ -105,6 +105,34 @@ select tests.expect_error(format($$insert into public.expenses (organization_id,
 insert into public.expenses (organization_id, category, amount_cents, incurred_on, campaign_id, guard_reason) values (:'org', 'advertising', 1000, current_date, :'camp', 'Last try with a new picture');
 select tests.eq((select 'loss_cap' = any(guard_flags) from public.expenses where campaign_id = :'camp' and amount_cents = 1000), true, 'more ads on a test over its cap: flagged loss_cap');
 
+-- An ad expense with no campaign, while a campaign runs: reason required, flagged no_campaign.
+select tests.expect_error(format($$insert into public.expenses (organization_id, category, amount_cents, incurred_on) values (%L, 'advertising', 500, current_date)$$, :'org'), 'GUARD_REASON_REQUIRED');
+insert into public.expenses (organization_id, category, amount_cents, incurred_on, guard_reason) values (:'org', 'advertising', 500, current_date, 'Boosted post, no campaign');
+select tests.eq((select 'no_campaign' = any(guard_flags) from public.expenses where organization_id = :'org' and amount_cents = 500), true, 'ad spend outside any campaign: flagged no_campaign');
+
+-- A refused piece that comes back damaged is a loss of its cost; a piece without a cost is reported.
+insert into public.marketing_campaigns (organization_id, name, platform) values (:'org', 'Damage test', 'meta') returning id as camp2 \gset
+select id as tord from public.create_order(:'org', jsonb_build_object(
+  'customer', jsonb_build_object('full_name', 'Test Buyer', 'phone', '+212612340000', 'city', 'Rabat'),
+  'items', jsonb_build_array(jsonb_build_object('variant_id', :'variant', 'quantity', 1)), 'campaign_id', :'camp2')) \gset
+select public.transition_order(:'tord', 'confirmed');
+select public.transition_order(:'tord', 'preparing');
+select public.transition_order(:'tord', 'ready_to_ship');
+select public.transition_order(:'tord', 'shipped');
+select public.transition_order(:'tord', 'refused', 'Refused at door');
+select id as tret from public.returns where order_id = :'tord' \gset
+select public.receive_return(:'tret', 0);
+select id as tri from public.return_items where return_id = :'tret' \gset
+select public.inspect_return_item(:'tri', 'damaged');
+select tests.eq((select profit_cents from public.campaign_loss_status(:'org') where campaign_id = :'camp2'), -8000::bigint, 'a refused piece back damaged costs the test its cost (80 MAD)');
+select public.save_product(:'org', jsonb_build_object('name', 'No Cost Belt', 'status', 'active', 'options', '[]'::jsonb,
+  'variants', jsonb_build_array(jsonb_build_object('sku', 'NOC-1', 'title', '', 'option_values', '{}'::jsonb, 'price_cents', 9900, 'status', 'active')))) as nocost \gset
+select id as nocost_variant from public.product_variants where product_id = :'nocost' \gset
+select public.create_order(:'org', jsonb_build_object(
+  'customer', jsonb_build_object('full_name', 'Other Buyer', 'phone', '+212612340001', 'city', 'Rabat'),
+  'items', jsonb_build_array(jsonb_build_object('variant_id', :'nocost_variant', 'quantity', 2)), 'campaign_id', :'camp2'));
+select tests.eq((select missing_cost_items from public.campaign_loss_status(:'org') where campaign_id = :'camp2'), 1::bigint, 'a line without a cost is reported (the result would look too good)');
+
 -- Others: the finance member is guarded the same way; an outsider learns nothing.
 select tests.login(:'finance');
 select tests.expect_error(format($$insert into public.expenses (organization_id, category, amount_cents, incurred_on) values (%L, 'packaging', 10000, current_date)$$, :'org'), 'GUARD_REASON_REQUIRED');

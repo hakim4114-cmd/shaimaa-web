@@ -2225,7 +2225,7 @@ export type Database = {
     Functions: {
       campaign_loss_status: {
         Args: { p_organization_id: string }
-        Returns: { campaign_id: string; name: string; profit_cents: number; loss_cap_cents: number; over_cap: boolean }[]
+        Returns: { campaign_id: string; name: string; profit_cents: number; loss_cap_cents: number; over_cap: boolean; missing_cost_items: number }[]
       }
       capital_status: {
         Args: { p_organization_id: string }
