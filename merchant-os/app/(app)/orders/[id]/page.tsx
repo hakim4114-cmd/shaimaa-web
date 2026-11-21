@@ -40,22 +40,23 @@ export default async function OrderPage({ params }: { params: Promise<{ id: stri
 
   const awaitingConfirmation = order.status === "new" || order.status === "confirmation_pending";
   const shippable = ["confirmed", "preparing", "ready_to_ship"].includes(order.status);
-  const [shipment, sendit, campaigns, campaignRow] = await Promise.all([
+  const exchangeable = order.status === "delivered" && can.manageOrders;
+  // Everything else the page needs depends only on the order: one round of parallel reads.
+  const [shipment, sendit, campaigns, campaignRow, sellable, children, history] = await Promise.all([
     getActiveShipment(supabase, organizationId, order.id),
     shippable ? getSenditProvider(supabase, organizationId) : Promise.resolve(null),
     can.manageOrders ? listCampaigns(supabase, organizationId) : Promise.resolve([]),
-    supabase.from("orders").select("campaign_id, exchange_of_order_id").eq("id", order.id).maybeSingle()
-  ]);
-  const exchangeable = order.status === "delivered" && can.manageOrders;
-  const [sellable, related] = await Promise.all([
+    supabase.from("orders").select("campaign_id, exchange_of_order_id").eq("id", order.id).maybeSingle(),
     exchangeable ? listSellableVariants(supabase, organizationId) : Promise.resolve([]),
-    supabase
-      .from("orders")
-      .select("id, order_number, exchange_of_order_id")
-      .eq("organization_id", organizationId)
-      .or(`exchange_of_order_id.eq.${order.id}${campaignRow.data?.exchange_of_order_id ? `,id.eq.${campaignRow.data.exchange_of_order_id}` : ""}`)
+    supabase.from("orders").select("id, order_number, exchange_of_order_id").eq("organization_id", organizationId).eq("exchange_of_order_id", order.id),
+    can.manageOrders && order.contact ? getCustomerHistory(supabase, organizationId, order.contact.phone) : Promise.resolve(null)
   ]);
-  const history = can.manageOrders && order.contact ? await getCustomerHistory(supabase, organizationId, order.contact.phone) : null;
+  // Only an exchange order needs its original as well (rare: one more read).
+  const parentId = campaignRow.data?.exchange_of_order_id;
+  const parent = parentId
+    ? await supabase.from("orders").select("id, order_number, exchange_of_order_id").eq("organization_id", organizationId).eq("id", parentId)
+    : { data: [] };
+  const related = { data: [...(parent.data ?? []), ...(children.data ?? [])] };
   const itemsText = order.items.map((item) => `• ${item.productName}${item.variantTitle ? ` (${item.variantTitle})` : ""} × ${item.quantity}`).join("\n");
   const defaultTemplate: WhatsappTemplate =
     order.status === "cancelled"

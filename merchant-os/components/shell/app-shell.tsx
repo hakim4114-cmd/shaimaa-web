@@ -2,7 +2,7 @@
 
 import { ChevronsLeft, Menu, Search } from "lucide-react";
 import Link from "next/link";
-import { useMemo, useState, type ReactNode } from "react";
+import { Suspense, use, useMemo, useState, type ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Kbd } from "@/components/ui/kbd";
@@ -23,14 +23,14 @@ export function AppShell({
   initialCollapsed,
   essentialOnly = false,
   account,
-  alerts = [],
+  alerts,
   children
 }: {
   showDevTools: boolean;
   account: ShellAccount | null;
   initialCollapsed: boolean;
   essentialOnly?: boolean;
-  alerts?: Alert[];
+  alerts?: Promise<Alert[]>;
   children: ReactNode;
 }) {
   const { t } = useI18n();
@@ -126,7 +126,9 @@ export function AppShell({
             <Kbd className="ms-auto hidden sm:inline-flex">{t.topbar.searchShortcut}</Kbd>
           </button>
           <div className="ms-auto flex items-center gap-1">
-            <NotificationsMenu alerts={alerts} />
+            <Suspense fallback={<NotificationsMenu alerts={[]} />}>
+              <AlertsBell alerts={alerts ?? noAlerts} />
+            </Suspense>
             <PreferencesMenu />
             {account ? <UserMenu account={account} /> : null}
           </div>
@@ -137,4 +139,10 @@ export function AppShell({
       <CommandMenu groups={groups} open={searchOpen} onOpenChange={setSearchOpen} />
     </div>
   );
+}
+
+const noAlerts: Promise<Alert[]> = Promise.resolve([]);
+
+function AlertsBell({ alerts }: { alerts: Promise<Alert[]> }) {
+  return <NotificationsMenu alerts={use(alerts)} />;
 }
