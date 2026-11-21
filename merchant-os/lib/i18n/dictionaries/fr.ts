@@ -287,6 +287,7 @@ const fr: Dictionary = {
     write_off: "Sorti du stock",
   },
   errors: {
+    BEFORE_OPENING_DATE: "Cette date est antérieure à la date de départ des comptes (Règles). Aucun mouvement d'argent ne peut être enregistré avant.",
     CAPITAL_BELOW_FLOOR: "Retrait bloqué : la valeur de l'activité (caisse + stock + encours transporteur) est passée sous le plancher de protection du capital. Les ventes doivent d'abord la remonter.",
     RESERVE_PROTECTED: "Ce retrait ferait passer la caisse sous la réserve. La réserve ne se retire pas.",
     GUARD_REASON_REQUIRED: "Cette dépense dépasse une règle financière. Écrivez la raison (10 caractères minimum) : elle sera enregistrée et signalée dans le rapport.",

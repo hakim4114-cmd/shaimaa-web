@@ -284,6 +284,7 @@ const en = {
     write_off: "Written off",
   },
   errors: {
+    BEFORE_OPENING_DATE: "This date is before the accounts start date (Rules). No money movement can be recorded before it.",
     CAPITAL_BELOW_FLOOR: "Withdrawal blocked: the business value (cash + stock + money at the carrier) is below the capital protection floor. Sales must bring it back above first.",
     RESERVE_PROTECTED: "This withdrawal would take cash below the reserve. The reserve is never withdrawn.",
     GUARD_REASON_REQUIRED: "This expense crosses a money rule. Write the reason (at least 10 characters): it is recorded and flagged in the report.",
