@@ -19,7 +19,7 @@ test("the pay page guides the setup and explains the safe amount", async ({ page
   await page.getByRole("button", { name: ar.common.save, exact: true }).click();
   await expect(page.getByText(tp.safeTitle)).toBeVisible();
   await page.getByLabel(tp.amount, { exact: true }).last().fill("5000");
-  await page.getByRole("button", { name: tp.addEntry }).click();
+  await page.getByRole("button", { name: tp.addEntry, exact: true }).click();
   await expect(page.getByText(tp.step1Todo)).toHaveCount(0);
 
   // No pay line chosen yet: nothing is safe to take, and the page says why in words.
