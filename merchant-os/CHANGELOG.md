@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.14.0 — Owner pay page you can read (2026-11-21)
+
+### Changed
+- **Pay and cash page:** a 3-step checklist says what the calculation still needs (money today, your share of the profit, a closed month), with a link to the monthly close, which is otherwise hidden in the essential menu.
+- The safe amount comes with one sentence in plain words using your own numbers (for example: "you earned 2,400 of pay, but free cash is only 2,000: take 2,000 now").
+- Every line of the calculation has a short explanation; the rule reads "never more than you earned, nor more than the money you really have".
+- The pay line choice shows each line's percentage of the profit.
+- No change to the calculation itself.
+
 ## 1.13.0 — Delivery included in the price, or paid by the customer (2026-11-19)
 
 ### Added
