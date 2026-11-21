@@ -96,8 +96,8 @@ export async function getPeriodReport(ctx: Ctx, period: ReportPeriod, today: str
       .eq("organization_id", organizationId)
       .gte("incurred_on", period.from)
       .lte("incurred_on", period.to)
-      .neq("guard_flags", [])
-      .order("incurred_on"),
+      .order("incurred_on")
+      .limit(5000),
     supabase
       .from("cash_entries")
       .select("entry_date, amount_cents, note")
@@ -109,7 +109,7 @@ export async function getPeriodReport(ctx: Ctx, period: ReportPeriod, today: str
       .order("entry_date")
   ]);
   const violations: Violation[] = [
-    ...(flaggedExpenses ?? []).map((e) => ({ date: e.incurred_on, kind: "expense" as const, category: e.category, flags: e.guard_flags, amountCents: e.amount_cents, reason: e.guard_reason })),
+    ...(flaggedExpenses ?? []).filter((e) => (e.guard_flags ?? []).length > 0).map((e) => ({ date: e.incurred_on, kind: "expense" as const, category: e.category, flags: e.guard_flags, amountCents: e.amount_cents, reason: e.guard_reason })),
     ...(overWithdrawals ?? []).map((w) => ({ date: w.entry_date, kind: "withdrawal" as const, category: null, flags: [], amountCents: -w.amount_cents, reason: w.note }))
   ].sort((a, b) => a.date.localeCompare(b.date));
   const stockList = (stockRows ?? []).map((r) => ({
