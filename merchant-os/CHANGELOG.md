@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.17.0 — Loss cap per test, ad budget tied to profit (2026-11-21)
+
+### Added
+- Each campaign has a cumulative loss cap (600 MAD by default, set on the campaign form). Once its result after ads reaches the cap, the bell and Reports say "stop this test", and a new ad expense on it needs a written reason (flagged `loss_cap`).
+- Reports: a "tests" section with each campaign's result since its start, its cap and stop / running; a note when the period ended less than 10 days ago (delivery results not final yet).
+- New order: with a single campaign it is picked by default; with several, a hint asks to pick one so ad cost per product stays right.
+
+### Changed
+- Ad budget: the share of last month's revenue counts only when last month made money after ads; otherwise the fixed amount applies.
+
 ## 1.16.2 — Product verdict after ads (2026-11-21)
 
 ### Fixed

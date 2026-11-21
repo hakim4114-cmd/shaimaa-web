@@ -53,7 +53,7 @@ const ar: Dictionary = {
     sectionsEssential: "الأساسية",
     sectionsAll: "كل الأقسام",
     notificationsAllClear: "والو كيتسناك دابا.",
-    alerts: { obligationsOverdue: "التزامات فات الوقت ديالها", obligationsSoon: "التزامات حالّة فـ 7 أيام", callsDue: "مكالمات خاصك تديرها", deliveryProblems: "مشاكل التوصيل", returnsWaiting: "مرتجعات للاستلام", lowStock: "منتجات المخزون ديالها ناقص", storeOrders: "طلبات المتجر خاصها تصحيح", waitingToShip: "مؤكدة من أكثر من 24 ساعة وباقي ما تصيفطاتش", problems: "مشاكل خاصك تشوفها", capitalBelowFloor: "راس المال تحت خط الحماية: السحب موقوف" }
+    alerts: { obligationsOverdue: "التزامات فات الوقت ديالها", obligationsSoon: "التزامات حالّة فـ 7 أيام", callsDue: "مكالمات خاصك تديرها", deliveryProblems: "مشاكل التوصيل", returnsWaiting: "مرتجعات للاستلام", lowStock: "منتجات المخزون ديالها ناقص", storeOrders: "طلبات المتجر خاصها تصحيح", waitingToShip: "مؤكدة من أكثر من 24 ساعة وباقي ما تصيفطاتش", problems: "مشاكل خاصك تشوفها", capitalBelowFloor: "راس المال تحت خط الحماية: السحب موقوف", campaignLossCap: "تجربة وصلات سقف الخسارة: وقفها" }
   },
   commandCenter: {
     title: "لوحة القيادة",
@@ -672,6 +672,9 @@ const ar: Dictionary = {
     copy: "نسخ"
   },
   money: {
+    lossCap: "سقف الخسارة (درهم)",
+    lossCapHint: "إلا وصلات الخسارة بعد الإشهار لهاد الرقم، التطبيق كيقول ليك وقف.",
+    campaignPick: "اختار الحملة اللي جابت هاد الطلب باش يتحسب الإشهار صحيح.",
     financeTitle: "المالية",
     financeDescription: "الربح والسيولة والمصاريف، محسوبة من الطلبات والتحصيلات والمصاريف.",
     marketingTitle: "التسويق",
@@ -1079,6 +1082,13 @@ const ar: Dictionary = {
     priceShort: "الثمن"
   },
   reports: {
+    testsTitle: "التجارب (الحملات) وسقف الخسارة",
+    testsDescription: "النتيجة ديال كل حملة من البداية، بعد الإشهار. ملي توصل للسقف: وقف التجربة.",
+    colResult: "النتيجة من البداية",
+    colCap: "السقف",
+    stop: "وقف",
+    ok: "مستمرة",
+    incomplete: "المدة باقي ما سالاتش ولا ساليا قريب: نتائج التوصيل ديال الطلبات الأخيرة كتوصل من بعد 5–10 أيام. ما تحكمش دابا.",
     violationsTitle: "تجاوز القواعد المالية",
     violationsDescription: "كل مصروف ولا سحب تجاوز قاعدة، مع السبب اللي تكتب.",
     colDate: "التاريخ",
@@ -1167,7 +1177,8 @@ const ar: Dictionary = {
       flags: {
         reserve: "كينزل الصندوق تحت الاحتياط",
         ad_budget: "كيفوت ميزانية الإشهار ديال هاد الشهر",
-        stock_cap: "شراء سلعة فوق السقف (نسبة من الفلوس الحرة)"
+        stock_cap: "شراء سلعة فوق السقف (نسبة من الفلوس الحرة)",
+        loss_cap: "الحملة وصلات سقف الخسارة ديالها (التجربة خاسرة)"
       }
     },
     capitalTitle: "حماية راس المال",

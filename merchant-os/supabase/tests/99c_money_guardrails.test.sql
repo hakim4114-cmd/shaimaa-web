@@ -96,6 +96,15 @@ insert into public.payables (organization_id, counterparty, category, amount_cen
 select public.pay_payable(:'rent', current_date);
 select tests.eq((select guard_flags from public.expenses where organization_id = :'org' and category = 'rent'), '{}'::text[], 'a paid obligation is not guarded');
 
+-- Cumulative loss cap per campaign (default 600 MAD): 700 of ads with no sale crosses it.
+insert into public.marketing_campaigns (organization_id, name, platform) values (:'org', 'Wallet test', 'meta') returning id as camp \gset
+select tests.eq((select loss_cap_cents from public.marketing_campaigns where id = :'camp'), 60000::bigint, 'a campaign starts with a 600 MAD loss cap');
+insert into public.expenses (organization_id, category, amount_cents, incurred_on, campaign_id, guard_reason) values (:'org', 'advertising', 70000, current_date, :'camp', 'First test week, agreed');
+select tests.eq((select over_cap from public.campaign_loss_status(:'org') where campaign_id = :'camp'), true, 'the campaign lost 700 after ads: over its cap');
+select tests.expect_error(format($$insert into public.expenses (organization_id, category, amount_cents, incurred_on, campaign_id) values (%L, 'advertising', 1000, current_date, %L)$$, :'org', :'camp'), 'GUARD_REASON_REQUIRED');
+insert into public.expenses (organization_id, category, amount_cents, incurred_on, campaign_id, guard_reason) values (:'org', 'advertising', 1000, current_date, :'camp', 'Last try with a new picture');
+select tests.eq((select 'loss_cap' = any(guard_flags) from public.expenses where campaign_id = :'camp' and amount_cents = 1000), true, 'more ads on a test over its cap: flagged loss_cap');
+
 -- Others: the finance member is guarded the same way; an outsider learns nothing.
 select tests.login(:'finance');
 select tests.expect_error(format($$insert into public.expenses (organization_id, category, amount_cents, incurred_on) values (%L, 'packaging', 10000, current_date)$$, :'org'), 'GUARD_REASON_REQUIRED');

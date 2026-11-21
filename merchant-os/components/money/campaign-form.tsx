@@ -19,6 +19,7 @@ export function CampaignForm({ platforms, today }: { platforms: readonly Marketi
   const [name, setName] = useState("");
   const [platform, setPlatform] = useState<MarketingPlatform>("meta");
   const [startsOn, setStartsOn] = useState(today);
+  const [lossCap, setLossCap] = useState("600");
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<AppErrorCode | null>(null);
   return (
@@ -28,7 +29,7 @@ export function CampaignForm({ platforms, today }: { platforms: readonly Marketi
         event.preventDefault();
         setError(null);
         startTransition(async () => {
-          const result = await createCampaign({ name, platform, startsOn: startsOn || null });
+          const result = await createCampaign({ name, platform, startsOn: startsOn || null, lossCap });
           if (result.error) {
             setError(result.error);
             return;
@@ -55,6 +56,9 @@ export function CampaignForm({ platforms, today }: { platforms: readonly Marketi
         </Field>
         <Field label={tm.startsOn} htmlFor={`${id}-start`}>
           <Input id={`${id}-start`} type="date" dir="ltr" value={startsOn} onChange={(e) => setStartsOn(e.target.value)} />
+        </Field>
+        <Field label={tm.lossCap} htmlFor={`${id}-cap`} hint={tm.lossCapHint}>
+          <Input id={`${id}-cap`} dir="ltr" inputMode="decimal" value={lossCap} onChange={(e) => setLossCap(e.target.value)} />
         </Field>
         <Button type="submit" disabled={pending || !name.trim()}>
           {tm.addCampaign}

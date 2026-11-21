@@ -867,6 +867,7 @@ export type Database = {
       }
       marketing_campaigns: {
         Row: {
+          loss_cap_cents: number
           created_at: string
           data_source: Database["public"]["Enums"]["data_source"]
           ends_on: string | null
@@ -879,6 +880,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          loss_cap_cents?: number
           created_at?: string
           data_source?: Database["public"]["Enums"]["data_source"]
           ends_on?: string | null
@@ -891,6 +893,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          loss_cap_cents?: number
           created_at?: string
           data_source?: Database["public"]["Enums"]["data_source"]
           ends_on?: string | null
@@ -2220,6 +2223,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      campaign_loss_status: {
+        Args: { p_organization_id: string }
+        Returns: { campaign_id: string; name: string; profit_cents: number; loss_cap_cents: number; over_cap: boolean }[]
+      }
       capital_status: {
         Args: { p_organization_id: string }
         Returns: Json
