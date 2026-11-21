@@ -15,7 +15,7 @@ test("an ad expense over the monthly budget needs a reason and is flagged", asyn
   await page.getByLabel(tm.amount, { exact: true }).fill("2500");
   await page.getByRole("button", { name: tm.addExpense }).click();
 
-  // Default budget: 2,000 MAD a month while last month had no revenue.
+  // Default budget: 15 % of the capital (5,000 put in → 750 MAD) while last month made no profit.
   await expect(page.getByText(tp.guard.crossing)).toBeVisible();
   await expect(page.getByText(tp.guard.flags.ad_budget)).toBeVisible();
   const record = page.getByRole("button", { name: tp.guard.recordAnyway });

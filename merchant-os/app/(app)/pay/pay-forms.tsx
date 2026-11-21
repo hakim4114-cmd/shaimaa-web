@@ -71,7 +71,10 @@ export function WithdrawForm({ safeCents, today }: { safeCents: number; today: s
   );
 }
 
-type Settings = { openingDate: string; reserveFloor: string; ownerFundName: string; capitalFloorPct: string; adBudget: string; adBudgetPct: string; stockPct: string };
+type Settings = {
+  openingDate: string; reserveFloor: string; ownerFundName: string; capitalFloorPct: string; adBudget: string; adBudgetPct: string; stockPct: string;
+  reservePct: string; adCapitalPct: string; lossCapPct: string;
+};
 
 export function SettingsForm({ initial, funds }: { initial: Settings; funds: { name: string; percent: number }[] }) {
   const { t } = useI18n();
@@ -106,6 +109,15 @@ export function SettingsForm({ initial, funds }: { initial: Settings; funds: { n
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           <Field label={tp.capitalFloorPct} htmlFor={`${id}-cf`} hint={tp.capitalFloorPctHint}>
             <Input id={`${id}-cf`} dir="ltr" inputMode="numeric" value={v.capitalFloorPct} onChange={(e) => setV({ ...v, capitalFloorPct: e.target.value })} />
+          </Field>
+          <Field label={tp.reservePct} htmlFor={`${id}-rp`} hint={tp.reservePctHint}>
+            <Input id={`${id}-rp`} dir="ltr" inputMode="numeric" value={v.reservePct} onChange={(e) => setV({ ...v, reservePct: e.target.value })} />
+          </Field>
+          <Field label={tp.adCapitalPct} htmlFor={`${id}-acp`} hint={tp.adCapitalPctHint}>
+            <Input id={`${id}-acp`} dir="ltr" inputMode="numeric" value={v.adCapitalPct} onChange={(e) => setV({ ...v, adCapitalPct: e.target.value })} />
+          </Field>
+          <Field label={tp.lossCapPct} htmlFor={`${id}-lcp`} hint={tp.lossCapPctHint}>
+            <Input id={`${id}-lcp`} dir="ltr" inputMode="numeric" value={v.lossCapPct} onChange={(e) => setV({ ...v, lossCapPct: e.target.value })} />
           </Field>
           <Field label={tp.adBudget} htmlFor={`${id}-ab`} hint={tp.adBudgetHint}>
             <Input id={`${id}-ab`} dir="ltr" inputMode="decimal" value={v.adBudget} onChange={(e) => setV({ ...v, adBudget: e.target.value })} />

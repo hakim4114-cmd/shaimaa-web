@@ -260,10 +260,13 @@ export type Database = {
       }
       cash_settings: {
         Row: {
-          ad_budget_cents: number
+          ad_budget_cents: number | null
           ad_budget_revenue_pct: number
           capital_floor_pct: number
           stock_cash_pct: number
+          reserve_pct: number
+          ad_budget_capital_pct: number
+          loss_cap_pct: number
           opening_date: string
           organization_id: string
           owner_fund_name: string
@@ -271,10 +274,13 @@ export type Database = {
           updated_at: string
         }
         Insert: {
-          ad_budget_cents?: number
+          ad_budget_cents?: number | null
           ad_budget_revenue_pct?: number
           capital_floor_pct?: number
           stock_cash_pct?: number
+          reserve_pct?: number
+          ad_budget_capital_pct?: number
+          loss_cap_pct?: number
           opening_date?: string
           organization_id: string
           owner_fund_name?: string
@@ -282,10 +288,13 @@ export type Database = {
           updated_at?: string
         }
         Update: {
-          ad_budget_cents?: number
+          ad_budget_cents?: number | null
           ad_budget_revenue_pct?: number
           capital_floor_pct?: number
           stock_cash_pct?: number
+          reserve_pct?: number
+          ad_budget_capital_pct?: number
+          loss_cap_pct?: number
           opening_date?: string
           organization_id?: string
           owner_fund_name?: string
@@ -867,7 +876,7 @@ export type Database = {
       }
       marketing_campaigns: {
         Row: {
-          loss_cap_cents: number
+          loss_cap_cents: number | null
           created_at: string
           data_source: Database["public"]["Enums"]["data_source"]
           ends_on: string | null
@@ -880,7 +889,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
-          loss_cap_cents?: number
+          loss_cap_cents?: number | null
           created_at?: string
           data_source?: Database["public"]["Enums"]["data_source"]
           ends_on?: string | null
@@ -893,7 +902,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
-          loss_cap_cents?: number
+          loss_cap_cents?: number | null
           created_at?: string
           data_source?: Database["public"]["Enums"]["data_source"]
           ends_on?: string | null

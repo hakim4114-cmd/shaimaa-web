@@ -1,6 +1,6 @@
 # Scenario review: money rules and product tests
 
-Status of each real-life situation that can make the numbers wrong, checked against the code on 2026-11-21 (1.17.2). Run this list again before any change to money, stock, ads or reports, and add new situations as they show up.
+Status of each real-life situation that can make the numbers wrong, checked against the code on 2026-11-21 (1.18.0). Run this list again before any change to money, stock, ads or reports, and add new situations as they show up.
 
 Legend: **OK** handled by the app · **FIXED** gap found in this review and fixed · **RULE** the app cannot see it, a working habit covers it · **OPEN** known, not handled yet.
 
@@ -45,6 +45,8 @@ Legend: **OK** handled by the app · **FIXED** gap found in this review and fixe
 | # | Situation | What could go wrong | Status |
 |---|---|---|---|
 | D1 | Rules set before the money arrives | — | **OK**: nothing is guarded until the opening balance and the start date are set (Pay page checklist) |
+| D7 | Another amount of capital (3,000 or 300,000) | Fixed defaults (2,000 ads, 600 cap) fit only one amount | **FIXED** 1.18.0: reserve, ad budget and loss cap are shares of the capital; they grow when money is put in |
+| D8 | A campaign created before any capital is entered | It had a 600 MAD cap and the no-campaign rule while nothing else was guarded | **FIXED** 1.18.0: the cap is 10 % of the capital, so zero until money is entered. The no-campaign rule still applies once a campaign runs |
 | D2 | Personal spending paid from the business cash | Cash in the app is higher than in reality | **RULE**: record it as an owner withdrawal |
 | D3 | Stock bought on credit | — | **OK**: unpaid obligations are subtracted from the business value |
 | D4 | An expense recorded twice, or with a wrong amount | — | **OK**: delete it and record it again (it passes the guard again) |
