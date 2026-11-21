@@ -18,3 +18,15 @@ export async function setMockStatus(code: string, status: string) {
   });
   if (!response.ok) throw new Error(`Mock parcel ${code} not found`);
 }
+
+export type MockInvoice = { code: string; status: string; amount: number; date: string; items: Record<string, unknown>[] };
+
+/** Publishes a COD payout invoice at the mock, as Sendit would. */
+export async function addMockInvoice(invoice: MockInvoice) {
+  const response = await fetch(`${senditMockUrl}/__control/invoices`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(invoice)
+  });
+  if (!response.ok) throw new Error("Could not add the mock invoice");
+}

@@ -1,6 +1,6 @@
 # QA plan: end-to-end tests, responsive checks, security pass (Phases 6–7)
 
-Status: **in progress**. Steps 1–2 done (PRs #38, #40); step 3a done (Sendit mock and shipping, PR #41); step 3b in progress (returns, store intake, delivery pricing). J7 (cash from Sendit invoices) still to write: the mock needs the invoice endpoints.
+Status: **in progress**. Steps 1–2 done (PRs #38, #40); step 3a done (Sendit mock and shipping, PR #41); step 3b in progress (returns, store intake, delivery pricing). J7 (cash from Sendit invoices) added with invoice endpoints in the mock.
 
 ## Why
 
