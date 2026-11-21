@@ -69,6 +69,13 @@ Each phase starts only when the previous one is used for real. Order inside a ph
 2. Shared risk signals across merchants (refusal history by phone) — **only after legal review**: it is personal data shared between companies; hashed numbers and consent are not automatically enough under 09-08 **[likely]**.
 3. Mobile app wrapper if the PWA is not enough.
 
+### Decided to wait for real orders (owner decisions, 2026-11-21)
+Build only when the first 30–50 real orders show the need and the exact shape:
+1. **Packs and upsell.** Until then: a pack is several lines on one order plus the order discount; an upsell is added by editing the order during the confirmation call, before marking it confirmed (orders lock at confirmation). Later, if packs sell: a pack product with a fixed price whose stock moves from its pieces, upsell suggestions on the confirmation screen, and an acceptance report (offered, accepted, added order value).
+2. **Flexible variants.** After the first models are chosen: a size × colour grid to receive stock in one go (today each variant is received alone), size presets (S–XXL, waist 38–46, lengths), price per size, a picture per colour, adding a value without regenerating.
+3. **Profit per product, campaign and niche.** The data is already recorded (order lines with unit cost, carrier cost, refusals, campaign on orders and ad expenses); the report waits for real numbers.
+4. **Pay percentage on the pay page** instead of the monthly close (needs a migration).
+
 ## 4. Things not to do
 
 - Auto-confirm every order by WhatsApp button: fewer calls, but more refusals for risky orders **[guess, to measure]**.
