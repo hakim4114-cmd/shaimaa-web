@@ -52,3 +52,9 @@ const unanswered: readonly CallOutcome[] = ["no_answer", "busy", "unreachable"];
 export function isGivenUp(row: { callAttempts: number; lastCallOutcome: CallOutcome | null }): boolean {
   return row.callAttempts >= maxUnansweredCalls && row.lastCallOutcome !== null && unanswered.includes(row.lastCallOutcome);
 }
+
+/**
+ * PostgREST filter for orders still in the call queue (not given up). The same rule as
+ * isGivenUp, so the bell, the command center and call mode show the same count.
+ */
+export const stillCallableFilter = `call_attempts.lt.${maxUnansweredCalls},last_call_outcome.is.null,last_call_outcome.not.in.(${unanswered.join(",")})`;

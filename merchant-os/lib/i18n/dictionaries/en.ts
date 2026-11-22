@@ -386,7 +386,8 @@ const en = {
     left: "Left",
     confirmedToday: "Confirmed today",
     noAnswerToday: "No answer today",
-    rateToday: "Confirmation rate today",
+    rateToday: "Today's call result",
+    rateHint: "Of the calls decided today (confirmed, cancelled, wrong number). The period's confirmation rate is on the command center.",
     emptyTitle: "No order waiting for a call",
     emptyDescription: "New orders show up here.",
     queue: "Queue",
@@ -622,7 +623,7 @@ const en = {
   },
   shipping: {
     title: "Shipping",
-    description: "Parcels sent with Sendit: labels, pickup and delivery follow-up.",
+    description: "Parcel logistics: labels, pickup, cancelling. To reach a customer whose parcel is on the way, use \"Delivery follow-up\".",
     views: {
       to_pickup: "To pick up",
       in_transit: "On the way",

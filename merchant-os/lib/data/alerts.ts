@@ -1,4 +1,5 @@
 import "server-only";
+import { stillCallableFilter } from "@/lib/orders/calls";
 import { businessDay } from "@/lib/datetime";
 import type { requireOrganization } from "./context";
 
@@ -21,7 +22,7 @@ export async function getAlerts({ supabase, organizationId, can }: Ctx): Promise
   const queries = await Promise.all([
     can.seeMoney ? supabase.from("payables").select("id", head).eq("organization_id", organizationId).is("paid_on", null).lt("due_on", today) : null,
     can.seeMoney ? supabase.from("payables").select("id", head).eq("organization_id", organizationId).is("paid_on", null).gte("due_on", today).lte("due_on", addDays(today, 7)) : null,
-    can.manageOrders ? supabase.from("orders").select("id", head).eq("organization_id", organizationId).in("status", ["new", "confirmation_pending"]).or(`next_call_at.is.null,next_call_at.lte.${nowIso}`) : null,
+    can.manageOrders ? supabase.from("orders").select("id", head).eq("organization_id", organizationId).in("status", ["new", "confirmation_pending"]).or(`and(or(next_call_at.is.null,next_call_at.lte.${nowIso}),or(${stillCallableFilter}))`) : null,
     supabase.from("shipments").select("id", head).eq("organization_id", organizationId).eq("status", "failed_attempt"),
     supabase.from("returns").select("id", head).eq("organization_id", organizationId).eq("status", "awaiting_receipt"),
     can.manageOrders ? supabase.from("external_orders").select("id", head).eq("organization_id", organizationId).eq("status", "needs_attention") : null,
@@ -59,7 +60,7 @@ export async function getAlerts({ supabase, organizationId, can }: Ctx): Promise
     { key: "obligationsSoon", count: count(queries[1]), href: "/pay", tone: "warning" },
     { key: "problems", count: count(queries[8]), href: "/problems", tone: "danger" },
     { key: "storeOrders", count: count(queries[5]), href: "/orders/inbox", tone: "danger" },
-    { key: "callsDue", count: count(queries[2]), href: "/orders?view=to_call", tone: "info" },
+    { key: "callsDue", count: count(queries[2]), href: can.manageOrders ? "/calls" : "/orders?view=to_call", tone: "info" },
     { key: "waitingToShip", count: count(queries[7]), href: "/orders?view=confirmed", tone: "warning" },
     { key: "deliveryProblems", count: count(queries[3]), href: "/tracking", tone: "warning" },
     { key: "returnsWaiting", count: count(queries[4]), href: "/returns", tone: "info" },

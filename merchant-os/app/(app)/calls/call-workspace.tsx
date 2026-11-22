@@ -106,9 +106,9 @@ export function CallWorkspace({
           { label: tc.left, value: String(dueCount), tone: "" },
           { label: tc.confirmedToday, value: String(stats.confirmedToday), tone: "text-success" },
           { label: tc.noAnswerToday, value: String(stats.noAnswerToday), tone: "text-muted-foreground" },
-          { label: tc.rateToday, value: stats.rate === null ? "—" : `${Math.round(stats.rate * 100)}%`, tone: "" }
+          { label: tc.rateToday, value: stats.rate === null ? "—" : `${Math.round(stats.rate * 100)}%`, tone: "", hint: tc.rateHint }
         ].map((s) => (
-          <div key={s.label} className="rounded-lg border border-border bg-surface px-3 py-2 shadow-card">
+          <div key={s.label} title={"hint" in s ? s.hint : undefined} className="rounded-lg border border-border bg-surface px-3 py-2 shadow-card">
             <dt className="text-xs text-muted-foreground">{s.label}</dt>
             <dd className={cn("tabular text-xl font-bold", s.tone)}>{s.value}</dd>
           </div>

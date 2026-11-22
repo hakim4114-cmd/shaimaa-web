@@ -389,7 +389,8 @@ const fr: Dictionary = {
     left: "Restantes",
     confirmedToday: "Confirmées aujourd'hui",
     noAnswerToday: "Sans réponse aujourd'hui",
-    rateToday: "Taux du jour",
+    rateToday: "Résultat des appels du jour",
+    rateHint: "Parmi les appels décidés aujourd'hui (confirmé, annulé, faux numéro). Le taux de confirmation de la période est sur le tableau de bord.",
     emptyTitle: "Aucune commande à appeler",
     emptyDescription: "Les nouvelles commandes apparaissent ici.",
     queue: "File",
@@ -625,7 +626,7 @@ const fr: Dictionary = {
   },
   shipping: {
     title: "Expédition",
-    description: "Colis envoyés avec Sendit : étiquettes, ramassage et suivi de livraison.",
+    description: "La logistique des colis : bordereaux, ramassage, annulation. Pour joindre un client dont le colis est en route, utilisez « Suivi livraison ».",
     views: {
       to_pickup: "À ramasser",
       in_transit: "En route",
