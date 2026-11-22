@@ -12,6 +12,7 @@ import { requireOrganization } from "@/lib/data/context";
 import { interpolate } from "@/lib/i18n/dictionaries";
 import { getI18n } from "@/lib/i18n/server";
 import { formatMoney } from "@/lib/money";
+import { cn } from "@/lib/utils";
 
 const statuses: ProductStatus[] = ["active", "draft", "archived"];
 const statusTone = { active: "success", draft: "neutral", archived: "warning" } as const;
@@ -60,7 +61,8 @@ export default async function ProductsPage({ searchParams }: { searchParams: Pro
             </option>
           ))}
         </NativeSelect>
-        <button type="submit" className={buttonVariants({ variant: "secondary" })}>
+        {/* Phone: Enter on the keyboard searches; a lone button on its own line looked broken. */}
+        <button type="submit" className={cn(buttonVariants({ variant: "secondary" }), "hidden sm:inline-flex")}>
           <Search /> <span className="sr-only sm:not-sr-only">{t.topbar.search.replace("…", "")}</span>
         </button>
       </form>
