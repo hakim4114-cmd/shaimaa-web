@@ -1,4 +1,4 @@
-import { Banknote, PhoneCall, Boxes, Calculator, CalendarCheck, CalendarRange, ChartColumn, HandCoins, LayoutDashboard, Megaphone, Package, Palette, Settings, TrendingUp, Truck, Undo2, Users, Wallet, type LucideIcon } from "lucide-react";
+import { Banknote, PackageSearch, PhoneCall, Boxes, Calculator, CalendarCheck, CalendarRange, ChartColumn, HandCoins, LayoutDashboard, Megaphone, Package, Palette, Settings, TrendingUp, Truck, Undo2, Users, Wallet, type LucideIcon } from "lucide-react";
 import type { Dictionary } from "@/lib/i18n/dictionaries";
 
 type NavLabelKey = Exclude<keyof Dictionary["nav"], "groups" | "comingInPhase" | "collapse" | "expand" | "openMenu" | "closeMenu">;
@@ -28,6 +28,7 @@ export const navigation: NavGroup[] = [
       { key: "calls", icon: PhoneCall, href: "/calls" },
       { key: "customers", icon: Users, href: "/customers", advanced: true },
       { key: "shipping", icon: Truck, href: "/shipping" },
+      { key: "tracking", icon: PackageSearch, href: "/tracking" },
       { key: "returns", icon: Undo2, href: "/returns" }
     ]
   },

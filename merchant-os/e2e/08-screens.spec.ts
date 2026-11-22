@@ -13,7 +13,7 @@ const viewports = [
   { name: "desktop", width: 1440, height: 900 }
 ] as const;
 
-const pages = ["/", "/orders", "/orders/new", "/order", "/calls", "/products", "/inventory", "/shipping", "/returns", "/cash", "/pay", "/settings", "/problems"];
+const pages = ["/", "/orders", "/orders/new", "/order", "/calls", "/tracking", "/products", "/inventory", "/shipping", "/returns", "/cash", "/pay", "/settings", "/problems"];
 
 async function latestOrderPath(): Promise<string> {
   const orgId = await organizationId(owner.slug);

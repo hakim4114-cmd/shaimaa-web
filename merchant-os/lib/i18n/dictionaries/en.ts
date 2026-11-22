@@ -8,6 +8,7 @@ const en = {
     commandCenter: "Command center",
     orders: "Orders",
     calls: "Calls",
+    tracking: "Delivery follow-up",
     shipping: "Shipping",
     returns: "Returns",
     customers: "Customers",
@@ -352,7 +353,34 @@ const en = {
     KEYS_INCOMPLETE: "Enter both Sendit keys (public and secret), copied in full.",
     UNKNOWN: "Something went wrong. Try again.",
   },
+  tracking: {
+    title: "Delivery follow-up",
+    description: "Parcels with the courier, missed deliveries first. One tap opens WhatsApp with the message that fits.",
+    missed: "Missed delivery",
+    today: "Arriving today",
+    onTheWay: "On the way",
+    messageLanguage: "Message language",
+    emptyTitle: "No parcel with the courier",
+    emptyDescription: "Parcels show up here once picked up.",
+    shippedDays: "Shipped {days} days ago",
+    unreachable: "Courier could not reach them {count} times",
+    call: "Call",
+    note: "Note",
+    notePlaceholder: "e.g. deliver on Saturday",
+    saveNote: "Save",
+    notePrefix: "Follow-up:",
+    noteSaved: "Note added to the order",
+    status: {
+      failed_attempt: "Missed delivery",
+      out_for_delivery: "Arriving today",
+      in_transit: "On the way",
+      picked_up: "Picked up"
+    }
+  },
   calls: {
+    givenUpTitle: "{count} orders unanswered after 5 calls: out of the queue",
+    givenUpReason: "No answer after {count} calls",
+    tryAgain: "Try again",
     title: "Calls",
     description: "The confirmation queue, oldest first. After each outcome the next order opens by itself.",
     left: "Left",
@@ -519,6 +547,8 @@ const en = {
       confirmed: "Order confirmed",
       shipped: "Parcel shipped (tracking)",
       deliveryReminder: "Delivery reminder",
+      outForDelivery: "Arriving today",
+      failedAttempt: "Courier could not reach you",
       cancelled: "Order cancelled"
     },
     languages: {

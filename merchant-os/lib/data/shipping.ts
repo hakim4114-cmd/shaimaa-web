@@ -128,3 +128,26 @@ export async function countShipments(supabase: Client, organizationId: string) {
   }
   return counts;
 }
+
+export type TrackedShipment = ShipmentRow & { phone: string | null; orderStatus: string };
+
+type TrackedContact = { full_name: string; phone: string };
+type RawTracked = Omit<RawShipment, "order"> & { order: { order_number: string; city: string; status: string; contact?: TrackedContact | TrackedContact[] | null } | null };
+
+/** Parcels with the courier, for the delivery follow-up page (with the customer's phone). */
+export async function listTrackedShipments(supabase: Client, organizationId: string, statuses: readonly ShipmentStatus[]): Promise<TrackedShipment[]> {
+  const select = `${shipmentSelect}, order:orders(order_number, city, status, contact:order_contacts(full_name, phone))`;
+  const { data, error } = await supabase
+    .from("shipments")
+    .select(select)
+    .eq("organization_id", organizationId)
+    .in("status", [...statuses])
+    .order("created_at", { ascending: true })
+    .limit(300)
+    .overrideTypes<RawTracked[], { merge: false }>();
+  if (error) throw new Error("SHIPMENTS_UNAVAILABLE");
+  return (data ?? []).map((raw) => {
+    const contact = Array.isArray(raw.order?.contact) ? raw.order?.contact[0] : raw.order?.contact;
+    return { ...toRow(raw), phone: contact?.phone ?? null, orderStatus: raw.order?.status ?? "" };
+  });
+}

@@ -29,6 +29,7 @@ Legend: **OK** handled by the app · **FIXED** gap found in this review and fixe
 | B5 | Exchange | — | **OK**: counted as delivered; both parcels' carrier costs are counted |
 | B6 | A product sold without a cost | Its pieces count as free: margin and test results look too good | **FIXED** 1.17.2: the tests list shows how many lines have no cost. **RULE**: never sell a product without a cost |
 | B7 | The customer keeps only part of the order | The app has no partial delivery | **OPEN**: record it as an exchange or edit the order before delivery |
+| B8 | A customer never answers | The order stays in the call queue for ever | **FIXED** 1.21.0: after 5 unanswered calls it leaves the queue, with try again or cancel |
 
 ## Delivery, refusals and returns
 
@@ -40,6 +41,8 @@ Legend: **OK** handled by the app · **FIXED** gap found in this review and fixe
 | C4 | Orders still on the way when the cap is reached | Ads are counted when paid, revenue only when delivered: "stop" can come too early | **FIXED** 1.17.1: "pause ads and wait" while the pending orders could bring it back (best case, carrier cost included since 1.17.2) |
 | C5 | Sendit pays late or not at all | The money at the carrier counts in the business value | **FIXED** 1.17.2: the bell warns about orders delivered over 7 days ago and still not paid |
 | C6 | The carrier invoice differs from the estimated fee | — | **OK**: Sendit invoices are recorded and reconciled on the cash page |
+| C7 | The courier could not reach the customer | Without a call the parcel goes back: carrier cost lost, no sale | **FIXED** 1.21.0: Delivery follow-up lists missed deliveries first, with a WhatsApp message ready. **RULE**: go through it every morning |
+| C8 | The customer asks for a later delivery day | No scheduled delivery date | **OPEN**: write it as a note on the order and tell the courier |
 
 ## Capital, cash and owner pay
 
