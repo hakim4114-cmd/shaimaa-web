@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.22.1 — Pay and cash, folded (2026-11-22)
+
+### Changed
+- Pay and cash opens on the one number the owner comes for: how much can be withdrawn safely, with its explanation and the rule. "How this amount is worked out" folds under it.
+- Capital protection, obligations, cash movements and the rules fold, each with its state in one line (above or below the floor and the business value, obligations due within 30 days, last movement, the rule percentages).
+- A section opens by itself when it needs attention: capital below the floor, an overdue obligation, no opening balance yet, rules not set. A link can open one section (`/pay?section=rules`).
+- The withdrawal form stays in view.
+
 ## 1.22.0 — Made for the phone (2026-11-22)
 
 ### Changed

@@ -19,20 +19,20 @@ export function CollapsibleCard({
   icon: LucideIcon;
   title: string;
   status?: string;
-  tone?: "neutral" | "ok" | "todo";
+  tone?: "neutral" | "ok" | "todo" | "danger";
   defaultOpen?: boolean;
   children: ReactNode;
 }) {
   return (
-    <details id={id} open={defaultOpen} className="group rounded-xl border border-border bg-surface shadow-card [&_summary::-webkit-details-marker]:hidden">
+    <details id={id} open={defaultOpen} className={cn("group rounded-xl border bg-surface shadow-card [&_summary::-webkit-details-marker]:hidden", tone === "danger" ? "border-danger/50" : "border-border")}>
       <summary className="flex min-h-16 cursor-pointer list-none items-center gap-3 px-4 py-3 sm:px-5">
         <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-accent-soft text-accent-soft-foreground">
           <Icon className="size-5" aria-hidden />
         </span>
         <span className="flex min-w-0 flex-1 flex-col">
-          <span className="font-semibold text-foreground">{title}</span>
+          <h2 className="text-base font-semibold text-foreground">{title}</h2>
           {status ? (
-            <span className={cn("truncate text-xs", tone === "ok" ? "text-success" : tone === "todo" ? "text-warning" : "text-muted-foreground")}>{status}</span>
+            <span className={cn("truncate text-xs", tone === "ok" ? "text-success" : tone === "todo" ? "text-warning" : tone === "danger" ? "font-semibold text-danger" : "text-muted-foreground")}>{status}</span>
           ) : null}
         </span>
         <ChevronDown className="size-5 shrink-0 text-muted-foreground transition-transform group-open:rotate-180" aria-hidden />
