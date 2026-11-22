@@ -384,6 +384,7 @@ const en = {
       picked_up: "Picked up"
     }
   },
+  settingsPage: { storesStatus: "{active} active of {total}", storesNone: "No store linked", senditReady: "Connected · manual sending", senditAuto: "Connected · automatic sending on confirmation", senditTodo: "Not connected yet: enter the keys", ratesPaid: "Customer pays delivery · {count} of {total} cities priced", ratesIncluded: "Delivery included · {count} of {total} cities priced", assistantStatus: "{count} links" },
   calls: {
     givenUpTitle: "{count} orders unanswered after 5 calls: out of the queue",
     givenUpReason: "No answer after {count} calls",

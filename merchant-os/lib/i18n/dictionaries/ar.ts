@@ -386,6 +386,7 @@ const ar: Dictionary = {
       picked_up: "خداها الرقاص"
     }
   },
+  settingsPage: { storesStatus: "{active} خدامين من {total}", storesNone: "حتى متجر ما مربوط", senditReady: "مربوط · الإرسال باليد", senditAuto: "مربوط · الإرسال أوتوماتيكي ملي يتأكد الطلب", senditTodo: "باقي ما مربوطش: دخّل المفاتيح", ratesPaid: "الزبون كيخلص التوصيل · {count} من {total} مدينة عندها ثمن", ratesIncluded: "التوصيل داخل ف الثمن · {count} من {total} مدينة عندها ثمن", assistantStatus: "{count} روابط" },
   calls: {
     givenUpTitle: "{count} طلبات ما جاوبوش 5 مرات: خرجو من الطابور",
     givenUpReason: "ما جاوبش {count} مرات",

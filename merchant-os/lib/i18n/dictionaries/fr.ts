@@ -387,6 +387,7 @@ const fr: Dictionary = {
       picked_up: "Ramassé"
     }
   },
+  settingsPage: { storesStatus: "{active} actives sur {total}", storesNone: "Aucune boutique liée", senditReady: "Connecté · envoi manuel", senditAuto: "Connecté · envoi automatique à la confirmation", senditTodo: "Pas encore connecté : saisissez les clés", ratesPaid: "Livraison payée par le client · {count} villes sur {total} avec un tarif", ratesIncluded: "Livraison incluse · {count} villes sur {total} avec un tarif", assistantStatus: "{count} liens" },
   calls: {
     givenUpTitle: "{count} commandes sans réponse après 5 appels : sorties de la file",
     givenUpReason: "Sans réponse après {count} appels",

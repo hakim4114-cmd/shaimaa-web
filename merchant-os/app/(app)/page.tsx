@@ -37,8 +37,8 @@ export default async function CommandCenterPage({ searchParams }: { searchParams
     const tw = t.workspace;
     const readySteps: { label: string; hint: string; done: boolean; href?: string }[] = [
       { label: tw.stepCatalog, hint: tw.stepCatalogHint, done: (costed.count ?? 0) > 0, href: "/products" },
-      { label: tw.stepRates, hint: tw.stepRatesHint, done: (rates.count ?? 0) > 0, href: "/settings" },
-      { label: tw.stepSendit, hint: tw.stepSenditHint, done: Boolean(provider.data?.credentials_set) && pickupSet, href: "/settings" },
+      { label: tw.stepRates, hint: tw.stepRatesHint, done: (rates.count ?? 0) > 0, href: "/settings?section=rates" },
+      { label: tw.stepSendit, hint: tw.stepSenditHint, done: Boolean(provider.data?.credentials_set) && pickupSet, href: "/settings?section=sendit" },
       { label: tw.stepCash, hint: tw.stepCashHint, done: (cash.count ?? 0) > 0, href: "/pay" },
       { label: tw.stepOrders, hint: tw.stepOrdersHint, done: (orders.count ?? 0) > 0, href: "/orders/new" },
       { label: tw.stepShip, hint: tw.stepShipHint, done: (parcels.count ?? 0) > 0, href: "/orders?view=confirmed" }

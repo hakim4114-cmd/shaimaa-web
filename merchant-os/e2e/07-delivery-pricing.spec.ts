@@ -20,7 +20,7 @@ test("delivery included in the price, or paid by the customer", async ({ page })
   expect(error).toBeNull();
 
   await signIn(page, owner);
-  await page.goto("/settings");
+  await page.goto("/settings?section=rates");
   await page.getByRole("radio", { name: ts.deliveryPricingIncluded }).check();
   await expect(page.getByText(ts.deliveryPricingSaved)).toBeVisible();
   await expect.poll(async () => (await admin.from("organizations").select("delivery_included").eq("id", orgId).single()).data?.delivery_included).toBe(true);
@@ -45,7 +45,7 @@ test("delivery included in the price, or paid by the customer", async ({ page })
   expect(order).toEqual({ shipping_fee_cents: 0, cod_amount_cents: 19900 });
 
   // Back to the default: the customer pays delivery.
-  await page.goto("/settings");
+  await page.goto("/settings?section=rates");
   await page.getByRole("radio", { name: ts.deliveryPricingPaid }).check();
   await expect.poll(async () => (await admin.from("organizations").select("delivery_included").eq("id", orgId).single()).data?.delivery_included).toBe(false);
 });

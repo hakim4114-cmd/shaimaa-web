@@ -8,6 +8,7 @@
 - Products on a phone: one card per product (photo, stock, price, status) instead of a table that cut the price.
 - Orders on a phone: one clear "New order" button; the status tabs fade at the edge instead of cutting a word.
 - Call mode: city, address and campaign in one compact block.
+- Settings: each section (stores, Sendit, delivery prices by city, assistant links) folds, with its state in one line ("connected, automatic sending", "38 of 120 cities priced"). Sendit opens by itself until its keys are set; a link can open one section (`/settings?section=rates`).
 - Problems: what happened and what to do in plain words; the technical message is folded under "Technical details".
 
 ## 1.21.1 — One number, one definition (2026-11-22)

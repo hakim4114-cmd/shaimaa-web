@@ -13,7 +13,7 @@ test.describe.serial("online store", () => {
 
   test("the owner connects a Shopify store", async ({ page }) => {
     await signIn(page, owner);
-    await page.goto("/settings");
+    await page.goto("/settings?section=stores");
     await page.getByRole("button", { name: st.add }).click();
     // The labels wrap their fields (and the select's options), so find the fields by role and name.
     await page.getByRole("combobox", { name: st.platform }).selectOption("shopify");
