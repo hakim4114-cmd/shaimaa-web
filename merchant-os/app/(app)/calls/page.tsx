@@ -4,6 +4,7 @@ import { requireOrganization } from "@/lib/data/context";
 import { listCampaigns } from "@/lib/data/money";
 import { getCustomerHistory, getOrder, listOrders } from "@/lib/data/orders";
 import { businessDay } from "@/lib/datetime";
+import { isGivenUp } from "@/lib/orders/calls";
 import { getI18n } from "@/lib/i18n/server";
 import { CallWorkspace, type QueueItem } from "./call-workspace";
 
@@ -31,13 +32,17 @@ export default async function CallsPage({ searchParams }: { searchParams: Promis
 
   const clock = readClock();
   const since = clock.since;
-  const [queue, attempts, campaigns] = await Promise.all([
+  const [allQueue, attempts, campaigns] = await Promise.all([
     listOrders(supabase, organizationId, { view: "to_call", withContacts: can.seeContacts }),
     supabase.from("order_call_attempts").select("outcome, created_at").eq("organization_id", organizationId).gte("created_at", since),
     listCampaigns(supabase, organizationId)
   ]);
 
   const today = clock.today;
+  // Orders that did not answer five times leave the queue: call mode offers to cancel them.
+  // "Try again" opens one of them on purpose: it then sits at the top of the queue.
+  const queue = allQueue.filter((o) => !isGivenUp(o) || o.id === params.order);
+  const givenUp = allQueue.filter(isGivenUp);
   const todays = (attempts.data ?? []).filter((a) => businessDay(a.created_at) === today);
   const confirmedToday = todays.filter((a) => a.outcome === "confirmed").length;
   const noAnswerToday = todays.filter((a) => a.outcome === "no_answer" || a.outcome === "busy" || a.outcome === "unreachable").length;
@@ -70,6 +75,7 @@ export default async function CallsPage({ searchParams }: { searchParams: Promis
       <PageHeader title={tc.title} description={tc.description} />
       <CallWorkspace
         queue={items}
+        givenUp={givenUp.map((o) => ({ id: o.id, name: o.contact?.fullName ?? o.orderNumber, city: o.city, attempts: o.callAttempts }))}
         dueCount={due.length}
         stats={{ confirmedToday, noAnswerToday, rate: decided > 0 ? confirmedToday / decided : null }}
         current={

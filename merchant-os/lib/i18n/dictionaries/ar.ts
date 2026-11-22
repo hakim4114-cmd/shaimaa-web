@@ -10,6 +10,7 @@ const ar: Dictionary = {
     commandCenter: "لوحة القيادة",
     orders: "الطلبات",
     calls: "المكالمات",
+    tracking: "تتبّع التوصيل",
     shipping: "الشحن",
     returns: "المرتجعات",
     customers: "العملاء",
@@ -354,7 +355,34 @@ const ar: Dictionary = {
     KEYS_INCOMPLETE: "دخل جوج مفاتيح Sendit (العمومي والسري)، منسوخين كاملين.",
     UNKNOWN: "حدث خطأ. أعد المحاولة.",
   },
+  tracking: {
+    title: "تتبّع التوصيل",
+    description: "الطرود لي عند الموزع: لي ما لقاهمش الموزع هوما الأولين. بضغطة وحدة كيتحل واتساب بالرسالة المناسبة.",
+    missed: "ما لقاهمش الموزع",
+    today: "غادي توصل اليوم",
+    onTheWay: "ف الطريق",
+    messageLanguage: "لغة الرسالة",
+    emptyTitle: "حتى طرد ما عند الموزع دابا",
+    emptyDescription: "ملي يجي الرقاص ياخد الطرود كيبانو هنا.",
+    shippedDays: "تصيفط هادي {days} يوم",
+    unreachable: "الموزع ما لقاهش {count} مرات",
+    call: "عيّط",
+    note: "ملاحظة",
+    notePlaceholder: "مثلاً: قال صيفطوه نهار السبت",
+    saveNote: "سجّل",
+    notePrefix: "تتبّع:",
+    noteSaved: "تسجلات الملاحظة ف الطلب",
+    status: {
+      failed_attempt: "ما لقاهش الموزع",
+      out_for_delivery: "غادي توصل اليوم",
+      in_transit: "ف الطريق",
+      picked_up: "خداها الرقاص"
+    }
+  },
   calls: {
+    givenUpTitle: "{count} طلبات ما جاوبوش 5 مرات: خرجو من الطابور",
+    givenUpReason: "ما جاوبش {count} مرات",
+    tryAgain: "جرب مرة أخرى",
     title: "المكالمات",
     description: "الطابور ديال التأكيد: الأقدم أولاً. من بعد كل نتيجة كيبان الطلب الجاي بوحدو.",
     left: "باقي",
@@ -521,6 +549,8 @@ const ar: Dictionary = {
       confirmed: "تم تأكيد الطلب",
       shipped: "الطلبية تصيفطات (رقم التتبع)",
       deliveryReminder: "تذكير بالتوصيل",
+      outForDelivery: "غادي توصل اليوم",
+      failedAttempt: "الموزع ما لقاكش",
       cancelled: "تم إلغاء الطلب"
     },
     languages: {

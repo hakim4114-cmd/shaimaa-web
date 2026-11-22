@@ -57,7 +57,7 @@ export default async function CommandCenterPage({ searchParams }: { searchParams
       { icon: PhoneCall, label: td.calls, count: today.callsDue, href: ctx.can.manageOrders ? "/calls" : "/orders?view=to_call", chip: "bg-accent-soft text-accent-soft-foreground" },
       { icon: PackageCheck, label: td.prepare, count: today.toPrepare, href: "/orders?view=confirmed", chip: "bg-warning-soft text-warning" },
       { icon: Truck, label: td.pickup, count: today.toPickUp, href: "/shipping?view=to_pickup", chip: "bg-info-soft text-info" },
-      { icon: TriangleAlert, label: td.problems, count: today.deliveryProblems, href: "/shipping?view=problems", chip: "bg-danger-soft text-danger" },
+      { icon: TriangleAlert, label: td.problems, count: today.deliveryProblems, href: "/tracking", chip: "bg-danger-soft text-danger" },
       { icon: Undo2, label: td.returns, count: today.returnsWaiting, href: "/returns", chip: "bg-success-soft text-success" },
       ...(ctx.can.seeMoney ? [{ icon: CalendarClock, label: td.obligations, count: today.obligationsDue, href: "/pay", chip: "bg-surface-muted text-foreground" }] : [])
     ];

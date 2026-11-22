@@ -61,7 +61,7 @@ export async function getAlerts({ supabase, organizationId, can }: Ctx): Promise
     { key: "storeOrders", count: count(queries[5]), href: "/orders/inbox", tone: "danger" },
     { key: "callsDue", count: count(queries[2]), href: "/orders?view=to_call", tone: "info" },
     { key: "waitingToShip", count: count(queries[7]), href: "/orders?view=confirmed", tone: "warning" },
-    { key: "deliveryProblems", count: count(queries[3]), href: "/shipping?view=problems", tone: "warning" },
+    { key: "deliveryProblems", count: count(queries[3]), href: "/tracking", tone: "warning" },
     { key: "returnsWaiting", count: count(queries[4]), href: "/returns", tone: "info" },
     { key: "lowStock", count: low, href: "/inventory?low=1", tone: "warning" }
   ];

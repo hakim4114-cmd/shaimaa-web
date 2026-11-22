@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { isGivenUp } from "@/lib/orders/calls";
 import { waitLevel, waitMinutes, waitParts } from "@/lib/orders/wait";
 
 describe("call wait", () => {
@@ -16,5 +17,13 @@ describe("call wait", () => {
   it("shows hours and minutes, then days and hours", () => {
     expect(waitParts(221)).toEqual({ days: 0, hours: 3, minutes: 41 });
     expect(waitParts(1500)).toEqual({ days: 1, hours: 1, minutes: 0 });
+  });
+});
+
+describe("unanswered orders", () => {
+  it("leave the queue after five unanswered calls, not after other outcomes", () => {
+    expect(isGivenUp({ callAttempts: 5, lastCallOutcome: "no_answer" })).toBe(true);
+    expect(isGivenUp({ callAttempts: 4, lastCallOutcome: "no_answer" })).toBe(false);
+    expect(isGivenUp({ callAttempts: 6, lastCallOutcome: "call_back_requested" })).toBe(false);
   });
 });

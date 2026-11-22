@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useId, useState, useTransition } from "react";
 import { toast } from "sonner";
-import { logCall } from "@/app/(app)/orders/actions";
+import { changeOrderStatus, logCall } from "@/app/(app)/orders/actions";
 import { FormAlert } from "@/components/auth/form-alert";
 import { useAutoShipAfterConfirm } from "@/components/orders/order-actions";
 import { Button, buttonVariants } from "@/components/ui/button";
@@ -77,11 +77,13 @@ function useNow() {
 
 export function CallWorkspace({
   queue,
+  givenUp,
   dueCount,
   stats,
   current
 }: {
   queue: QueueItem[];
+  givenUp: { id: string; name: string; city: string; attempts: number }[];
   dueCount: number;
   stats: { confirmedToday: number; noAnswerToday: number; rate: number | null };
   current: Current | null;
@@ -112,6 +114,8 @@ export function CallWorkspace({
           </div>
         ))}
       </dl>
+
+      {givenUp.length > 0 ? <GivenUp items={givenUp} /> : null}
 
       {queue.length === 0 || !current ? (
         <EmptyState icon={PhoneCall} title={tc.emptyTitle} description={tc.emptyDescription} />
@@ -380,6 +384,54 @@ function CurrentOrder({
       </div>
 
       <p className="text-xs text-muted-foreground">{nextName ? interpolate(tc.next, { name: nextName }) : tc.lastOne}</p>
+    </section>
+  );
+}
+
+/** Orders that did not answer five times: cancel them in one tap (the reason is written for you). */
+function GivenUp({ items }: { items: { id: string; name: string; city: string; attempts: number }[] }) {
+  const { t } = useI18n();
+  const tc = t.calls;
+  const router = useRouter();
+  const [pending, startTransition] = useTransition();
+  const [open, setOpen] = useState(false);
+
+  function cancel(id: string, attempts: number) {
+    startTransition(async () => {
+      const result = await changeOrderStatus({ orderId: id, to: "cancelled", note: interpolate(tc.givenUpReason, { count: attempts }) });
+      if (result.error) {
+        toast.error(t.errors[result.error]);
+        return;
+      }
+      router.refresh();
+    });
+  }
+
+  return (
+    <section className="rounded-xl border border-warning/40 bg-warning-soft/40 p-3">
+      <button type="button" onClick={() => setOpen(!open)} aria-expanded={open} className="flex w-full min-h-11 items-center justify-between gap-3 text-start text-sm font-semibold text-warning">
+        <span>{interpolate(tc.givenUpTitle, { count: items.length })}</span>
+        <span aria-hidden>{open ? "−" : "+"}</span>
+      </button>
+      {open ? (
+        <ul className="mt-2 divide-y divide-border rounded-lg bg-surface">
+          {items.map((o) => (
+            <li key={o.id} className="flex flex-wrap items-center justify-between gap-2 px-3 py-2 text-sm">
+              <Link href={`/orders/${o.id}`} className="font-medium underline-offset-2 hover:underline">
+                {o.name} <span className="text-xs text-muted-foreground">· {o.city} · {interpolate(tc.attempts, { count: o.attempts })}</span>
+              </Link>
+              <div className="flex gap-2">
+                <Link href={`/calls?order=${o.id}`} className={buttonVariants({ size: "sm", variant: "secondary" })}>
+                  {tc.tryAgain}
+                </Link>
+                <Button size="sm" variant="danger" disabled={pending} onClick={() => cancel(o.id, o.attempts)}>
+                  {tc.cancelled}
+                </Button>
+              </div>
+            </li>
+          ))}
+        </ul>
+      ) : null}
     </section>
   );
 }

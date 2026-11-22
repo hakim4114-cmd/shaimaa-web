@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.21.0 — Delivery follow-up, unanswered orders (2026-11-22)
+
+### Added
+- **Delivery follow-up** (`/tracking`): every parcel with the courier. Missed deliveries come first, then today's deliveries, then parcels on the way (oldest first). Each card has call, and a one-tap WhatsApp message that fits where the parcel is: "arriving today", "the courier could not reach you, when are you available?", or "on its way" with the tracking number. Darija, Arabic or French. A short note saves to the order. The delivery-problems alert and the command center open it.
+- Two WhatsApp templates on the order page too: arriving today, courier could not reach you.
+
+### Changed
+- Call mode: an order unanswered after 5 calls (no answer, busy, unreachable) leaves the queue. It is listed apart with "try again" or a one-tap cancel, with the reason written for you.
+
 ## 1.20.0 — "Atlas" identity (2026-11-22)
 
 ### Changed

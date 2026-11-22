@@ -44,3 +44,11 @@ export function compareCallQueue(a: CallQueueRow, b: CallQueueRow, now = Date.no
   const key = (row: typeof a) => (row.nextCallAt ? Date.parse(row.nextCallAt) : Date.parse(row.createdAt));
   return key(a) - key(b);
 }
+
+/** After this many unanswered calls the order leaves the queue: call mode offers to cancel it. */
+export const maxUnansweredCalls = 5;
+const unanswered: readonly CallOutcome[] = ["no_answer", "busy", "unreachable"];
+
+export function isGivenUp(row: { callAttempts: number; lastCallOutcome: CallOutcome | null }): boolean {
+  return row.callAttempts >= maxUnansweredCalls && row.lastCallOutcome !== null && unanswered.includes(row.lastCallOutcome);
+}

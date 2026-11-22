@@ -10,6 +10,7 @@ const fr: Dictionary = {
     commandCenter: "Tableau de bord",
     orders: "Commandes",
     calls: "Appels",
+    tracking: "Suivi livraison",
     shipping: "Expéditions",
     returns: "Retours",
     customers: "Clients",
@@ -355,7 +356,34 @@ const fr: Dictionary = {
     KEYS_INCOMPLETE: "Saisissez les deux clés Sendit (publique et secrète), copiées en entier.",
     UNKNOWN: "Une erreur est survenue. Réessayez.",
   },
+  tracking: {
+    title: "Suivi livraison",
+    description: "Colis chez le livreur : les livraisons manquées d'abord. Un clic ouvre WhatsApp avec le bon message.",
+    missed: "Livraison manquée",
+    today: "Livrés aujourd'hui",
+    onTheWay: "En route",
+    messageLanguage: "Langue du message",
+    emptyTitle: "Aucun colis chez le livreur",
+    emptyDescription: "Les colis apparaissent ici dès leur ramassage.",
+    shippedDays: "Expédié il y a {days} j",
+    unreachable: "Client injoignable {count} fois",
+    call: "Appeler",
+    note: "Note",
+    notePlaceholder: "ex. : livrer samedi",
+    saveNote: "Enregistrer",
+    notePrefix: "Suivi :",
+    noteSaved: "Note ajoutée à la commande",
+    status: {
+      failed_attempt: "Livraison manquée",
+      out_for_delivery: "En livraison aujourd'hui",
+      in_transit: "En route",
+      picked_up: "Ramassé"
+    }
+  },
   calls: {
+    givenUpTitle: "{count} commandes sans réponse après 5 appels : sorties de la file",
+    givenUpReason: "Sans réponse après {count} appels",
+    tryAgain: "Réessayer",
     title: "Appels",
     description: "File de confirmation : les plus anciennes d'abord. Après chaque résultat, la commande suivante s'ouvre.",
     left: "Restantes",
@@ -522,6 +550,8 @@ const fr: Dictionary = {
       confirmed: "Commande confirmée",
       shipped: "Colis expédié (suivi)",
       deliveryReminder: "Rappel de livraison",
+      outForDelivery: "Livraison aujourd'hui",
+      failedAttempt: "Livreur passé sans vous joindre",
       cancelled: "Commande annulée"
     },
     languages: {
