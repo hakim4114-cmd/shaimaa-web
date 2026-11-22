@@ -295,7 +295,7 @@ function CurrentOrder({
 
       {mode === "buttons" ? (
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-          <button type="button" disabled={pending} onClick={() => record("confirmed")} className="min-h-14 rounded-lg bg-success px-3 text-base font-bold text-white transition-opacity hover:opacity-90 disabled:opacity-50">
+          <button type="button" disabled={pending} onClick={() => record("confirmed")} className="min-h-14 rounded-lg bg-success px-3 text-base font-bold text-white dark:text-background transition-opacity hover:opacity-90 disabled:opacity-50">
             ✓ {tc.confirmed}
           </button>
           <button type="button" disabled={pending} onClick={() => record("no_answer")} className="min-h-14 rounded-lg bg-surface-muted px-3 text-base font-semibold text-foreground ring-1 ring-border transition-colors hover:bg-surface-hover disabled:opacity-50">
@@ -304,7 +304,7 @@ function CurrentOrder({
           <button type="button" disabled={pending} onClick={() => setMode("callback")} className="min-h-14 rounded-lg bg-warning-soft px-3 text-base font-semibold text-warning ring-1 ring-warning/40 transition-colors hover:opacity-90 disabled:opacity-50">
             {tc.callBack}
           </button>
-          <button type="button" disabled={pending} onClick={() => setMode("cancel")} className="min-h-14 rounded-lg bg-danger px-3 text-base font-bold text-white transition-opacity hover:opacity-90 disabled:opacity-50">
+          <button type="button" disabled={pending} onClick={() => setMode("cancel")} className="min-h-14 rounded-lg bg-danger px-3 text-base font-bold text-white dark:text-background transition-opacity hover:opacity-90 disabled:opacity-50">
             ✕ {tc.cancelled}
           </button>
         </div>

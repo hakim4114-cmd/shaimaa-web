@@ -11,7 +11,7 @@ export const buttonVariants = cva(
         primary: "bg-accent text-accent-foreground shadow-card hover:bg-accent-hover",
         secondary: "border border-border bg-surface text-foreground shadow-card hover:bg-surface-hover",
         ghost: "text-muted-foreground hover:bg-surface-hover hover:text-foreground",
-        danger: "bg-danger text-white shadow-card hover:opacity-90"
+        danger: "bg-danger text-white shadow-card hover:opacity-90 dark:text-background"
       },
       size: {
         sm: "h-8 px-3 pointer-coarse:h-10",

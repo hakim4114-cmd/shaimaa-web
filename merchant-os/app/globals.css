@@ -4,88 +4,88 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 /*
- * Design tokens — identity "Ink" (approved 2026-11-16).
+ * Design tokens — identity "Atlas" (approved 2026-11-22, replaces "Ink").
  * Components use only these semantic tokens, never raw colours.
- * Ink navy frames the app (sidebar), the page is a cool tinted grey and cards are white.
- * The single accent is an electric violet, chosen because it never collides with the
- * status colours (green delivered, amber pending, red refused).
- * Text pairs are checked to WCAG AA (≥ 4.5:1).
+ * Warm and Moroccan: a sand page, a zellige-green frame (sidebar), terracotta for
+ * actions and a saffron mark for where you are. Status colours stay apart from the
+ * accent (green delivered, amber pending, red refused).
+ * Text pairs are checked to WCAG AA (>= 4.5:1), light and dark.
  */
 :root {
-  --background: #eef0f7;
-  --foreground: #10142a;
-  --surface: #ffffff;
-  --surface-muted: #f5f6fb;
-  --surface-hover: #e6e9f3;
-  --border: #dde1ee;
-  --border-strong: #c3c9dc;
-  --muted-foreground: #5b6380;
-  --subtle-foreground: #626a88;
+  --background: #f7f2ea;
+  --foreground: #2a1f14;
+  --surface: #fffdf9;
+  --surface-muted: #f3ece1;
+  --surface-hover: #efe6d8;
+  --border: #e8dccb;
+  --border-strong: #d4c4ad;
+  --muted-foreground: #6b5842;
+  --subtle-foreground: #6e5b45;
 
-  --accent: #5b4bd6;
-  --accent-hover: #4d3ec4;
+  --accent: #b84e26;
+  --accent-hover: #a1421f;
   --accent-foreground: #ffffff;
-  --accent-soft: #ece9fd;
-  --accent-soft-foreground: #4a3bbf;
+  --accent-soft: #fbe6d9;
+  --accent-soft-foreground: #8f3a17;
 
-  --success: #0e7f60;
-  --success-soft: #e3f5ee;
-  --warning: #935a00;
-  --warning-soft: #fff4dc;
-  --danger: #c6343d;
-  --danger-soft: #fdecec;
-  --info: #1f6fb2;
-  --info-soft: #e5f0fa;
+  --success: #1d6b4f;
+  --success-soft: #dcefe6;
+  --warning: #7a4f05;
+  --warning-soft: #fbefd6;
+  --danger: #a8322b;
+  --danger-soft: #f8e1de;
+  --info: #1f5f8f;
+  --info-soft: #e2edf6;
 
-  /* The app frame (sidebar and mobile drawer) stays dark in both modes. */
-  --sidebar: #10142a;
-  --sidebar-foreground: #e8eaf5;
-  --sidebar-muted: #a9b0cc;
-  --sidebar-hover: #1a1f3a;
-  --sidebar-active: #252b4d;
-  --sidebar-border: #232846;
-  --sidebar-accent: #b9b1ff;
+  /* Zellige green frame with a saffron marker. */
+  --sidebar: #123b35;
+  --sidebar-foreground: #e7efe9;
+  --sidebar-muted: #a9c2ba;
+  --sidebar-hover: #1a4740;
+  --sidebar-active: #1f5047;
+  --sidebar-border: #1c4a43;
+  --sidebar-accent: #e8a33d;
 
-  --ring: rgb(91 75 214 / 0.45);
-  --overlay: rgb(16 20 42 / 0.5);
-  --shadow-tint: 16 20 42;
+  --ring: rgb(184 78 38 / 0.45);
+  --overlay: rgb(42 31 20 / 0.5);
+  --shadow-tint: 42 31 20;
 }
 
 .dark {
-  --background: #0b0f22;
-  --foreground: #e8eaf5;
-  --surface: #151a33;
-  --surface-muted: #1a2040;
-  --surface-hover: #212849;
-  --border: #262d50;
-  --border-strong: #353d66;
-  --muted-foreground: #a3abcb;
-  --subtle-foreground: #8890ae;
+  --background: #14120f;
+  --foreground: #f3ece1;
+  --surface: #1d1a16;
+  --surface-muted: #24201b;
+  --surface-hover: #2b2620;
+  --border: #342e26;
+  --border-strong: #463e33;
+  --muted-foreground: #b9aa95;
+  --subtle-foreground: #a1927d;
 
-  --accent: #8b7cf6;
-  --accent-hover: #a194f8;
-  --accent-foreground: #10142a;
-  --accent-soft: #2a2656;
-  --accent-soft-foreground: #cdc6ff;
+  --accent: #e9875a;
+  --accent-hover: #f0996f;
+  --accent-foreground: #1d1208;
+  --accent-soft: #3d2417;
+  --accent-soft-foreground: #f6c3a8;
 
-  --success: #3fcf9f;
-  --success-soft: #12352d;
-  --warning: #f2b544;
-  --warning-soft: #3a2c10;
-  --danger: #ff7b82;
-  --danger-soft: #3d1a22;
-  --info: #6cb4f0;
-  --info-soft: #142c45;
+  --success: #4fc596;
+  --success-soft: #13342a;
+  --warning: #f0b552;
+  --warning-soft: #3a2c12;
+  --danger: #ff8a80;
+  --danger-soft: #3d1c1a;
+  --info: #7cb8e8;
+  --info-soft: #16304a;
 
-  --sidebar: #070a18;
-  --sidebar-foreground: #e8eaf5;
-  --sidebar-muted: #9aa3c7;
-  --sidebar-hover: #121733;
-  --sidebar-active: #1c2245;
-  --sidebar-border: #1a1f3a;
-  --sidebar-accent: #b9b1ff;
+  --sidebar: #0c2622;
+  --sidebar-foreground: #e7efe9;
+  --sidebar-muted: #9fbab2;
+  --sidebar-hover: #133731;
+  --sidebar-active: #1a443d;
+  --sidebar-border: #163a34;
+  --sidebar-accent: #e8a33d;
 
-  --ring: rgb(139 124 246 / 0.55);
+  --ring: rgb(233 135 90 / 0.55);
   --overlay: rgb(0 0 0 / 0.6);
   --shadow-tint: 0 0 0;
 }

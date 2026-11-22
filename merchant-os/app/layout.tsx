@@ -32,8 +32,8 @@ export const viewport: Viewport = {
   // Content may extend under notches/home indicators; padding below keeps it clear.
   viewportFit: "cover",
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#eef0f7" },
-    { media: "(prefers-color-scheme: dark)", color: "#0b0f22" }
+    { media: "(prefers-color-scheme: light)", color: "#f7f2ea" },
+    { media: "(prefers-color-scheme: dark)", color: "#14120f" }
   ]
 };
 

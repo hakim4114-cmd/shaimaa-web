@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.20.0 — "Atlas" identity (2026-11-22)
+
+### Changed
+- New identity, chosen by the owner from three directions. Sand page, zellige-green menu, terracotta for actions and a saffron marker for where you are. It replaces the cold grey-violet "Ink" look, with a matching dark mode, and every text colour is checked to WCAG AA.
+- The logo, app icon and browser bar take the new colours. The net-profit card is now green.
+- Command center: each of today's tasks has its own coloured icon. "Calls to make" opens call mode.
+
 ## 1.19.0 — Call mode (2026-11-22)
 
 ### Added
