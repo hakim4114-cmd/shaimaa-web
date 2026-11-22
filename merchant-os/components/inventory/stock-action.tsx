@@ -1,6 +1,7 @@
 "use client";
 
 import { ArrowRightLeft } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useId, useState, useTransition } from "react";
 import { toast } from "sonner";
 import { recordStockMovement, type StockInput } from "@/app/(app)/inventory/actions";
@@ -22,6 +23,7 @@ export function StockAction({ variantId, label }: { variantId: string; label: st
   const [type, setType] = useState<StockInput["type"]>("receipt");
   const [quantity, setQuantity] = useState("");
   const [note, setNote] = useState("");
+  const router = useRouter();
   const [error, setError] = useState<AppErrorCode | null>(null);
   const [pending, startTransition] = useTransition();
 
@@ -34,7 +36,13 @@ export function StockAction({ variantId, label }: { variantId: string; label: st
         setError(result.error);
         return;
       }
-      toast.success(ti.done);
+      // Receiving stock moves pieces, not money: remind to record what was paid,
+      // or the cash and the capital floor would count the stock as free.
+      if (type === "receipt") {
+        toast.success(ti.done, { description: ti.receiptPaidHint, action: { label: ti.recordPurchase, onClick: () => router.push("/finance") }, duration: 8000 });
+      } else {
+        toast.success(ti.done);
+      }
       setOpen(false);
       setQuantity("");
       setNote("");
@@ -69,7 +77,7 @@ export function StockAction({ variantId, label }: { variantId: string; label: st
               ))}
             </NativeSelect>
           </Field>
-          <Field label={ti.quantity} htmlFor={`${id}-qty`} hint={type === "adjustment" ? ti.quantityHint : undefined}>
+          <Field label={ti.quantity} htmlFor={`${id}-qty`} hint={type === "adjustment" ? ti.quantityHint : type === "receipt" ? ti.receiptPaidHint : undefined}>
             <Input id={`${id}-qty`} dir="ltr" type="number" inputMode="numeric" step={1} value={quantity} onChange={(e) => setQuantity(e.target.value)} required autoFocus />
           </Field>
           <Field label={ti.note} htmlFor={`${id}-note`} hint={ti.noteHint}>

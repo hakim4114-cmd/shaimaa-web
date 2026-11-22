@@ -263,6 +263,8 @@ const en = {
     type: "Movement",
     quantity: "Quantity",
     quantityHint: "For a count correction, a negative number lowers the stock.",
+    receiptPaidHint: "Receiving stock does not record the money. Record what you paid in Finance → Stock purchase, or cash and the capital floor will be wrong.",
+    recordPurchase: "Record the purchase",
     note: "Note",
     noteHint: "Required for corrections.",
     submit: "Record movement",

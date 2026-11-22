@@ -266,6 +266,8 @@ const fr: Dictionary = {
     type: "Mouvement",
     quantity: "Quantité",
     quantityHint: "Pour une correction d'inventaire, un nombre négatif diminue le stock.",
+    receiptPaidHint: "L'entrée en stock n'enregistre pas l'argent. Saisissez le montant payé dans Finances → Achat de marchandise, sinon la trésorerie et le plancher seront faux.",
+    recordPurchase: "Saisir l'achat",
     note: "Note",
     noteHint: "Obligatoire pour les corrections.",
     submit: "Enregistrer le mouvement",

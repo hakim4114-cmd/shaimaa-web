@@ -45,7 +45,9 @@ async function handle(message: RpcRequest, tokenHash: string) {
         const denied = /INVALID_TOKEN|FORBIDDEN/.test(error.message);
         return reply(message.id, { isError: true, content: [{ type: "text", text: denied ? "Access refused: this connector link was revoked or its owner no longer has access." : "The data could not be read. Try again." }] });
       }
-      return reply(message.id, { content: [{ type: "text", text: JSON.stringify(data, null, 2) }], structuredContent: data });
+      // MCP structured content must be a JSON object: lists (orders, stock, campaigns…) are wrapped.
+      const structured = data !== null && typeof data === "object" && !Array.isArray(data) ? data : { items: data };
+      return reply(message.id, { content: [{ type: "text", text: JSON.stringify(data, null, 2) }], structuredContent: structured });
     }
     default:
       if (message.id === undefined || message.id === null) return null; // notification
