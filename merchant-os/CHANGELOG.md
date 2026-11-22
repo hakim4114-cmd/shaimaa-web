@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.23.1 — Review fixes (2026-11-22)
+
+### Fixed
+- Claude connector: list tools (orders, stock, campaigns…) failed in Claude, because MCP structured content must be an object. Lists are now wrapped as `{ items: [...] }`.
+- Claude connector: "days since last sale" is described for what it is: days since the last piece left for a customer, or since the first receipt if never sold.
+- Receiving stock now says plainly that it moves pieces, not money, and offers to record the purchase in Finance. A purchase left unrecorded would make cash and the capital floor too high.
+
 ## 1.23.0 — Delivery on a chosen day (2026-11-22)
 
 ### Added

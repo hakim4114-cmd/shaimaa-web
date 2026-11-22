@@ -38,7 +38,7 @@ export const assistantTools = [
   },
   {
     name: "stock",
-    description: "Stock per variant in hand: on hand, available, minimum level, value at cost (cents) and days since the last sale (dormant stock).",
+    description: "Stock per variant in hand: on hand, available, minimum level, value at cost (cents) and days_since_last_sale = days since the last piece left for a customer, or since the first receipt when it has never been sold (dormant stock either way).",
     inputSchema: { type: "object", properties: {}, additionalProperties: false }
   },
   {
