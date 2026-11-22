@@ -1281,6 +1281,7 @@ const en = {
     receivable: "At the carrier",
     statusOk: "Above the floor: capital protected",
     statusBelow: "Below the floor: withdrawals blocked until the value is back above {floor}",
+    statusBelowShort: "Below the floor · {value} of {floor}",
     rulesTitle: "Money rules",
     rulesDescription: "They protect the capital and the reserve. Crossing one needs a written reason and shows in the report.",
     capitalFloorPct: "Capital protection floor (%)",

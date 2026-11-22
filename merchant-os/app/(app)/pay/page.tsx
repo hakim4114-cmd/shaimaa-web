@@ -170,7 +170,7 @@ export default async function PayPage({ searchParams }: { searchParams: Promise<
           id="capital"
           icon={ShieldCheck}
           title={tp.capitalTitle}
-          status={capital.below_floor ? interpolate(tp.statusBelow, { floor: m(capital.floor_cents) }) : `${tp.statusOk} · ${m(capital.business_value_cents)}`}
+          status={capital.below_floor ? interpolate(tp.statusBelowShort, { value: m(capital.business_value_cents), floor: m(capital.floor_cents) }) : `${tp.statusOk} · ${m(capital.business_value_cents)}`}
           tone={capital.below_floor ? "danger" : "ok"}
           defaultOpen={capital.below_floor || openSection === "capital"}
         >

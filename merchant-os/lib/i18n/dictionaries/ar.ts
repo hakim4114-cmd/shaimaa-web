@@ -1283,6 +1283,7 @@ const ar: Dictionary = {
     receivable: "عند شركة التوصيل",
     statusOk: "فوق الخط: راس المال محمي",
     statusBelow: "تحت الخط: السحب موقوف حتى ترجع القيمة فوق {floor}",
+    statusBelowShort: "تحت خط الحماية · {value} من {floor}",
     rulesTitle: "القواعد المالية",
     rulesDescription: "كتحمي راس المال والاحتياط. تجاوزها كيحتاج سبب مكتوب، وكيبان فالتقرير.",
     capitalFloorPct: "خط حماية راس المال (%)",

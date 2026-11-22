@@ -1284,6 +1284,7 @@ const fr: Dictionary = {
     receivable: "Chez le transporteur",
     statusOk: "Au-dessus du plancher : capital protégé",
     statusBelow: "Sous le plancher : retraits bloqués jusqu'à repasser au-dessus de {floor}",
+    statusBelowShort: "Sous le plancher · {value} sur {floor}",
     rulesTitle: "Règles financières",
     rulesDescription: "Elles protègent le capital et la réserve. Les dépasser demande une raison écrite, visible dans le rapport.",
     capitalFloorPct: "Plancher de protection du capital (%)",
