@@ -36,6 +36,7 @@ const fr: Dictionary = {
     closeMenu: "Fermer le menu"
   },
   topbar: {
+    tabs: { label: "Navigation", home: "Accueil", orders: "Commandes", calls: "Appels", tracking: "Suivi", more: "Plus" },
     search: "Rechercher…",
     searchShortcut: "Ctrl K",
     searchPlaceholder: "Rechercher des pages et actions",
@@ -225,6 +226,7 @@ const fr: Dictionary = {
     costUnknown: "coût inconnu",
     priceRange: "{min} – {max}",
     variantsCount: "{count} variantes",
+    availableShort: "{count} dispo",
     archivedVariants: "Les variantes archivées sont conservées pour l'historique des commandes et masquées des nouvelles commandes.",
     image: "Photo",
     imageHint: "Une photo principale, redimensionnée automatiquement. Stockée en privé.",
@@ -1105,7 +1107,7 @@ const fr: Dictionary = {
       invalid_order: "La commande est incomplète ou trop grande. Créez-la à la main."
     }
   },
-  problems: { title: "Problèmes", description: "Échecs survenus en arrière-plan : messages du transporteur ou de la boutique refusés, colis non envoyés automatiquement. Corrigez la cause puis marquez comme traité.", empty: "Aucun problème", emptyHint: "Tout ce qui tourne en arrière-plan a fonctionné.", resolve: "Traité", times: "{count} fois", footer: "Le message technique est conservé tel quel pour aider à trouver la cause.", sources: { sendit_webhook: "Mise à jour Sendit", store_webhook: "Commande boutique", auto_ship: "Envoi automatique", sendit_api: "Sendit", other: "Autre" } },
+  problems: { title: "Problèmes", description: "Échecs survenus en arrière-plan : messages du transporteur ou de la boutique refusés, colis non envoyés automatiquement. Corrigez la cause puis marquez comme traité.", empty: "Aucun problème", emptyHint: "Tout ce qui tourne en arrière-plan a fonctionné.", resolve: "Traité", times: "{count} fois", footer: "Le message technique est conservé tel quel pour aider à trouver la cause.", technical: "Détails techniques", explain: { sendit_webhook: "Une mise à jour de Sendit a été refusée. La clé de liaison a sans doute changé : voir Paramètres → Sendit.", store_webhook: "Une commande de la boutique a été refusée, sans doute à cause de la clé de liaison. Copiez la clé depuis les paramètres dans la boutique.", auto_ship: "La commande est confirmée mais n'a pas été envoyée à Sendit automatiquement. Ouvrez-la et expédiez-la à la main.", sendit_api: "Sendit n'a pas répondu ou a refusé la commande. Réessayez plus tard ou vérifiez les clés.", other: "Un problème est survenu en arrière-plan. Les détails techniques aident à en trouver la cause." }, sources: { sendit_webhook: "Mise à jour Sendit", store_webhook: "Commande boutique", auto_ship: "Envoi automatique", sendit_api: "Sendit", other: "Autre" } },
   assistant: {
     title: "Claude (lecture seule)",
     description: "Posez vos questions à Claude sur vos chiffres : bénéfice, commandes, stock, campagnes, encaissements. Claude lit via un lien privé ; il ne peut rien modifier.",

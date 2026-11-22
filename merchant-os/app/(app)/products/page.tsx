@@ -80,6 +80,44 @@ export default async function ProductsPage({ searchParams }: { searchParams: Pro
             }
           />
         ) : (
+          <>
+          {/* Phone: one card per product (a table would cut the price column). */}
+          <ul className="divide-y divide-border sm:hidden">
+            {products.map((product) => {
+              const active = product.variants.filter((v) => v.status === "active");
+              const prices = active.map((v) => v.priceCents);
+              const min = prices.length ? Math.min(...prices) : 0;
+              const max = prices.length ? Math.max(...prices) : 0;
+              const available = active.reduce((sum, v) => sum + v.stock.available, 0);
+              const low = active.some((v) => v.stock.available <= v.minStockLevel);
+              return (
+                <li key={product.id}>
+                  <Link href={`/products/${product.id}`} className="flex min-h-16 items-center gap-3 px-4 py-3 hover:bg-surface-hover">
+                    <span className="size-12 shrink-0 overflow-hidden rounded-lg bg-surface-muted ring-1 ring-border">
+                      {product.imagePath && images[product.imagePath] ? (
+                        // eslint-disable-next-line @next/next/no-img-element -- signed URL from private storage
+                        <img src={images[product.imagePath]} alt="" className="size-full object-cover" loading="lazy" />
+                      ) : null}
+                    </span>
+                    <span className="flex min-w-0 flex-1 flex-col gap-0.5">
+                      <span className="truncate font-semibold text-foreground">{product.name}</span>
+                      <span className="text-xs text-muted-foreground">
+                        {interpolate(tp.variantsCount, { count: active.length })} ·{" "}
+                        <span className={low ? "font-semibold text-warning" : undefined}>{interpolate(tp.availableShort, { count: available })}</span>
+                      </span>
+                    </span>
+                    <span className="flex shrink-0 flex-col items-end gap-1">
+                      <span className="tabular text-sm font-semibold">{formatMoney(min, locale)}{min === max ? "" : "+"}</span>
+                      <Badge tone={statusTone[product.status]} dot>
+                        {t.productStatus[product.status]}
+                      </Badge>
+                    </span>
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+          <div className="hidden sm:block">
           <Table>
             <THead>
               <TR className="hover:bg-transparent">
@@ -133,6 +171,8 @@ export default async function ProductsPage({ searchParams }: { searchParams: Pro
               })}
             </TBody>
           </Table>
+          </div>
+          </>
         )}
       </Card>
     </div>

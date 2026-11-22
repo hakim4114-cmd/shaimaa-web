@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.22.0 — Made for the phone (2026-11-22)
+
+### Changed
+- Phone and tablet: a bottom bar with Home, Orders, Calls (with the number of calls waiting), Tracking and More. The top bar keeps the logo, search, bell and account; theme and language move into "More".
+- Page explanations are hidden on phones: the title is enough and the work starts higher.
+- Products on a phone: one card per product (photo, stock, price, status) instead of a table that cut the price.
+- Orders on a phone: one clear "New order" button; the status tabs fade at the edge instead of cutting a word.
+- Call mode: city, address and campaign in one compact block.
+- Problems: what happened and what to do in plain words; the technical message is folded under "Technical details".
+
 ## 1.21.1 — One number, one definition (2026-11-22)
 
 ### Fixed

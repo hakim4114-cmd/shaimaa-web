@@ -36,6 +36,7 @@ const ar: Dictionary = {
     closeMenu: "إغلاق القائمة"
   },
   topbar: {
+    tabs: { label: "التنقل", home: "الرئيسية", orders: "الطلبات", calls: "المكالمات", tracking: "التتبّع", more: "المزيد" },
     search: "بحث…",
     searchShortcut: "Ctrl K",
     searchPlaceholder: "ابحث في الصفحات والإجراءات",
@@ -224,6 +225,7 @@ const ar: Dictionary = {
     costUnknown: "التكلفة غير معروفة",
     priceRange: "{min} – {max}",
     variantsCount: "{count} متغيرات",
+    availableShort: "{count} متاح",
     archivedVariants: "المتغيرات المؤرشفة تبقى محفوظة لسجل الطلبات ولا تظهر في الطلبات الجديدة.",
     image: "الصورة",
     imageHint: "صورة رئيسية وحدة، كتصغّر بوحدها. محفوظة بشكل خاص.",
@@ -1104,7 +1106,7 @@ const ar: Dictionary = {
       invalid_order: "الطلب ناقص ولا كبير بزاف. خلقو يدويا."
     }
   },
-  problems: { title: "المشاكل", description: "أخطاء وقعو فالخلفية: رسائل من Sendit ولا من المتجر ترفضو، ولا طرود ما تصيفطوش أوتوماتيكيا. صلح السبب ومن بعد علّم أنها تعالجات.", empty: "حتى مشكل", emptyHint: "كلشي اللي خدام فالخلفية دوز مزيان.", resolve: "تعالج", times: "{count} مرات", footer: "الرسالة التقنية كتبقى كيف وصلات، باش تعاون فمعرفة السبب.", sources: { sendit_webhook: "تحديث من Sendit", store_webhook: "طلب من المتجر", auto_ship: "الإرسال الأوتوماتيكي", sendit_api: "Sendit", other: "أخرى" } },
+  problems: { title: "المشاكل", description: "أخطاء وقعو فالخلفية: رسائل من Sendit ولا من المتجر ترفضو، ولا طرود ما تصيفطوش أوتوماتيكيا. صلح السبب ومن بعد علّم أنها تعالجات.", empty: "حتى مشكل", emptyHint: "كلشي اللي خدام فالخلفية دوز مزيان.", resolve: "تعالج", times: "{count} مرات", footer: "الرسالة التقنية كتبقى كيف وصلات، باش تعاون فمعرفة السبب.", technical: "التفاصيل التقنية", explain: { sendit_webhook: "Sendit صيفط تحديث ما قبلناهش. غالباً المفتاح ديال الربط تبدّل: شوف الإعدادات ← Sendit.", store_webhook: "طلب جا من المتجر وترفض، غالباً حيث المفتاح ديال الربط ما متطابقش. نسخ المفتاح من الإعدادات وحطّو ف المتجر.", auto_ship: "الطلب تأكد ولكن ما تصيفطش لـSendit بوحدو. حل الطلب وصيفطو باليد.", sendit_api: "Sendit ما جاوبش ولا رفض الطلب. جرب من بعد، ولا شوف المفاتيح ف الإعدادات.", other: "وقع مشكل ف الخلفية. التفاصيل التقنية لتحت كتعاون باش نعرفو السبب." }, sources: { sendit_webhook: "تحديث من Sendit", store_webhook: "طلب من المتجر", auto_ship: "الإرسال الأوتوماتيكي", sendit_api: "Sendit", other: "أخرى" } },
   assistant: {
     title: "Claude (قراءة فقط)",
     description: "سول Claude على الأرقام ديالك: الربح، الطلبات، المخزون، الحملات، التحصيلات. Claude كيقرا عبر رابط خاص، وما يقدر يبدّل حتى حاجة.",

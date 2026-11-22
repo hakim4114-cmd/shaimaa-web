@@ -34,6 +34,7 @@ const en = {
     closeMenu: "Close menu"
   },
   topbar: {
+    tabs: { label: "Navigation", home: "Home", orders: "Orders", calls: "Calls", tracking: "Tracking", more: "More" },
     search: "Search…",
     searchShortcut: "Ctrl K",
     searchPlaceholder: "Search pages and actions",
@@ -222,6 +223,7 @@ const en = {
     costUnknown: "cost unknown",
     priceRange: "{min} – {max}",
     variantsCount: "{count} variants",
+    availableShort: "{count} available",
     archivedVariants: "Archived variants are kept for order history and hidden from new orders.",
     image: "Photo",
     imageHint: "One main photo, resized automatically. Stored privately.",
@@ -1102,7 +1104,7 @@ const en = {
       invalid_order: "The order is incomplete or too large. Create it by hand."
     }
   },
-  problems: { title: "Problems", description: "Failures that happened in the background: carrier or store messages rejected, parcels that could not be sent automatically. Fix the cause, then mark as handled.", empty: "No problem", emptyHint: "Everything that ran in the background worked.", resolve: "Handled", times: "{count} times", footer: "The technical message is kept as received, to help find the cause.", sources: { sendit_webhook: "Sendit status update", store_webhook: "Online store order", auto_ship: "Automatic sending", sendit_api: "Sendit", other: "Other" } },
+  problems: { title: "Problems", description: "Failures that happened in the background: carrier or store messages rejected, parcels that could not be sent automatically. Fix the cause, then mark as handled.", empty: "No problem", emptyHint: "Everything that ran in the background worked.", resolve: "Handled", times: "{count} times", footer: "The technical message is kept as received, to help find the cause.", technical: "Technical details", explain: { sendit_webhook: "An update from Sendit was refused. The link key has probably changed: see Settings → Sendit.", store_webhook: "An order from the store was refused, probably because of the link key. Copy the key from Settings into the store.", auto_ship: "The order was confirmed but not sent to Sendit automatically. Open it and ship it by hand.", sendit_api: "Sendit did not answer or refused the order. Try again later or check the keys in Settings.", other: "Something failed in the background. The technical details below help find the cause." }, sources: { sendit_webhook: "Sendit status update", store_webhook: "Online store order", auto_ship: "Automatic sending", sendit_api: "Sendit", other: "Other" } },
   assistant: {
     title: "Claude (read-only)",
     description: "Ask Claude about your numbers: profit, orders, stock, campaigns, cash. Claude reads through a private link; it cannot change anything.",

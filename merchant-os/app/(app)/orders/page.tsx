@@ -73,19 +73,22 @@ export default async function OrdersPage({ searchParams }: { searchParams: Promi
         description={to.description}
         actions={
           <>
-            <ExportMenu dataset="orders" print={false} />
+            {/* Phone: one clear action. Calls are in the bottom bar; export and import are desk work. */}
+            <span className="hidden sm:contents">
+              <ExportMenu dataset="orders" print={false} />
+              {can.manageOrders ? (
+                <Link href="/calls" className={buttonVariants({ variant: "secondary" })}>
+                  <PhoneCall /> {t.calls.title}
+                </Link>
+              ) : null}
+              {can.manageOrders ? (
+                <Link href="/orders/import" className={buttonVariants({ variant: "secondary" })}>
+                  <Upload /> {t.imports.button}
+                </Link>
+              ) : null}
+            </span>
             {can.manageOrders ? (
-              <Link href="/calls" className={buttonVariants({ variant: "secondary" })}>
-                <PhoneCall /> {t.calls.title}
-              </Link>
-            ) : null}
-            {can.manageOrders ? (
-              <Link href="/orders/import" className={buttonVariants({ variant: "secondary" })}>
-                <Upload /> {t.imports.button}
-              </Link>
-            ) : null}
-            {can.manageOrders ? (
-              <Link href="/orders/new" className={buttonVariants()}>
+              <Link href="/orders/new" className={cn(buttonVariants(), "w-full sm:w-auto")}>
                 <Plus /> {to.new}
               </Link>
             ) : null}
@@ -107,7 +110,7 @@ export default async function OrdersPage({ searchParams }: { searchParams: Promi
         </Link>
       ) : null}
 
-      <nav className="-mx-4 flex gap-1 overflow-x-auto px-4 pb-1 sm:mx-0 sm:flex-wrap sm:px-0" aria-label={to.title}>
+      <nav className="-mx-4 flex gap-1 overflow-x-auto px-4 pb-1 [mask-image:linear-gradient(to_right,black_calc(100%-28px),transparent)] rtl:[mask-image:linear-gradient(to_left,black_calc(100%-28px),transparent)] sm:mx-0 sm:flex-wrap sm:px-0 sm:[mask-image:none] sm:rtl:[mask-image:none]" aria-label={to.title}>
         {tabs.map((tab) => {
           const count = countFor(tab);
           const active = tab === view && !q;
