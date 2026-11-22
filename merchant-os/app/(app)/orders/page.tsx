@@ -75,6 +75,11 @@ export default async function OrdersPage({ searchParams }: { searchParams: Promi
           <>
             <ExportMenu dataset="orders" print={false} />
             {can.manageOrders ? (
+              <Link href="/calls" className={buttonVariants({ variant: "secondary" })}>
+                <PhoneCall /> {t.calls.title}
+              </Link>
+            ) : null}
+            {can.manageOrders ? (
               <Link href="/orders/import" className={buttonVariants({ variant: "secondary" })}>
                 <Upload /> {t.imports.button}
               </Link>

@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.19.0 — Call mode (2026-11-22)
+
+### Added
+- **Calls** (`/calls`): the confirmation queue next to the order being called. Each order shows how long it has waited (green under an hour, orange up to four hours, red after). The page shows the customer, the items, cash on delivery, the campaign, whether the customer is new or has refused before, a big call button and WhatsApp. Four large outcome buttons: confirmed, no answer, call back (with time presets), cancelled (reason required). Other outcomes sit in a list. After each outcome the next order opens by itself. Today's counts are shown at the top: left, confirmed, no answer and confirmation rate.
+- A "Calls" entry in the menu and a button on the orders page.
+
 ## 1.18.2 — Faster pages (2026-11-21)
 
 ### Changed

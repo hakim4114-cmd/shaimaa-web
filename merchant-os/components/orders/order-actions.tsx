@@ -49,7 +49,7 @@ function callBackPresets() {
  * merchant turned it on), as a separate request so the confirmation itself
  * never waits for Sendit, then tells the user what happened.
  */
-function useAutoShipAfterConfirm() {
+export function useAutoShipAfterConfirm() {
   const { t } = useI18n();
   const ts = t.shipping;
   const router = useRouter();
