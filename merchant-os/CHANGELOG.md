@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.23.0 — Delivery on a chosen day (2026-11-22)
+
+### Added
+- "Send it on Saturday": an order keeps the day the customer wants it. In call mode, "Confirmed, but for another day" offers tomorrow, the day after, Saturday or any date, with an optional note. The order page shows and changes it, and Delivery follow-up can postpone a parcel already with the courier.
+- Automatic sending to Sendit waits until the day before. "To prepare" and the waiting-to-ship alert leave the order out until then. The orders list shows the day.
+- Each change is written in the order history.
+
 ## 1.22.1 — Pay and cash, folded (2026-11-22)
 
 ### Changed

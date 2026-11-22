@@ -11,6 +11,13 @@ describe("delivery follow-up", () => {
     ];
     expect(rows.sort(compareTracking).map((r) => r.status)).toEqual(["failed_attempt", "out_for_delivery", "picked_up", "in_transit"]);
   });
+  it("puts parcels the customer wants later at the end, even a missed delivery", () => {
+    const rows: TrackedRow[] = [
+      { status: "failed_attempt", since: "2026-11-21T12:00:00Z", later: true },
+      { status: "in_transit", since: "2026-11-21T10:00:00Z" }
+    ];
+    expect(rows.sort(compareTracking).map((r) => r.status)).toEqual(["in_transit", "failed_attempt"]);
+  });
   it("picks the message that fits the parcel", () => {
     expect(trackingTemplate("failed_attempt")).toBe("failedAttempt");
     expect(trackingTemplate("out_for_delivery")).toBe("outForDelivery");

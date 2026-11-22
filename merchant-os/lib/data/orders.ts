@@ -36,6 +36,7 @@ export type OrderListRow = {
   source: OrderSource;
   itemCount: number;
   contact: Contact | null;
+  deliverOn: string | null;
 };
 
 type RawContact = { full_name: string; phone: string; address: string };
@@ -58,6 +59,7 @@ type RawListOrder = {
   next_call_at: string | null;
   created_at: string;
   source: OrderSource;
+  deliver_on: string | null;
   items: { quantity: number }[] | null;
   contact: RawContact | RawContact[] | null;
 };
@@ -76,7 +78,7 @@ export async function listOrders(
   const byContact = options.withContacts && q !== "" && !/^[A-Za-z]{2,10}-?\d+$/.test(q);
   const contactEmbed = options.withContacts ? `contact:order_contacts${byContact ? "!inner" : ""}(full_name, phone, address)` : "";
   const select = [
-    "id, order_number, status, city, total_cents, cod_amount_cents, call_attempts, last_call_outcome, next_call_at, created_at, source",
+    "id, order_number, status, city, total_cents, cod_amount_cents, call_attempts, last_call_outcome, next_call_at, created_at, source, deliver_on",
     "items:order_items(quantity)",
     contactEmbed
   ]
@@ -115,7 +117,8 @@ export async function listOrders(
     createdAt: raw.created_at,
     source: raw.source,
     itemCount: (raw.items ?? []).reduce((sum, item) => sum + item.quantity, 0),
-    contact: oneContact(raw.contact)
+    contact: oneContact(raw.contact),
+    deliverOn: raw.deliver_on
   }));
 
   if (options.view === "to_call") {
@@ -157,6 +160,8 @@ export type OrderDetail = {
   callAttempts: number;
   nextCallAt: string | null;
   createdAt: string;
+  /** The day the customer asked to receive it (null: as soon as possible). */
+  deliverOn: string | null;
   contact: Contact | null;
   items: { id: string; variantId: string; productName: string; variantTitle: string; sku: string; quantity: number; unitPriceCents: number; lineTotalCents: number }[];
   calls: { id: number; outcome: CallOutcome; channel: "phone" | "whatsapp"; note: string | null; callBackAt: string | null; createdAt: string }[];
@@ -178,6 +183,7 @@ type RawDetail = {
   notes: string;
   internal_notes: string;
   call_attempts: number;
+  deliver_on: string | null;
   next_call_at: string | null;
   created_at: string;
   contact?: RawContact | RawContact[] | null;
@@ -187,7 +193,7 @@ type RawDetail = {
 
 export async function getOrder(supabase: Client, organizationId: string, id: string, options: { withContacts: boolean; withCalls: boolean }): Promise<OrderDetail | null> {
   const select = [
-    "id, order_number, status, source, city, city_id, subtotal_cents, discount_cents, shipping_fee_cents, total_cents, cod_amount_cents, notes, internal_notes, call_attempts, next_call_at, created_at",
+    "id, order_number, status, source, city, city_id, subtotal_cents, discount_cents, shipping_fee_cents, total_cents, cod_amount_cents, notes, internal_notes, call_attempts, next_call_at, created_at, deliver_on",
     "items:order_items(id, variant_id, product_name, variant_title, sku, quantity, unit_price_cents, line_total_cents)",
     "events:order_events(id, event_type, from_status, to_status, note, created_at)",
     options.withContacts ? "contact:order_contacts(full_name, phone, address)" : ""
@@ -230,6 +236,7 @@ export async function getOrder(supabase: Client, organizationId: string, id: str
     internalNotes: data.internal_notes,
     callAttempts: data.call_attempts,
     nextCallAt: data.next_call_at,
+    deliverOn: data.deliver_on,
     createdAt: data.created_at,
     contact: oneContact(data.contact),
     items: data.items.map((item) => ({

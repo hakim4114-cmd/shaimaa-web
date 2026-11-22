@@ -4,7 +4,10 @@ import { MessageCircle, Phone, Truck } from "lucide-react";
 import Link from "next/link";
 import { useId, useState, useTransition } from "react";
 import { toast } from "sonner";
-import { addOrderNote } from "@/app/(app)/orders/actions";
+import { addOrderNote, setDeliveryDate } from "@/app/(app)/orders/actions";
+import { DeliveryDayPicker } from "@/components/orders/delivery-day";
+import { formatDay } from "@/lib/datetime";
+import { useRouter } from "next/navigation";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Input } from "@/components/ui/input";
@@ -29,6 +32,8 @@ export type TrackedParcel = {
   since: string;
   shippedAt: string;
   unreachable: number;
+  deliverOn: string | null;
+  later: boolean;
 };
 
 const statusTone: Record<TrackedStatus, string> = {
@@ -139,6 +144,22 @@ function ParcelCard({
   const id = useId();
   const [note, setNote] = useState("");
   const [pending, startTransition] = useTransition();
+  const [postponing, setPostponing] = useState(false);
+  const router = useRouter();
+  const { locale } = useI18n();
+
+  function postpone(day: string, dayNote: string) {
+    startTransition(async () => {
+      const result = await setDeliveryDate({ orderId: parcel.orderId, day, note: dayNote });
+      if (result.error) {
+        toast.error(t.errors[result.error]);
+        return;
+      }
+      toast.success(interpolate(tt.postponedSaved, { day: formatDay(day, locale) }));
+      setPostponing(false);
+      router.refresh();
+    });
+  }
   const template = trackingTemplate(parcel.status);
   const message = whatsappMessage(language, template, {
     customerName: parcel.name,
@@ -183,6 +204,11 @@ function ParcelCard({
         </div>
         <div className="flex flex-col items-end gap-1">
           <span className={cn("rounded-full px-2.5 py-0.5 text-xs font-semibold", statusTone[parcel.status])}>{tt.status[parcel.status]}</span>
+          {parcel.deliverOn ? (
+            <span className={cn("rounded-full px-2.5 py-0.5 text-xs font-semibold", parcel.later ? "bg-surface-muted text-foreground" : "bg-warning-soft text-warning")}>
+              {interpolate(parcel.later ? tt.postponedTo : tt.dueToday, { day: formatDay(parcel.deliverOn, locale) })}
+            </span>
+          ) : null}
           <span className="tabular text-sm font-semibold">{money(parcel.codCents)}</span>
         </div>
       </div>
@@ -205,6 +231,14 @@ function ParcelCard({
           </a>
         ) : null}
       </div>
+
+      {postponing ? (
+        <DeliveryDayPicker initial={parcel.deliverOn} pending={pending} confirmLabel={tt.postpone} onPick={postpone} onCancel={() => setPostponing(false)} />
+      ) : (
+        <button type="button" onClick={() => setPostponing(true)} className="self-start text-sm font-medium text-accent underline-offset-2 hover:underline">
+          {tt.postponeAsk}
+        </button>
+      )}
 
       <div className="flex gap-2">
         <label htmlFor={`${id}-note`} className="sr-only">

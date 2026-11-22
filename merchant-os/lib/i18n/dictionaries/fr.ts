@@ -359,6 +359,11 @@ const fr: Dictionary = {
     UNKNOWN: "Une erreur est survenue. Réessayez.",
   },
   tracking: {
+    postpone: "Reporter",
+    postponeAsk: "Le client veut un autre jour ? Reporter",
+    postponedSaved: "Reporté au {day}. Prévenez le livreur ou Sendit.",
+    postponedTo: "Reporté au {day}",
+    dueToday: "Prévu aujourd'hui ({day})",
     missedShort: "Manquées",
     todayShort: "Aujourd'hui",
     onTheWayShort: "En route",
@@ -388,7 +393,10 @@ const fr: Dictionary = {
     }
   },
   settingsPage: { storesStatus: "{active} actives sur {total}", storesNone: "Aucune boutique liée", senditReady: "Connecté · envoi manuel", senditAuto: "Connecté · envoi automatique à la confirmation", senditTodo: "Pas encore connecté : saisissez les clés", ratesPaid: "Livraison payée par le client · {count} villes sur {total} avec un tarif", ratesIncluded: "Livraison incluse · {count} villes sur {total} avec un tarif", assistantStatus: "{count} liens" },
+  deliveryDay: { title: "Jour de livraison", asap: "Dès que possible", change: "Modifier", save: "Enregistrer", backToAsap: "Revenir à « dès que possible »", pick: "Choisir le jour", tomorrow: "Demain", dayAfter: "Après-demain", saturday: "Samedi", other: "Autre jour", note: "Note (facultatif)", notePlaceholder: "ex. : après 18 h", savedOn: "Livraison le {day}", savedAsap: "Livraison dès que possible", shipsOn: "Envoyé à Sendit le {day}", listChip: "Livraison : {day}" },
   calls: {
+    confirmedLater: "Confirmée, mais pour un autre jour",
+    laterSaved: "jour enregistré",
     givenUpTitle: "{count} commandes sans réponse après 5 appels : sorties de la file",
     givenUpReason: "Sans réponse après {count} appels",
     tryAgain: "Réessayer",
@@ -633,6 +641,7 @@ const fr: Dictionary = {
     removeConfirm: "Les commandes de ce numéro seront de nouveau acceptées."
   },
   shipping: {
+    autoShipScheduled: "Commande confirmée. Pas envoyée à Sendit maintenant : elle partira la veille du jour choisi par le client.",
     title: "Expédition",
     description: "La logistique des colis : bordereaux, ramassage, annulation. Pour joindre un client dont le colis est en route, utilisez « Suivi livraison ».",
     views: {

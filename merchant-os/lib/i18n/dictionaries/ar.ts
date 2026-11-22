@@ -358,6 +358,11 @@ const ar: Dictionary = {
     UNKNOWN: "حدث خطأ. أعد المحاولة.",
   },
   tracking: {
+    postpone: "أجّل",
+    postponeAsk: "الزبون بغاه نهار آخر؟ أجّل",
+    postponedSaved: "تأجّل لنهار {day}. قول للموزع ولا لـSendit.",
+    postponedTo: "مؤجل لـ {day}",
+    dueToday: "بغاه اليوم ({day})",
     missedShort: "ما لقاهمش",
     todayShort: "اليوم",
     onTheWayShort: "ف الطريق",
@@ -387,7 +392,10 @@ const ar: Dictionary = {
     }
   },
   settingsPage: { storesStatus: "{active} خدامين من {total}", storesNone: "حتى متجر ما مربوط", senditReady: "مربوط · الإرسال باليد", senditAuto: "مربوط · الإرسال أوتوماتيكي ملي يتأكد الطلب", senditTodo: "باقي ما مربوطش: دخّل المفاتيح", ratesPaid: "الزبون كيخلص التوصيل · {count} من {total} مدينة عندها ثمن", ratesIncluded: "التوصيل داخل ف الثمن · {count} من {total} مدينة عندها ثمن", assistantStatus: "{count} روابط" },
+  deliveryDay: { title: "نهار التوصيل", asap: "أقرب وقت", change: "بدّل", save: "سجّل", backToAsap: "رجّعو لأقرب وقت", pick: "اختار النهار", tomorrow: "غدا", dayAfter: "بعد غدا", saturday: "السبت", other: "نهار آخر", note: "ملاحظة (اختيارية)", notePlaceholder: "مثلاً: من بعد 6 ديال العشية", savedOn: "التوصيل نهار {day}", savedAsap: "التوصيل ف أقرب وقت", shipsOn: "كيتصيفط لـSendit نهار {day}", listChip: "التوصيل: {day}" },
   calls: {
+    confirmedLater: "مؤكد، ولكن بغاه نهار آخر",
+    laterSaved: "النهار تسجّل",
     givenUpTitle: "{count} طلبات ما جاوبوش 5 مرات: خرجو من الطابور",
     givenUpReason: "ما جاوبش {count} مرات",
     tryAgain: "جرب مرة أخرى",
@@ -632,6 +640,7 @@ const ar: Dictionary = {
     removeConfirm: "ستُقبل طلبات هذا الرقم من جديد."
   },
   shipping: {
+    autoShipScheduled: "الطلب تأكد. ما تصيفطش لـSendit دابا: غادي يتصيفط نهار قبل النهار لي بغا الزبون.",
     title: "الشحن",
     description: "اللوجيستيك ديال الطرود: الوصولات، الرقاص، الإلغاء. باش تتواصل مع الزبون على طرد ف الطريق، استعمل \"تتبّع التوصيل\".",
     views: {

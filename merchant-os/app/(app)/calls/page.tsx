@@ -94,7 +94,8 @@ export default async function CallsPage({ searchParams }: { searchParams: Promis
                 codAmountCents: order.codAmountCents,
                 campaignName,
                 history: history ? { orders: history.ordersTotal, delivered: history.delivered, refused: history.refused + history.returned, blocked: history.blocked } : null,
-                lastCall: order.calls[0] ? { outcome: order.calls[0].outcome, note: order.calls[0].note } : null
+                lastCall: order.calls[0] ? { outcome: order.calls[0].outcome, note: order.calls[0].note } : null,
+                deliverOn: order.deliverOn
               }
             : null
         }

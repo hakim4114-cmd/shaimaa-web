@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { PageHeader } from "@/components/ui/page-header";
 import { requireOrganization } from "@/lib/data/context";
 import { listTrackedShipments } from "@/lib/data/shipping";
+import { businessDay } from "@/lib/datetime";
 import { getI18n } from "@/lib/i18n/server";
 import { compareTracking, trackedStatuses, type TrackedStatus } from "@/lib/orders/tracking";
 import { TrackingBoard, type TrackedParcel } from "./tracking-board";
@@ -20,6 +21,7 @@ export default async function TrackingPage() {
   const { supabase, organizationId, organizationName, can } = await requireOrganization();
   if (!can.prepareOrders) redirect("/");
   const rows = await listTrackedShipments(supabase, organizationId, trackedStatuses);
+  const today = businessDay(new Date());
 
   const parcels: TrackedParcel[] = rows
     .map((r) => ({
@@ -35,7 +37,9 @@ export default async function TrackingPage() {
       codCents: r.codAmountCents,
       since: r.carrierUpdatedAt ?? r.createdAt,
       shippedAt: r.createdAt,
-      unreachable: r.unreachableCount
+      unreachable: r.unreachableCount,
+      deliverOn: r.deliverOn,
+      later: r.deliverOn !== null && r.deliverOn > today
     }))
     .sort(compareTracking);
 

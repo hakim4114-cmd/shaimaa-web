@@ -129,14 +129,14 @@ export async function countShipments(supabase: Client, organizationId: string) {
   return counts;
 }
 
-export type TrackedShipment = ShipmentRow & { phone: string | null; orderStatus: string };
+export type TrackedShipment = ShipmentRow & { phone: string | null; orderStatus: string; deliverOn: string | null };
 
 type TrackedContact = { full_name: string; phone: string };
-type RawTracked = Omit<RawShipment, "order"> & { order: { order_number: string; city: string; status: string; contact?: TrackedContact | TrackedContact[] | null } | null };
+type RawTracked = Omit<RawShipment, "order"> & { order: { order_number: string; city: string; status: string; deliver_on: string | null; contact?: TrackedContact | TrackedContact[] | null } | null };
 
 /** Parcels with the courier, for the delivery follow-up page (with the customer's phone). */
 export async function listTrackedShipments(supabase: Client, organizationId: string, statuses: readonly ShipmentStatus[]): Promise<TrackedShipment[]> {
-  const select = `${shipmentSelect}, order:orders(order_number, city, status, contact:order_contacts(full_name, phone))`;
+  const select = `${shipmentSelect}, order:orders(order_number, city, status, deliver_on, contact:order_contacts(full_name, phone))`;
   const { data, error } = await supabase
     .from("shipments")
     .select(select)
@@ -148,6 +148,6 @@ export async function listTrackedShipments(supabase: Client, organizationId: str
   if (error) throw new Error("SHIPMENTS_UNAVAILABLE");
   return (data ?? []).map((raw) => {
     const contact = Array.isArray(raw.order?.contact) ? raw.order?.contact[0] : raw.order?.contact;
-    return { ...toRow(raw), phone: contact?.phone ?? null, orderStatus: raw.order?.status ?? "" };
+    return { ...toRow(raw), phone: contact?.phone ?? null, orderStatus: raw.order?.status ?? "", deliverOn: raw.order?.deliver_on ?? null };
   });
 }

@@ -28,3 +28,8 @@ export function isDueByToday(value: string | null, now: Date = new Date()): bool
   if (!value) return false;
   return businessDay(value) <= businessDay(now);
 }
+
+/** A calendar day (YYYY-MM-DD) as "Sat 28 Nov" in the user's language. */
+export function formatDay(day: string, locale: Locale): string {
+  return new Intl.DateTimeFormat(intlLocale[locale], { weekday: "short", day: "numeric", month: "short", timeZone: "UTC", numberingSystem: "latn" }).format(new Date(`${day}T12:00:00Z`));
+}

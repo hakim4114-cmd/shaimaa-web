@@ -356,6 +356,11 @@ const en = {
     UNKNOWN: "Something went wrong. Try again.",
   },
   tracking: {
+    postpone: "Postpone",
+    postponeAsk: "Customer wants another day? Postpone",
+    postponedSaved: "Postponed to {day}. Tell the courier or Sendit.",
+    postponedTo: "Postponed to {day}",
+    dueToday: "Wanted today ({day})",
     missedShort: "Missed",
     todayShort: "Today",
     onTheWayShort: "On the way",
@@ -385,7 +390,10 @@ const en = {
     }
   },
   settingsPage: { storesStatus: "{active} active of {total}", storesNone: "No store linked", senditReady: "Connected · manual sending", senditAuto: "Connected · automatic sending on confirmation", senditTodo: "Not connected yet: enter the keys", ratesPaid: "Customer pays delivery · {count} of {total} cities priced", ratesIncluded: "Delivery included · {count} of {total} cities priced", assistantStatus: "{count} links" },
+  deliveryDay: { title: "Delivery day", asap: "As soon as possible", change: "Change", save: "Save", backToAsap: "Back to as soon as possible", pick: "Pick the day", tomorrow: "Tomorrow", dayAfter: "Day after", saturday: "Saturday", other: "Another day", note: "Note (optional)", notePlaceholder: "e.g. after 6 pm", savedOn: "Delivery on {day}", savedAsap: "Delivery as soon as possible", shipsOn: "Sent to Sendit on {day}", listChip: "Delivery: {day}" },
   calls: {
+    confirmedLater: "Confirmed, but for another day",
+    laterSaved: "day saved",
     givenUpTitle: "{count} orders unanswered after 5 calls: out of the queue",
     givenUpReason: "No answer after {count} calls",
     tryAgain: "Try again",
@@ -630,6 +638,7 @@ const en = {
     removeConfirm: "Orders from this number will be accepted again."
   },
   shipping: {
+    autoShipScheduled: "Order confirmed. Not sent to Sendit now: it goes the day before the day the customer chose.",
     title: "Shipping",
     description: "Parcel logistics: labels, pickup, cancelling. To reach a customer whose parcel is on the way, use \"Delivery follow-up\".",
     views: {
