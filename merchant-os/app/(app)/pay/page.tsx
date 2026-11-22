@@ -12,6 +12,8 @@ import { interpolate } from "@/lib/i18n/dictionaries";
 import { getI18n } from "@/lib/i18n/server";
 import { formatMoney } from "@/lib/money";
 import { cn } from "@/lib/utils";
+import { Banknote, CalendarClock, ShieldCheck, SlidersHorizontal, Calculator } from "lucide-react";
+import { CollapsibleCard } from "@/components/ui/collapsible-card";
 import { CashEntryForm, PayableActions, PayableForm, SettingsForm, WithdrawForm } from "./pay-forms";
 
 export async function generateMetadata() {
@@ -35,7 +37,7 @@ type Safe = {
   closed_months?: number;
 };
 
-export default async function PayPage() {
+export default async function PayPage({ searchParams }: { searchParams: Promise<{ section?: string }> }) {
   const { t, locale } = await getI18n();
   const tp = t.pay;
   const { supabase, organizationId, can } = await requireOrganization();
@@ -57,6 +59,9 @@ export default async function PayPage() {
   const today = businessDay(new Date());
   const m = (c: number | undefined) => formatMoney(c ?? 0, locale);
   const open = (payables ?? []).filter((p) => !p.paid_on);
+  const overdue = open.filter((p) => p.due_on < today).length;
+  // A link can open one section directly: /pay?section=rules
+  const openSection = (await searchParams).section;
 
   // The three things the calculation needs, in the order the owner sets them up.
   const opening = (entries ?? []).find((e) => e.kind === "opening");
@@ -135,7 +140,12 @@ export default async function PayPage() {
             <p className="tabular mt-1 text-4xl font-bold">{m(s.safe_cents)}</p>
             <p className="mt-2 max-w-prose text-sm opacity-90">{explanation}</p>
           </div>
-          <CardBody className="grid gap-6 sm:grid-cols-2">
+          <details className="group border-t border-border [&_summary::-webkit-details-marker]:hidden">
+          <summary className="flex min-h-12 cursor-pointer list-none items-center justify-between gap-3 px-5 text-sm font-medium text-muted-foreground hover:text-foreground">
+            <span className="flex items-center gap-2"><Calculator className="size-4" aria-hidden /> {tp.howComputed}</span>
+            <span aria-hidden className="transition-transform group-open:rotate-180">⌄</span>
+          </summary>
+          <CardBody className="grid gap-6 pt-0 sm:grid-cols-2">
             <dl className="grid content-start gap-2.5 text-sm">
               <dt className="font-semibold">{tp.side1}</dt>
               {line(tp.earned, tp.earnedHint, s.pay_earned_cents)}
@@ -149,15 +159,23 @@ export default async function PayPage() {
               {line(tp.reserve, tp.reserveHint, s.reserve_floor_cents, "−")}
               <div className="flex justify-between gap-3 border-t border-border pt-2 font-semibold"><dt>= {tp.freeCash}</dt><dd className={cn("tabular", (s.free_cash_cents ?? 0) < 0 && "text-danger")}>{m(s.free_cash_cents)}</dd></div>
             </dl>
-            <p className="rounded-md bg-surface-muted p-3 text-sm sm:col-span-2">{tp.ruleShort}</p>
           </CardBody>
+          </details>
+          <p className="border-t border-border bg-surface-muted px-5 py-3 text-xs text-muted-foreground">{tp.ruleShort}</p>
         </Card>
       ) : null}
 
       {capital.configured && (capital.capital_cents ?? 0) > 0 ? (
-        <Card className={cn("overflow-hidden", capital.below_floor && "ring-2 ring-danger")}>
-          <CardHeader title={tp.capitalTitle} description={tp.capitalDescription} />
-          <CardBody className="flex flex-col gap-3 text-sm">
+        <CollapsibleCard
+          id="capital"
+          icon={ShieldCheck}
+          title={tp.capitalTitle}
+          status={capital.below_floor ? interpolate(tp.statusBelowShort, { value: m(capital.business_value_cents), floor: m(capital.floor_cents) }) : `${tp.statusOk} · ${m(capital.business_value_cents)}`}
+          tone={capital.below_floor ? "danger" : "ok"}
+          defaultOpen={capital.below_floor || openSection === "capital"}
+        >
+          <div className="flex flex-col gap-3 text-sm">
+            <p className="text-muted-foreground">{tp.capitalDescription}</p>
             <p role={capital.below_floor ? "alert" : undefined} className={cn("rounded-md p-3 font-semibold", capital.below_floor ? "bg-danger-soft text-danger" : "bg-success-soft text-success")}>
               {capital.below_floor ? interpolate(tp.statusBelow, { floor: m(capital.floor_cents) }) : tp.statusOk}
             </p>
@@ -173,8 +191,8 @@ export default async function PayPage() {
               <div className="flex justify-between gap-3"><dt className="text-muted-foreground">{tp.todayAdBudget}</dt><dd className="tabular">{m(capital.ad_budget_cents)}</dd></div>
               <div className="flex justify-between gap-3"><dt className="text-muted-foreground">{tp.todayLossCap}</dt><dd className="tabular">{m(capital.loss_cap_cents)}</dd></div>
             </dl>
-          </CardBody>
-        </Card>
+          </div>
+        </CollapsibleCard>
       ) : null}
 
       {s.configured && can.overrideBlocklist ? (
@@ -186,10 +204,16 @@ export default async function PayPage() {
         </Card>
       ) : null}
 
-      <div className="grid gap-6 lg:grid-cols-2">
-        <Card className="overflow-hidden">
-          <CardHeader title={tp.obligationsTitle} description={tp.obligationsDescription} />
-          <CardBody className="flex flex-col gap-4">
+      <CollapsibleCard
+        id="obligations"
+        icon={CalendarClock}
+        title={tp.obligationsTitle}
+        status={open.length ? interpolate(overdue ? tp.obligationsStatusLate : tp.obligationsStatus, { count: open.length, due: m(s.obligations_30d_cents) }) : tp.noObligations}
+        tone={overdue ? "danger" : "neutral"}
+        defaultOpen={overdue > 0 || openSection === "obligations"}
+      >
+          <div className="flex flex-col gap-4">
+            <p className="text-sm text-muted-foreground">{tp.obligationsDescription}</p>
             <PayableForm categories={expenseCategories} today={today} />
             <ul className="divide-y divide-border">
               {open.map((p) => (
@@ -210,11 +234,18 @@ export default async function PayPage() {
               ))}
               {open.length === 0 ? <li className="py-2 text-sm text-muted-foreground">{tp.noObligations}</li> : null}
             </ul>
-          </CardBody>
-        </Card>
-        <Card className="overflow-hidden">
-          <CardHeader title={tp.cashTitle} description={tp.cashDescription} />
-          <CardBody className="flex flex-col gap-4">
+          </div>
+      </CollapsibleCard>
+      <CollapsibleCard
+        id="cash"
+        icon={Banknote}
+        title={tp.cashTitle}
+        status={(entries ?? []).length ? interpolate(tp.cashStatus, { count: (entries ?? []).length, date: (entries ?? [])[0]?.entry_date ?? "" }) : tp.cashStatusNone}
+        tone={opening ? "neutral" : "todo"}
+        defaultOpen={!opening || openSection === "cash"}
+      >
+          <div className="flex flex-col gap-4">
+            <p className="text-sm text-muted-foreground">{tp.cashDescription}</p>
             {can.overrideBlocklist ? <CashEntryForm today={today} hasOpening={(entries ?? []).some((e) => e.kind === "opening")} /> : null}
             <ul className="divide-y divide-border">
               {(entries ?? []).map((e) => (
@@ -231,14 +262,19 @@ export default async function PayPage() {
                 </li>
               ))}
             </ul>
-          </CardBody>
-        </Card>
-      </div>
+          </div>
+      </CollapsibleCard>
 
       {can.overrideBlocklist ? (
-        <Card>
-          <CardHeader title={tp.settingsTitle} description={tp.settingsDescription} />
-          <CardBody>
+        <CollapsibleCard
+          id="rules"
+          icon={SlidersHorizontal}
+          title={tp.settingsTitle}
+          status={s.configured ? interpolate(tp.rulesStatus, { floor: rules?.capital_floor_pct ?? 80, reserve: rules?.reserve_pct ?? 25, ads: rules?.ad_budget_capital_pct ?? 15, cap: rules?.loss_cap_pct ?? 10 }) : tp.rulesStatusTodo}
+          tone={s.configured ? "neutral" : "todo"}
+          defaultOpen={!s.configured || openSection === "rules"}
+        >
+            <p className="mb-4 text-sm text-muted-foreground">{tp.settingsDescription}</p>
             <SettingsForm
               funds={funds.map((f) => ({ name: f.name, percent: f.percent }))}
               initial={{
@@ -254,8 +290,7 @@ export default async function PayPage() {
                 ownerFundName: s.owner_fund_name ?? funds.find((f) => /pay|أجرة|rémun/i.test(f.name))?.name ?? ""
               }}
             />
-          </CardBody>
-        </Card>
+        </CollapsibleCard>
       ) : null}
     </div>
   );
