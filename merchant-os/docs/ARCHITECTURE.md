@@ -71,7 +71,7 @@ The locale is stored in the `mos-locale` cookie (default Arabic) and read on the
 ### Design system
 
 - Semantic tokens only (`bg-surface`, `text-muted-foreground`, `bg-accent`, `text-danger` …) defined once in `app/globals.css` for light and dark. Components never use raw colours.
-- Identity "Ink" (chosen by the owner, 2026-11-16): a dark ink-navy app frame (sidebar and mobile drawer, dark in both modes), a cool tinted page background with white cards, and one electric-violet accent. The accent was chosen because it never collides with the status colours (green delivered, amber pending, red refused); status colours carry meaning only. Text colour pairs meet WCAG AA (≥ 4.5:1).
+- Identity "Atlas" (chosen by the owner, 2026-11-22, replacing "Ink"): a zellige-green app frame (sidebar and mobile drawer, dark in both modes) with a saffron marker for the active page, a warm sand page background with off-white cards, and terracotta as the one action accent. Status colours (green delivered, amber pending, red refused) carry meaning only. Text colour pairs meet WCAG AA (≥ 4.5:1) in light and dark.
 - One "hero" figure per page at most (`<Metric tone="hero">`): the number to read first.
 - Manrope for Latin text and numbers, IBM Plex Sans Arabic for Arabic; tabular figures for amounts. Radii 8–14 px.
 - Destructive actions must go through `ConfirmDialog`.

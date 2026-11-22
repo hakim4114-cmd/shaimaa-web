@@ -53,12 +53,13 @@ export default async function CommandCenterPage({ searchParams }: { searchParams
     ]);
     const td = t.money.today;
     const tasks = [
-      { icon: PhoneCall, label: td.calls, count: today.callsDue, href: "/orders?view=to_call" },
-      { icon: PackageCheck, label: td.prepare, count: today.toPrepare, href: "/orders?view=confirmed" },
-      { icon: Truck, label: td.pickup, count: today.toPickUp, href: "/shipping?view=to_pickup" },
-      { icon: TriangleAlert, label: td.problems, count: today.deliveryProblems, href: "/shipping?view=problems" },
-      { icon: Undo2, label: td.returns, count: today.returnsWaiting, href: "/returns" },
-      ...(ctx.can.seeMoney ? [{ icon: CalendarClock, label: td.obligations, count: today.obligationsDue, href: "/pay" }] : [])
+      // Each kind of task keeps its own colour, so the eye finds it without reading.
+      { icon: PhoneCall, label: td.calls, count: today.callsDue, href: ctx.can.manageOrders ? "/calls" : "/orders?view=to_call", chip: "bg-accent-soft text-accent-soft-foreground" },
+      { icon: PackageCheck, label: td.prepare, count: today.toPrepare, href: "/orders?view=confirmed", chip: "bg-warning-soft text-warning" },
+      { icon: Truck, label: td.pickup, count: today.toPickUp, href: "/shipping?view=to_pickup", chip: "bg-info-soft text-info" },
+      { icon: TriangleAlert, label: td.problems, count: today.deliveryProblems, href: "/shipping?view=problems", chip: "bg-danger-soft text-danger" },
+      { icon: Undo2, label: td.returns, count: today.returnsWaiting, href: "/returns", chip: "bg-success-soft text-success" },
+      ...(ctx.can.seeMoney ? [{ icon: CalendarClock, label: td.obligations, count: today.obligationsDue, href: "/pay", chip: "bg-surface-muted text-foreground" }] : [])
     ];
     const rate = (v: number | null) => (v === null ? null : `${Math.round(v * 100)}%`);
     return (
@@ -71,7 +72,9 @@ export default async function CommandCenterPage({ searchParams }: { searchParams
             {tasks.map((task) => (
               <li key={task.href}>
                 <Link href={task.href} className="flex items-center gap-3 px-5 py-3.5 hover:bg-surface-hover sm:flex-col sm:items-start sm:gap-1.5">
-                  <task.icon className={task.count ? "size-5 text-accent" : "size-5 text-subtle-foreground"} aria-hidden />
+                  <span className={task.count ? `flex size-9 shrink-0 items-center justify-center rounded-md ${task.chip}` : "flex size-9 shrink-0 items-center justify-center rounded-md bg-surface-muted text-subtle-foreground"}>
+                    <task.icon className="size-5" aria-hidden />
+                  </span>
                   <span className="min-w-0 flex-1 text-sm text-muted-foreground">{task.label}</span>
                   <span className={task.count ? "tabular text-2xl font-bold" : "tabular text-2xl font-bold text-subtle-foreground"}>{task.count}</span>
                 </Link>

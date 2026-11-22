@@ -29,7 +29,7 @@ export function Metric({
     <div
       className={cn(
         "rounded-lg border p-4 shadow-card",
-        hero ? "border-transparent bg-accent text-accent-foreground" : "border-border bg-surface",
+        hero ? "border-transparent bg-sidebar text-sidebar-foreground" : "border-border bg-surface",
         className
       )}
     >
