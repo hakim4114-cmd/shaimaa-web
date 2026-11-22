@@ -71,7 +71,13 @@ for (const viewport of viewports) {
       await signIn(page, owner);
       await page.goto("/");
       if (viewport.width < 1024) {
+        // Phone and tablet: the main sections sit in the bottom bar, the rest behind "More".
+        const tabs = page.getByRole("navigation", { name: ar.topbar.tabs.label });
+        await tabs.getByRole("link", { name: ar.topbar.tabs.orders, exact: true }).click();
+        await expect(page).toHaveURL(/\/orders$/);
         await page.getByRole("button", { name: ar.nav.openMenu }).click();
+        await expect(page.getByRole("dialog").getByRole("link", { name: ar.nav.reports, exact: true })).toBeVisible();
+        return;
       }
       const link = page.getByRole("link", { name: ar.nav.orders, exact: true }).first();
       await expect(link).toBeVisible();

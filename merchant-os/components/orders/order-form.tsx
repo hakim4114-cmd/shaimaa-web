@@ -450,7 +450,7 @@ export function OrderForm({
         </CardBody>
       </Card>
 
-      <div className="sticky bottom-0 z-10 -mx-4 flex flex-wrap items-center justify-end gap-2 border-t border-border bg-background/90 px-4 py-3 backdrop-blur sm:static sm:mx-0 sm:border-0 sm:bg-transparent sm:p-0 sm:backdrop-blur-none">
+      <div className="sticky bottom-[calc(3.5rem+1px+env(safe-area-inset-bottom))] z-10 -mx-4 flex flex-wrap items-center justify-end gap-2 border-t border-border bg-background/90 px-4 py-3 backdrop-blur sm:static sm:mx-0 sm:border-0 sm:bg-transparent sm:p-0 sm:backdrop-blur-none">
         <span className="tabular me-auto text-sm font-semibold sm:hidden">{formatMoney(total, locale)}</span>
         <Link href={mode === "edit" ? `/orders/${orderId}` : "/orders"} className={buttonVariants({ variant: "secondary" })}>
           {t.common.cancel}

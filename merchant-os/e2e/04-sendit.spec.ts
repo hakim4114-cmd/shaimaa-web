@@ -23,7 +23,7 @@ test.describe.serial("Sendit", () => {
   test("the owner connects Sendit and turns on automatic sending", async ({ page }) => {
     variantId = await sizeMVariant();
     await signIn(page, owner);
-    await page.goto("/settings");
+    await page.goto("/settings?section=sendit");
 
     await page.getByLabel(ts.publicKey, { exact: true }).fill(mockKeys.publicKey);
     await page.getByLabel(ts.secretKey, { exact: true }).fill(mockKeys.secretKey);

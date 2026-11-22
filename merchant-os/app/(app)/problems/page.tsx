@@ -54,14 +54,19 @@ export default async function ProblemsPage() {
                     {row.occurrences > 1 ? <Badge>{interpolate(tp.times, { count: row.occurrences })}</Badge> : null}
                     <span className="text-xs text-muted-foreground">{formatDateTime(row.last_seen_at, locale, "short")}</span>
                   </div>
-                  <p dir="ltr" className="break-words text-start font-mono text-xs">
-                    {row.message}
-                  </p>
-                  {row.details?.hint ? (
-                    <p dir="ltr" className="text-start text-xs text-muted-foreground">
-                      {row.details.hint}
+                  {/* What happened and what to do, in plain words; the raw message stays one tap away for support. */}
+                  <p className="font-medium text-foreground">{tp.explain[row.source]}</p>
+                  <details className="text-xs text-muted-foreground">
+                    <summary className="w-fit cursor-pointer select-none py-1">{tp.technical}</summary>
+                    <p dir="ltr" className="mt-1 break-words text-start font-mono">
+                      {row.message}
                     </p>
-                  ) : null}
+                    {row.details?.hint ? (
+                      <p dir="ltr" className="mt-1 text-start">
+                        {row.details.hint}
+                      </p>
+                    ) : null}
+                  </details>
                   {row.order ? (
                     <Link href={`/orders/${row.order.id}`} className="w-fit text-accent hover:underline">
                       {row.order.order_number}

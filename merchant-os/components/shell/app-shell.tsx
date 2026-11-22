@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronsLeft, Menu, Search } from "lucide-react";
+import { ChevronsLeft, Search } from "lucide-react";
 import Link from "next/link";
 import { Suspense, use, useMemo, useState, type ReactNode } from "react";
 import { Button } from "@/components/ui/button";
@@ -10,6 +10,7 @@ import { useI18n } from "@/lib/i18n/provider";
 import { visibleNavigation } from "@/lib/navigation";
 import { sidebarCookieName } from "@/lib/shell";
 import { cn } from "@/lib/utils";
+import { BottomNav } from "./bottom-nav";
 import { BrandMark } from "./brand-mark";
 import { CommandMenu } from "./command-menu";
 import { NotificationsMenu } from "./notifications-menu";
@@ -96,13 +97,17 @@ export function AppShell({
           closeLabel={t.nav.closeMenu}
           variant="sheet"
         >
-          <DialogTitle className="flex h-14 items-center px-4 text-sidebar-foreground">
+          <DialogTitle className="flex h-14 items-center justify-between gap-2 px-4 text-sidebar-foreground">
             <Link href="/" aria-label={t.nav.commandCenter} onClick={() => setMobileOpen(false)} className="flex items-center gap-2.5 rounded-md outline-none focus-visible:ring-2 focus-visible:ring-ring">
               <BrandMark />
               <span dir="ltr" className="font-brand text-[15px] font-extrabold tracking-tight">
                 {t.app.name}
               </span>
             </Link>
+            {/* Theme, language and sections: on a phone they live here, not in the top bar. */}
+            <span className="sm:hidden [&_button]:text-sidebar-foreground">
+              <PreferencesMenu />
+            </span>
           </DialogTitle>
           <SidebarNav groups={groups} onNavigate={() => setMobileOpen(false)} />
         </DialogContent>
@@ -110,31 +115,39 @@ export function AppShell({
 
       <div className="flex min-w-0 flex-1 flex-col">
         <header className="sticky top-0 z-30 flex h-14 print:hidden items-center gap-2 border-b border-border bg-background/85 px-4 backdrop-blur sm:px-6">
-          <Button variant="ghost" size="icon" className="lg:hidden" onClick={() => setMobileOpen(true)} aria-label={t.nav.openMenu}>
-            <Menu />
-          </Button>
-          <Link href="/" aria-label={t.nav.commandCenter} className="shrink-0 rounded-md outline-none focus-visible:ring-2 focus-visible:ring-ring lg:hidden">
+          {/* Phone: the menu lives in the bottom bar ("More"); the top bar keeps only the logo and quick actions. */}
+          <Link href="/" aria-label={t.nav.commandCenter} className="flex shrink-0 items-center gap-2 rounded-md outline-none focus-visible:ring-2 focus-visible:ring-ring lg:hidden">
             <BrandMark />
+            <span dir="ltr" className="font-brand text-[15px] font-extrabold tracking-tight sm:hidden">
+              {t.app.name}
+            </span>
           </Link>
+          <Button variant="ghost" size="icon" className="ms-auto sm:hidden" onClick={() => setSearchOpen(true)} aria-label={t.topbar.search}>
+            <Search />
+          </Button>
           <button
             type="button"
             onClick={() => setSearchOpen(true)}
-            className="flex h-9 pointer-coarse:h-11 w-full max-w-sm items-center gap-2 rounded-md border border-border bg-surface px-3 text-sm text-subtle-foreground shadow-card transition-colors hover:border-border-strong"
+            className="hidden h-9 pointer-coarse:h-11 w-full max-w-sm items-center gap-2 rounded-md border border-border bg-surface px-3 text-sm text-subtle-foreground shadow-card transition-colors hover:border-border-strong sm:flex"
           >
             <Search className="size-4" aria-hidden />
             <span className="truncate">{t.topbar.search}</span>
             <Kbd className="ms-auto hidden sm:inline-flex">{t.topbar.searchShortcut}</Kbd>
           </button>
-          <div className="ms-auto flex items-center gap-1">
+          <div className="flex items-center gap-1 sm:ms-auto">
             <Suspense fallback={<NotificationsMenu alerts={[]} />}>
               <AlertsBell alerts={alerts ?? noAlerts} />
             </Suspense>
-            <PreferencesMenu />
+            <div className="hidden sm:block">
+              <PreferencesMenu />
+            </div>
             {account ? <UserMenu account={account} /> : null}
           </div>
         </header>
-        <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-6 sm:px-6 lg:py-8">{children}</main>
+        <main className="mx-auto w-full max-w-7xl flex-1 px-4 pt-5 pb-28 sm:px-6 lg:py-8">{children}</main>
       </div>
+
+      <BottomNav alerts={alerts ?? noAlerts} onMore={() => setMobileOpen(true)} />
 
       <CommandMenu groups={groups} open={searchOpen} onOpenChange={setSearchOpen} />
     </div>

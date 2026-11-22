@@ -238,18 +238,19 @@ function CurrentOrder({
         </div>
       </div>
 
-      <dl className="grid gap-2 text-sm sm:grid-cols-3">
-        <div className="rounded-lg bg-surface-muted px-3 py-2">
-          <dt className="text-xs text-muted-foreground">{tc.city}</dt>
-          <dd className="font-semibold">{current.city || "—"}</dd>
+      {/* Phone: one compact block of label / value rows; wider screens: three tiles. */}
+      <dl className="divide-y divide-border rounded-lg bg-surface-muted text-sm sm:grid sm:grid-cols-3 sm:gap-2 sm:divide-y-0 sm:bg-transparent">
+        <div className="flex items-baseline justify-between gap-3 px-3 py-2 sm:flex-col sm:items-start sm:gap-0 sm:rounded-lg sm:bg-surface-muted">
+          <dt className="shrink-0 text-xs text-muted-foreground">{tc.city}</dt>
+          <dd className="truncate text-end font-semibold sm:text-start">{current.city || "—"}</dd>
         </div>
-        <div className="rounded-lg bg-surface-muted px-3 py-2">
-          <dt className="text-xs text-muted-foreground">{tc.address}</dt>
-          <dd className="font-semibold">{current.address || "—"}</dd>
+        <div className="flex items-baseline justify-between gap-3 px-3 py-2 sm:flex-col sm:items-start sm:gap-0 sm:rounded-lg sm:bg-surface-muted">
+          <dt className="shrink-0 text-xs text-muted-foreground">{tc.address}</dt>
+          <dd className="min-w-0 text-end font-semibold sm:text-start">{current.address || "—"}</dd>
         </div>
-        <div className="rounded-lg bg-surface-muted px-3 py-2">
-          <dt className="text-xs text-muted-foreground">{tc.campaign}</dt>
-          <dd className="font-semibold">{current.campaignName ?? tc.noCampaign}</dd>
+        <div className="flex items-baseline justify-between gap-3 px-3 py-2 sm:flex-col sm:items-start sm:gap-0 sm:rounded-lg sm:bg-surface-muted">
+          <dt className="shrink-0 text-xs text-muted-foreground">{tc.campaign}</dt>
+          <dd className="truncate text-end font-semibold sm:text-start">{current.campaignName ?? tc.noCampaign}</dd>
         </div>
       </dl>
 
