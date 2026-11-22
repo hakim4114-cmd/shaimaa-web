@@ -1184,6 +1184,7 @@ export type Database = {
           created_by: string | null
           customer_id: string
           delivered_at: string | null
+          deliver_on: string | null
           discount_cents: number
           exchange_of_order_id: string | null
           external_id: string | null
@@ -1219,6 +1220,7 @@ export type Database = {
           created_by?: string | null
           customer_id: string
           delivered_at?: string | null
+          deliver_on?: string | null
           discount_cents?: number
           exchange_of_order_id?: string | null
           external_id?: string | null
@@ -1254,6 +1256,7 @@ export type Database = {
           created_by?: string | null
           customer_id?: string
           delivered_at?: string | null
+          deliver_on?: string | null
           discount_cents?: number
           exchange_of_order_id?: string | null
           external_id?: string | null
@@ -2242,6 +2245,10 @@ export type Database = {
       }
       add_order_note: {
         Args: { p_note: string; p_order_id: string }
+        Returns: undefined
+      }
+      set_delivery_date: {
+        Args: { p_order_id: string; p_day: string | null; p_note?: string | null }
         Returns: undefined
       }
       adjust_inventory: {

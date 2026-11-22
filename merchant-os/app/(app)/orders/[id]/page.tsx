@@ -1,4 +1,5 @@
 import { ArrowLeft, MapPin, Pencil, Phone } from "lucide-react";
+import { DeliveryDayCard } from "@/components/orders/delivery-day";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { BlockNumberButton, CallPanel, NoteForm, StatusActions, WhatsappPanel } from "@/components/orders/order-actions";
@@ -191,6 +192,13 @@ export default async function OrderPage({ params }: { params: Promise<{ id: stri
         </div>
 
         <div className="flex min-w-0 flex-col gap-6">
+          {["new", "confirmation_pending", "confirmed", "preparing", "ready_to_ship", "shipped"].includes(order.status) || order.deliverOn ? (
+            <DeliveryDayCard
+              orderId={order.id}
+              deliverOn={order.deliverOn}
+              editable={can.manageOrders && ["new", "confirmation_pending", "confirmed", "preparing", "ready_to_ship", "shipped"].includes(order.status)}
+            />
+          ) : null}
           <Card>
             <CardHeader title={to.customer} />
             <CardBody className="flex flex-col gap-3 text-sm">

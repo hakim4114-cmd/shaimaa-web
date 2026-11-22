@@ -167,6 +167,11 @@ Rules marked **[DB]** are enforced by migration `20261116000400_order_workflow.s
 ### Editing before confirmation
 - While an order is `new` or `confirmation_pending` (stock not reserved yet), lines, discount, shipping fee, COD, city, address and name can be changed; lines are re-priced from the catalog and totals recomputed; COD follows the total unless it was a deposit **[DB]**. After confirmation the order is locked (`ORDER_LOCKED`) **[DB]**. Every edit is logged in the timeline with what changed **[DB]**.
 
+## Delivery day (1.23.0)
+- An order can carry the day the customer wants it (`orders.deliver_on`), set while confirming, on the order, or from Delivery follow-up; only owners, admins and operators, only for orders not yet delivered, refused, returned or cancelled, never in the past nor more than 60 days ahead (`INVALID_DATE`); each change is written in the order history **[DB]**.
+- The parcel goes to the carrier the day before that day: automatic sending skips it until then, and "to prepare" and the waiting-to-ship alert leave it out until the day before.
+- A parcel already with the courier keeps its carrier status; the owner tells the courier or Sendit (the app does not change the carrier's schedule).
+
 ## Store orders (1.5.0)
 
 Rules marked **[DB]** are enforced by `20261118000100_store_connections.sql` and covered by `supabase/tests/95_store_intake.test.sql`.

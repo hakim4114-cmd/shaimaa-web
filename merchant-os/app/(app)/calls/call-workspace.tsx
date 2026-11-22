@@ -5,7 +5,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useId, useState, useTransition } from "react";
 import { toast } from "sonner";
-import { changeOrderStatus, logCall } from "@/app/(app)/orders/actions";
+import { changeOrderStatus, logCall, setDeliveryDate } from "@/app/(app)/orders/actions";
+import { DeliveryDayPicker } from "@/components/orders/delivery-day";
 import { FormAlert } from "@/components/auth/form-alert";
 import { useAutoShipAfterConfirm } from "@/components/orders/order-actions";
 import { Button, buttonVariants } from "@/components/ui/button";
@@ -37,6 +38,7 @@ type Current = {
   campaignName: string | null;
   history: { orders: number; delivered: number; refused: number; blocked: boolean } | null;
   lastCall: { outcome: CallOutcome; note: string | null } | null;
+  deliverOn: string | null;
 };
 
 const waitTone: Record<WaitLevel, string> = {
@@ -187,12 +189,33 @@ function CurrentOrder({
   const router = useRouter();
   const afterConfirm = useAutoShipAfterConfirm();
   const [pending, startTransition] = useTransition();
-  const [mode, setMode] = useState<"buttons" | "callback" | "cancel">("buttons");
+  const [mode, setMode] = useState<"buttons" | "callback" | "cancel" | "later">("buttons");
   const [note, setNote] = useState("");
   const [callBack, setCallBack] = useState("");
   const [error, setError] = useState<AppErrorCode | null>(null);
   const m = (c: number) => formatMoney(c, locale);
   const wa = current.phone ? whatsappLink(current.phone) : null;
+
+  // Confirmed for a later day: save the day first, so the automatic sending waits for it.
+  function confirmLater(day: string, dayNote: string) {
+    setError(null);
+    startTransition(async () => {
+      const saved = await setDeliveryDate({ orderId: current.id, day, note: dayNote });
+      if (saved.error) {
+        setError(saved.error);
+        return;
+      }
+      const result = await logCall({ orderId: current.id, outcome: "confirmed", note: [dayNote, note].filter((x) => x.trim()).join(" — "), callBackAt: null, channel: "phone" });
+      if (result.error) {
+        setError(result.error);
+        return;
+      }
+      toast.success(`${current.name}: ${t.callOutcome.confirmed} · ${tc.laterSaved}`);
+      afterConfirm(current.id, result.confirmed);
+      router.push(nextId ? `/calls?order=${nextId}` : "/calls");
+      router.refresh();
+    });
+  }
 
   function record(outcome: CallOutcome, channel: "phone" | "whatsapp" = "phone") {
     setError(null);
@@ -312,8 +335,13 @@ function CurrentOrder({
           <button type="button" disabled={pending} onClick={() => setMode("cancel")} className="min-h-14 rounded-lg bg-danger px-3 text-base font-bold text-white dark:text-background transition-opacity hover:opacity-90 disabled:opacity-50">
             ✕ {tc.cancelled}
           </button>
+          <button type="button" disabled={pending} onClick={() => setMode("later")} className="col-span-2 min-h-11 rounded-lg border border-dashed border-success/60 px-3 text-sm font-semibold text-success transition-colors hover:bg-success-soft disabled:opacity-50 sm:col-span-4">
+            ✓ {tc.confirmedLater}
+          </button>
         </div>
       ) : null}
+
+      {mode === "later" ? <DeliveryDayPicker pending={pending} confirmLabel={tc.confirmed} onPick={confirmLater} onCancel={() => setMode("buttons")} /> : null}
 
       {mode === "callback" ? (
         <div className="flex flex-col gap-2 rounded-lg border border-border p-3">

@@ -56,7 +56,7 @@ export function useAutoShipAfterConfirm() {
   const report = (result: AutoShipResult) => {
     if (result.status === "off") return;
     if (result.status === "shipped") toast.success(interpolate(ts.autoShipped, { code: result.code, district: result.district }));
-    else if (result.status === "skipped") toast.info(result.reason === "district_unknown" ? ts.autoShipNoDistrict : ts.autoShipNotPossible);
+    else if (result.status === "skipped") toast.info(result.reason === "scheduled" ? ts.autoShipScheduled : result.reason === "district_unknown" ? ts.autoShipNoDistrict : ts.autoShipNotPossible);
     else toast.error(`${ts.autoShipFailed} ${t.errors[result.error]}${result.detail ? ` (${result.detail})` : ""}`);
   };
   return (orderId: string, confirmed: boolean | undefined) => {

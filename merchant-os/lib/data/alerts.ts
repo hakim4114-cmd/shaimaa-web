@@ -1,5 +1,6 @@
 import "server-only";
 import { stillCallableFilter } from "@/lib/orders/calls";
+import { prepareBy } from "@/lib/orders/delivery-day";
 import { businessDay } from "@/lib/datetime";
 import type { requireOrganization } from "./context";
 
@@ -29,7 +30,7 @@ export async function getAlerts({ supabase, organizationId, can }: Ctx): Promise
     supabase.rpc("low_stock_count", { p_organization_id: organizationId }),
     // Confirmed more than 24 hours ago and still no parcel (auto-send skipped or failed, or forgotten).
     can.prepareOrders
-      ? supabase.from("orders").select("id", head).eq("organization_id", organizationId).in("status", ["confirmed", "preparing"]).lt("confirmed_at", new Date(Date.now() - 86400000).toISOString())
+      ? supabase.from("orders").select("id", head).eq("organization_id", organizationId).in("status", ["confirmed", "preparing"]).lt("confirmed_at", new Date(Date.now() - 86400000).toISOString()).or(`deliver_on.is.null,deliver_on.lte.${prepareBy(today)}`)
       : null,
     can.overrideBlocklist ? supabase.from("system_events").select("id", head).eq("organization_id", organizationId).is("resolved_at", null) : null,
     can.seeMoney ? supabase.rpc("capital_status", { p_organization_id: organizationId }) : null,

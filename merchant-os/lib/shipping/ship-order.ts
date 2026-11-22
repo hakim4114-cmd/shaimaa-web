@@ -1,4 +1,6 @@
 import "server-only";
+import { shipsLater } from "@/lib/orders/delivery-day";
+import { businessDay } from "@/lib/datetime";
 import type { AppErrorCode } from "@/lib/data/errors";
 import { mapDatabaseError } from "@/lib/data/errors";
 import type { requireOrganization } from "@/lib/data/context";
@@ -84,7 +86,7 @@ export async function shipOrder(ctx: Ctx, provider: SenditProvider, keys: Sendit
 export type AutoShipResult =
   | { status: "off" }
   | { status: "shipped"; code: string; district: string }
-  | { status: "skipped"; reason: "district_unknown" | "no_keys" | "not_allowed" }
+  | { status: "skipped"; reason: "district_unknown" | "no_keys" | "not_allowed" | "scheduled" }
   | { status: "failed"; error: AppErrorCode; detail?: string };
 
 /** After a confirmation: sends the parcel when the merchant turned it on and the district is certain. */
@@ -97,6 +99,8 @@ export async function autoShipAfterConfirmation(ctx: Ctx, orderId: string): Prom
   if (!keys) return { status: "skipped", reason: "no_keys" };
   const order = await getOrder(supabase, organizationId, orderId, { withContacts: true, withCalls: false });
   if (!order || order.status !== "confirmed") return { status: "off" };
+  // The customer asked for a later day: it is sent the day before, not now.
+  if (shipsLater(order.deliverOn, businessDay(new Date()))) return { status: "skipped", reason: "scheduled" };
 
   let district: District | null = null;
   if (order.cityId !== null) {

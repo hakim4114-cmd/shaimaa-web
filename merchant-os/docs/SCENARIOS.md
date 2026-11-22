@@ -42,7 +42,7 @@ Legend: **OK** handled by the app · **FIXED** gap found in this review and fixe
 | C5 | Sendit pays late or not at all | The money at the carrier counts in the business value | **FIXED** 1.17.2: the bell warns about orders delivered over 7 days ago and still not paid |
 | C6 | The carrier invoice differs from the estimated fee | — | **OK**: Sendit invoices are recorded and reconciled on the cash page |
 | C7 | The courier could not reach the customer | Without a call the parcel goes back: carrier cost lost, no sale | **FIXED** 1.21.0: Delivery follow-up lists missed deliveries first, with a WhatsApp message ready. **RULE**: go through it every morning |
-| C8 | The customer asks for a later delivery day | No scheduled delivery date | **OPEN**: write it as a note on the order and tell the courier |
+| C8 | The customer asks for a later delivery day | No scheduled delivery date | **FIXED** 1.23.0: the order keeps the day; it is sent to the carrier the day before, work lists and the waiting-to-ship alert wait for it; a parcel already with the courier can be postponed from Delivery follow-up. **RULE**: tell the courier or Sendit when you postpone a parcel already picked up |
 
 ## Capital, cash and owner pay
 

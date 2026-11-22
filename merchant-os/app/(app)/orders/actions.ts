@@ -134,7 +134,7 @@ export async function autoShipOrder(orderId: string): Promise<AutoShipResult> {
   if (!z.string().uuid().safeParse(orderId).success) return { status: "off" };
   const ctx = await requireOrganization();
   const result = await autoShipAfterConfirmation(ctx, orderId);
-  if (result.status === "failed" || (result.status === "skipped" && result.reason !== "not_allowed")) {
+  if (result.status === "failed" || (result.status === "skipped" && result.reason !== "not_allowed" && result.reason !== "scheduled")) {
     const reason = result.status === "failed" ? `${result.error}${result.detail ? ` (${result.detail})` : ""}` : result.reason;
     await ctx.supabase.rpc("add_order_note", { p_order_id: orderId, p_note: `Sendit auto: not sent — ${reason}`.slice(0, 1000) });
     if (result.status === "failed") {
@@ -278,4 +278,24 @@ export async function createExchange(input: z.infer<typeof exchangeInput>): Prom
   revalidateOrders(value.orderId);
   revalidatePath("/returns");
   return { orderId: data.id };
+}
+
+const deliveryInput = z.object({
+  orderId: z.string().uuid(),
+  day: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).nullable(),
+  note: z.string().max(500).default("")
+});
+
+/** The day the customer wants the order (null: as soon as possible). */
+export async function setDeliveryDate(input: z.infer<typeof deliveryInput>): Promise<ActionResult> {
+  const parsed = deliveryInput.safeParse(input);
+  if (!parsed.success) return { error: "INVALID_DATE" };
+  const { supabase, can } = await requireOrganization();
+  if (!can.manageOrders) return { error: "FORBIDDEN" };
+  const { error } = await supabase.rpc("set_delivery_date", { p_order_id: parsed.data.orderId, p_day: parsed.data.day, p_note: parsed.data.note.trim() || null });
+  if (error) return { error: mapDatabaseError(error) };
+  revalidateOrders(parsed.data.orderId);
+  revalidatePath("/tracking");
+  revalidatePath("/calls");
+  return { ok: true };
 }

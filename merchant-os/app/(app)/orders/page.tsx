@@ -10,7 +10,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { TBody, TD, TH, THead, TR, Table } from "@/components/ui/table";
 import { requireOrganization } from "@/lib/data/context";
 import { countOrdersByView, listOrders, orderViews, type OrderListRow, type OrderView } from "@/lib/data/orders";
-import { formatDateTime } from "@/lib/datetime";
+import { formatDateTime, formatDay } from "@/lib/datetime";
 import type { Dictionary } from "@/lib/i18n/dictionaries";
 import { interpolate } from "@/lib/i18n/dictionaries";
 import type { Locale } from "@/lib/i18n/config";
@@ -28,6 +28,10 @@ const tabs: OrderView[] = ["to_call", "confirmed", "preparing", "ready", "open",
 
 function CallInfo({ row, t, locale, now }: { row: OrderListRow; t: Dictionary; locale: Locale; now: number }) {
   const to = t.orders;
+  // Once confirmed, the useful line is the day the customer wants it.
+  if (row.deliverOn && row.status !== "delivered" && row.status !== "cancelled") {
+    return <span className="text-xs font-medium text-info">{interpolate(t.deliveryDay.listChip, { day: formatDay(row.deliverOn, locale) })}</span>;
+  }
   if (row.status !== "new" && row.status !== "confirmation_pending") return null;
   const due = row.nextCallAt ? Date.parse(row.nextCallAt) <= now : false;
   if (row.nextCallAt) {

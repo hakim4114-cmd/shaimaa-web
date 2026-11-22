@@ -8,10 +8,11 @@ export type TrackedStatus = (typeof trackedStatuses)[number];
 // then parcels on the way, oldest first.
 const rank: Record<TrackedStatus, number> = { failed_attempt: 0, out_for_delivery: 1, in_transit: 2, picked_up: 2 };
 
-export type TrackedRow = { status: TrackedStatus; since: string };
+/** `later`: the customer asked for a day after today; it waits at the end until then. */
+export type TrackedRow = { status: TrackedStatus; since: string; later?: boolean };
 
 export function compareTracking(a: TrackedRow, b: TrackedRow): number {
-  return rank[a.status] - rank[b.status] || Date.parse(a.since) - Date.parse(b.since);
+  return Number(a.later ?? false) - Number(b.later ?? false) || rank[a.status] - rank[b.status] || Date.parse(a.since) - Date.parse(b.since);
 }
 
 /** The message that fits where the parcel is. */
