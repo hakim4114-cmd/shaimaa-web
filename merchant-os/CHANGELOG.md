@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.21.1 — One number, one definition (2026-11-22)
+
+### Fixed
+- The safe amount to withdraw counts cash from the opening date, like the capital card and the guards. With an entry dated earlier, the pay page used to show two different cash figures.
+- "Calls to make" in the bell and on the command center leaves out orders unanswered 5 times, like call mode. The bell opens call mode.
+- Call mode's percentage is now named "Today's call result" (decided calls), so it is not mistaken for the period's confirmation rate on the command center.
+- The shipping page says what it is for (logistics) and points to Delivery follow-up for customer contact.
+- Delivery follow-up on a phone: one summary strip with short labels instead of three cramped cards; the message language is a row of pills; the empty page points to parcels waiting for pickup and to call mode.
+- `docs/SCENARIOS.md` lists every figure shown in more than one place and where it is computed.
+
 ## 1.21.0 — Delivery follow-up, unanswered orders (2026-11-22)
 
 ### Added

@@ -7,7 +7,7 @@ import { toast } from "sonner";
 import { addOrderNote } from "@/app/(app)/orders/actions";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
-import { Input, NativeSelect } from "@/components/ui/input";
+import { Input } from "@/components/ui/input";
 import { interpolate } from "@/lib/i18n/dictionaries";
 import { useI18n } from "@/lib/i18n/provider";
 import { formatMoney } from "@/lib/money";
@@ -41,7 +41,6 @@ const statusTone: Record<TrackedStatus, string> = {
 export function TrackingBoard({ parcels, storeName }: { parcels: TrackedParcel[]; storeName: string }) {
   const { t, locale } = useI18n();
   const tt = t.tracking;
-  const id = useId();
   const [language, setLanguage] = useState<WhatsappLanguage>("darija");
   // Read once on the client; the day counts need no live update.
   const [now] = useState(() => Date.now());
@@ -57,35 +56,60 @@ export function TrackingBoard({ parcels, storeName }: { parcels: TrackedParcel[]
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex flex-wrap items-end justify-between gap-3">
-        <dl className="grid flex-1 grid-cols-3 gap-2 sm:max-w-xl">
-          {[
-            { label: tt.missed, value: counts.missed, tone: "text-danger" },
-            { label: tt.today, value: counts.today, tone: "text-success" },
-            { label: tt.onTheWay, value: counts.onTheWay, tone: "text-info" }
-          ].map((s) => (
-            <div key={s.label} className="rounded-lg border border-border bg-surface px-3 py-2 shadow-card">
-              <dt className="text-xs text-muted-foreground">{s.label}</dt>
-              <dd className={cn("tabular text-xl font-bold", s.value > 0 && s.tone)}>{s.value}</dd>
-            </div>
+      {/* One summary strip: three counts side by side, short labels, a coloured dot per kind. */}
+      <dl className="grid grid-cols-3 divide-x divide-border overflow-hidden rounded-xl border border-border bg-surface shadow-card rtl:divide-x-reverse">
+        {[
+          { label: tt.missedShort, value: counts.missed, tone: "text-danger", dot: "bg-danger" },
+          { label: tt.todayShort, value: counts.today, tone: "text-success", dot: "bg-success" },
+          { label: tt.onTheWayShort, value: counts.onTheWay, tone: "text-info", dot: "bg-info" }
+        ].map((s) => (
+          <div key={s.label} className="flex flex-col gap-1 px-3 py-3 sm:px-4">
+            <dt className="flex items-center gap-1.5 text-xs text-muted-foreground">
+              <span className={cn("size-2 shrink-0 rounded-full", s.dot)} aria-hidden />
+              <span className="truncate">{s.label}</span>
+            </dt>
+            <dd className={cn("tabular text-2xl font-bold", s.value > 0 ? s.tone : "text-subtle-foreground")}>{s.value}</dd>
+          </div>
+        ))}
+      </dl>
+
+      {parcels.length > 0 ? (
+        <div className="flex flex-wrap items-center gap-2 text-sm" role="radiogroup" aria-label={tt.messageLanguage}>
+          <span className="text-muted-foreground">{tt.messageLanguage}</span>
+          {whatsappLanguages.map((l) => (
+            <button
+              key={l}
+              type="button"
+              role="radio"
+              aria-checked={language === l}
+              onClick={() => pickLanguage(l)}
+              className={cn(
+                "min-h-9 rounded-full border px-3 text-sm font-medium transition-colors",
+                language === l ? "border-accent bg-accent-soft text-accent-soft-foreground" : "border-border bg-surface hover:bg-surface-hover"
+              )}
+            >
+              {t.orders.languages[l]}
+            </button>
           ))}
-        </dl>
-        <div className="flex items-center gap-2 text-sm">
-          <label htmlFor={`${id}-lang`} className="text-muted-foreground">
-            {tt.messageLanguage}
-          </label>
-          <NativeSelect id={`${id}-lang`} value={language} onChange={(e) => pickLanguage(e.target.value as WhatsappLanguage)} className="w-36">
-            {whatsappLanguages.map((l) => (
-              <option key={l} value={l}>
-                {t.orders.languages[l]}
-              </option>
-            ))}
-          </NativeSelect>
         </div>
-      </div>
+      ) : null}
 
       {parcels.length === 0 ? (
-        <EmptyState icon={Truck} title={tt.emptyTitle} description={tt.emptyDescription} />
+        <EmptyState
+          icon={Truck}
+          title={tt.emptyTitle}
+          description={tt.emptyDescription}
+          action={
+            <div className="flex flex-wrap justify-center gap-2">
+              <Link href="/shipping?view=to_pickup" className={buttonVariants({ variant: "secondary" })}>
+                {tt.toShipping}
+              </Link>
+              <Link href="/calls" className={buttonVariants()}>
+                {tt.toCalls}
+              </Link>
+            </div>
+          }
+        />
       ) : (
         <ul className="grid gap-3 lg:grid-cols-2">
           {parcels.map((p) => (

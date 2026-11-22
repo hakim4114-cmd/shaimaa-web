@@ -1,4 +1,5 @@
 import "server-only";
+import { stillCallableFilter } from "@/lib/orders/calls";
 import type { Database } from "@/lib/supabase/database.types";
 import type { requireOrganization } from "./context";
 
@@ -259,7 +260,7 @@ export async function getTodayCounts(supabase: Client, organizationId: string) {
   const head = { count: "exact" as const, head: true };
   const in7 = new Date(Date.now() + 7 * 86400000).toISOString().slice(0, 10);
   const [callsDue, toPrepare, ready, problems, returnsWaiting, obligations] = await Promise.all([
-    supabase.from("orders").select("id", head).eq("organization_id", organizationId).in("status", ["new", "confirmation_pending"]).or(`next_call_at.is.null,next_call_at.lte.${nowIso}`),
+    supabase.from("orders").select("id", head).eq("organization_id", organizationId).in("status", ["new", "confirmation_pending"]).or(`and(or(next_call_at.is.null,next_call_at.lte.${nowIso}),or(${stillCallableFilter}))`),
     supabase.from("orders").select("id", head).eq("organization_id", organizationId).in("status", ["confirmed", "preparing"]),
     supabase.from("shipments").select("id", head).eq("organization_id", organizationId).eq("status", "pending"),
     supabase.from("shipments").select("id", head).eq("organization_id", organizationId).eq("status", "failed_attempt"),

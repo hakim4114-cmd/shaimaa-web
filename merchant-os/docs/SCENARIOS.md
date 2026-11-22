@@ -66,3 +66,20 @@ Legend: **OK** handled by the app · **FIXED** gap found in this review and fixe
 | E1 | Judging a period that ended less than 10 days ago | Deliveries still pending | **OK** 1.17.0: the report says it is incomplete |
 | E2 | Judging a product before 20 orders | Too few orders | **OK**: "too early" until 20 orders; a test ends at 20 orders or the cap, whichever comes first |
 | E3 | Unsold stock of a stopped test | The test's result does not count stock bought and not sold | **RULE**: buy 10–15 pieces per test; sleeping stock is listed in Reports |
+
+## One number, one definition
+
+Every figure shown in more than one place, and where it is computed. A change to one must change all of them; check this table before any change to money, calls or reports.
+
+| Figure | Definition | Computed in | Shown on |
+|---|---|---|---|
+| Cash | Cash entries + Sendit payouts − expenses − withdrawals, **from the opening date** | `app.money_position`, `public.safe_withdrawal` (same filter since 1.21.1) | Pay (balance, capital card), guards |
+| Reserve | Larger of the fixed minimum and the reserve share of the capital | `app.effective_reserve` | Pay, guards, owner withdrawal |
+| Capital | Opening balance + money put in, from the opening date | `app.capital_cents` | Pay, rules |
+| Calls to make | New or pending orders, call-back due, **not** unanswered 5 times | `isGivenUp` / `stillCallableFilter` (`lib/orders/calls.ts`) | Bell, command center, call mode |
+| Confirmation rate (period) | Confirmed ÷ orders created in the period | report RPC | Command center, Reports, Excel |
+| Today's call result | Confirmed calls ÷ calls decided today (confirmed, cancelled, wrong number) | call mode page | Call mode only (different name on purpose) |
+| Delivery rate | Delivered ÷ (delivered + refused) | `lib/reports` | Reports, products, cities |
+| Profit (period) | Net profit of the period, all costs | report RPC | Command center |
+| Profit per product | Revenue − cost − carrier − ads of the product, period | `lib/reports/products.ts` | Reports |
+| Test result | Since the campaign started, after ads, damaged returns included | `app.campaign_profit` | Reports → tests, bell, guard |
